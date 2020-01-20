@@ -9,6 +9,7 @@
     <groupId>com.maehem.rotor.engine.data</groupId>
     <artifactId>data</artifactId>
     <!--packaging>jar</packaging-->
+    <!--
     <build>
         <plugins>
             <plugin>
@@ -21,4 +22,5 @@
             </plugin>
         </plugins>
     </build>
+    -->
 </project>
