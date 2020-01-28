@@ -24,6 +24,7 @@ import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.GameStateFile;
 import com.maehem.rotor.ui.controls.DialogLayer;
 import com.maehem.rotor.ui.controls.DialogPanel;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -64,8 +65,8 @@ public class GameSaveDialog extends DialogPanel {
             try {
                 // TODO  Pause game
                 FileSystem fs = FileSystem.getInstance();
-                GameStateFile.save(fs.getOutputStreamFor(game.data.mapInfo.getFileSaveName()), game.data);
-                // TODO restore previous running state.
+                game.getWorld().getState().save(new DataOutputStream(fs.getOutputStreamFor(fs.getGameSaveName())));
+                //GameStateFile.save(fs.getOutputStreamFor(game.data.mapInfo.getFileSaveName()), game.data);
             } catch (IOException ex) {
                 LOGGER .log(Level.SEVERE, ex.toString(), ex);
             }

@@ -68,7 +68,9 @@ public class GameSaveAsDialog extends DialogPanel {
             try {
                 // TODO  Pause game
                 FileSystem fs = FileSystem.getInstance();
-                GameStateFile.save(fs.getOutputStreamFor(saveAsFileName.getText()), game.data);
+                GameStateFile.save(fs.getOutputStreamFor(saveAsFileName.getText()), game.getWorld().getState());
+                fs.setGameSaveName(saveAsFileName.getText());   // Remember the current File Name
+                
                 // TODO restore previous running state.
             } catch (IOException ex) {
                 LOGGER .log(Level.SEVERE, ex.toString(), ex);
@@ -79,7 +81,7 @@ public class GameSaveAsDialog extends DialogPanel {
 
     private VBox saveAsGamePane() {
         Label label = new Label("Save As:");
-        saveAsFileName = new TextField(game.data.mapInfo.getName() + "_" + new Date().getTime());
+        saveAsFileName = new TextField(game.getWorld().getDisplayName() + "_" + new Date().getTime());
         saveAsFileName.setPrefColumnCount(40);
 //        colonyNameTextField.textProperty().addListener((o) -> {
 //            game.game.data.mapInfo.name = colonyNameTextField.getText();

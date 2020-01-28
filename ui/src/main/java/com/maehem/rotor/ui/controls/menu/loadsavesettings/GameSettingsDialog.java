@@ -60,39 +60,31 @@ public class GameSettingsDialog extends DialogPanel {
     }
 
     private VBox nameDescriptionPane() {
-        Label colonyNameLabel = new Label("Colony Name:");
-        TextField colonyNameTextField = new TextField(game.data.mapInfo.getName());
+        Label playerName = new Label("Name:");  // TODO: MessageBundle
+        TextField colonyNameTextField = new TextField(game.getWorld().getState().getPlayerName());
         colonyNameTextField.textProperty().addListener((o) -> {
-            game.data.mapInfo.setName(colonyNameTextField.getText());
+            game.getWorld().getState().setPlayerName(colonyNameTextField.getText());
         });        
         
-        Label founderLabel = new Label("Founder's Name:");
-        TextField founderTextField = new TextField(game.data.mapInfo.getFounder());
-        founderTextField.textProperty().addListener((o) -> {
-            game.data.mapInfo.setFounder(founderTextField.getText());
-        });
-
-        Label descriptionLabel = new Label("Description:");
-        TextArea descriptionTextArea = new TextArea();
-        
-        descriptionTextArea.setPrefRowCount(4);
-        descriptionTextArea.setEditable(true);
-        descriptionTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            game.data.mapInfo.setDescription(descriptionTextArea.getText());
-        });
-        descriptionTextArea.setText(game.data.mapInfo.getDescription());
-        ScrollPane descriptionScrollPane = new ScrollPane(descriptionTextArea);
-        descriptionScrollPane.setFitToWidth(true);
-        descriptionScrollPane.setFitToHeight(true);
-        descriptionScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
-        descriptionScrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-        HBox.setHgrow(descriptionScrollPane, Priority.ALWAYS);
+//        Label descriptionLabel = new Label("Description:");
+//        TextArea descriptionTextArea = new TextArea();
+//        
+//        descriptionTextArea.setPrefRowCount(4);
+//        descriptionTextArea.setEditable(true);
+//        descriptionTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
+//            game.data.mapInfo.setDescription(descriptionTextArea.getText());
+//        });
+//        descriptionTextArea.setText(game.data.mapInfo.getDescription());
+//        ScrollPane descriptionScrollPane = new ScrollPane(descriptionTextArea);
+//        descriptionScrollPane.setFitToWidth(true);
+//        descriptionScrollPane.setFitToHeight(true);
+//        descriptionScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+//        descriptionScrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+//        HBox.setHgrow(descriptionScrollPane, Priority.ALWAYS);
 
         VBox hb = new VBox();
-        hb.getChildren().addAll(
-                colonyNameLabel, colonyNameTextField,
-                founderLabel, founderTextField,
-                descriptionLabel, descriptionScrollPane
+        hb.getChildren().addAll(playerName, colonyNameTextField
+                
         );
         hb.setSpacing(10);
 

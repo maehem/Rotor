@@ -17,43 +17,20 @@
     under the License.
 
 */
-package com.maehem.rotor.engine.data;
+package com.maehem.rotor.engine.data.exception;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.maehem.rotor.engine.data.Room;
 
 /**
  *
  * @author maehem
  */
-public class Cell {
+public class RoomDimensionException extends Exception {
 
-    public Data parent;
-
-
-    public Cell(Data parent) {
-        this.parent = parent;
+    public RoomDimensionException(Room room, Room.Edge e, int index, Room destRoom) {
+        super("Destination door index was larger than rooms size: " + room.getDisplayName()+ 
+                " " + e.toString() + "[" + index + "]  dest: " + destRoom.getDisplayName());
     }
-
-    public Point getMapLocation() {
-        for (int y = 0; y < parent.mapInfo.mapSize; y++) {
-            for (int x = 0; x < parent.mapInfo.mapSize; x++) {
-                if (this.equals(parent.map[x][y])) {
-                    return new Point(x, y);
-                }
-            }
-        }
-        return null;
-    }
-
-
-    public void load(DataInputStream dis) throws IOException {
-        //structure.load(dis);
-    }
-
-    public void save(DataOutputStream dos) throws IOException {
-        //structure.save(dos);
-    }
-
+    
+    
 }

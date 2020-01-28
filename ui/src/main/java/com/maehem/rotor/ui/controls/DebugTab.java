@@ -217,7 +217,7 @@ public class DebugTab extends Group implements LogListener {
         //GridPane centerPane = new GridPane();
         cp.getChildren().addAll(
                 initDebugLevelSliderPane(),
-                new DebugTogglesPanel(gfx)
+                new DebugTogglesPanel(/*gfx.game,*/ gfx.debug)
         );
         cp.setBorder(new Border(new BorderStroke(new Color(1, 0, 0, 1), BorderStrokeStyle.NONE, CornerRadii.EMPTY, new BorderWidths(6))));
 

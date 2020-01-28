@@ -19,7 +19,7 @@
 */
 package com.maehem.rotor.ui.controls.menu.loadsavesettings;
 
-import com.maehem.rotor.engine.data.Data;
+import com.maehem.rotor.engine.data.WorldState;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.ui.controls.DialogLayer;
 import com.maehem.rotor.ui.controls.DialogPanel;
@@ -70,17 +70,15 @@ public class GameNewDialog extends DialogPanel {
         
         getDoneButton().addEventHandler(MouseEvent.MOUSE_CLICKED, (t) -> {
             LOGGER.finer("New Game DONE button clicked.");
-            Data d = new Data();
             // Read all the Dialog settings and apply them here.
-            d.mapInfo.setName(colonyNameField.getText());
-            d.mapInfo.setFounder(commanderNameField.getText());
-            d.mapInfo.setMoney((int) diffGroup.getSelectedToggle().getUserData());
-            d.mapInfo.setYearFounded((int)startGroup.getSelectedToggle().getUserData());
-            d.mapInfo.setMapSize((int)sizeGroup.getSelectedToggle().getUserData());
+            WorldState gameState = game.getWorld().initState();
+            
+            //d.mapInfo.setName(colonyNameField.getText());
+            gameState.setPlayerName(colonyNameField.getText());
+            //d.mapInfo.setMoney((int) diffGroup.getSelectedToggle().getUserData());
+            gameState.setPlayerDifficulty((int) diffGroup.getSelectedToggle().getUserData());
           
-            d.initMap();
-            d.setLoaded(true);
-            game.setData(d);
+            game.initNewGame(); // ???
         });
 
         // Start a timer to fade and then destroy this dialog.
@@ -93,9 +91,7 @@ public class GameNewDialog extends DialogPanel {
         hb.setSpacing(30);
         VBox vb = new VBox(
                 getColonyNamePanel(),
-                getCommanderNamePanel(),
-                getDifficultyLevelPanel(),
-                getDateSizePanel()
+                getDifficultyLevelPanel()
         );
         vb.setSpacing(10);
         
@@ -110,21 +106,10 @@ public class GameNewDialog extends DialogPanel {
         VBox box = new VBox();
         box.setPadding(new Insets(6));
         
-        Text label = new Text("Colony Name:");
+        Text label = new Text("Name:");
         colonyNameField = new TextField();
         
         box.getChildren().addAll(label, colonyNameField);
-        return box;
-    }
-
-    private Node getCommanderNamePanel() {
-        VBox box = new VBox();
-        box.setPadding(new Insets(6));        
-        
-        Text label = new Text("Commander Name:");
-        commanderNameField = new TextField();
-        
-        box.getChildren().addAll(label, commanderNameField);
         return box;
     }
 
@@ -134,9 +119,9 @@ public class GameNewDialog extends DialogPanel {
         box.setPadding(new Insets(6));        
         
         Text label = new Text("Difficulty:");
-        RadioButton easyB = new RadioButton(  "Easy    CR 80000");
-        RadioButton mediumB = new RadioButton("Medium  CR 50000");
-        RadioButton hardB = new RadioButton(  "Hard    CR 20000");
+        RadioButton easyB = new RadioButton(  "Easy");
+        RadioButton mediumB = new RadioButton("Medium");
+        RadioButton hardB = new RadioButton(  "Hard");
         
         easyB.setUserData(80000);
         mediumB.setUserData(50000);
@@ -153,62 +138,4 @@ public class GameNewDialog extends DialogPanel {
         return box;
     }
 
-    private Node getDateSizePanel() {
-        HBox hBox = new HBox();
-        hBox.setPadding(new Insets(6));
-        hBox.setSpacing(30);
-        
-        VBox dateBox = new VBox();
-        dateBox.setSpacing(6);
-        dateBox.setPadding(new Insets(6));        
-        
-        Text startLabel = new Text("Start Date:");
-        RadioButton early = new RadioButton(  "2030");
-        RadioButton mid = new RadioButton("2100");
-        RadioButton late = new RadioButton(  "2800");
-        
-        early.setUserData(2030);
-        mid.setUserData(2100);
-        late.setUserData(2800);
-        
-        startGroup = new ToggleGroup();
-        early.setToggleGroup(startGroup);
-        mid.setToggleGroup(startGroup);
-        late.setToggleGroup(startGroup);
-        
-        early.setSelected(true);
-        
-        dateBox.getChildren().addAll(startLabel, early, mid, late);
-        
-        
-        VBox sizeBox = new VBox();
-        sizeBox.setSpacing(6);
-        sizeBox.setPadding(new Insets(6));        
-        
-        Text sizeLabel = new Text("Map Size:");
-        RadioButton small = new RadioButton(  "Small    16x16");
-        RadioButton medium = new RadioButton( "Medium   32x32");
-        RadioButton large = new RadioButton(  "Large    64x64");
-
-        small.setUserData(16);
-        medium.setUserData(32);
-        large.setUserData(64);
-        
-        sizeGroup = new ToggleGroup();
-        small.setToggleGroup(sizeGroup);
-        medium.setToggleGroup(sizeGroup);
-        large.setToggleGroup(sizeGroup);
-        
-        small.setSelected(true);
-        
-        
-        
-        sizeBox.getChildren().addAll(sizeLabel, small, medium, large);
-        
-        
-        
-        hBox.getChildren().addAll(dateBox, sizeBox);
-        
-        return hBox;
-    }
 }

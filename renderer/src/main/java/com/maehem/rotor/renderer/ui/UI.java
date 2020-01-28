@@ -23,31 +23,12 @@ import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
 import com.maehem.rotor.renderer.Graphics;
-import com.maehem.rotor.engine.data.Cell;
-import com.maehem.rotor.engine.data.Point;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Cell;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 /**
  *
@@ -121,7 +102,7 @@ public class UI implements GameListener {
     public void gameEvent(GameEvent e) {
         switch (e.type) {
             case DATA_LOADED:
-                centerCell = game.data.map[game.data.mapInfo.mapSize / 2][game.data.mapInfo.mapSize / 2]; // Center the map view.
+//                centerCell = game.data.map[game.data.mapInfo.mapSize / 2][game.data.mapInfo.mapSize / 2]; // Center the map view.
                 break;
         }
     }

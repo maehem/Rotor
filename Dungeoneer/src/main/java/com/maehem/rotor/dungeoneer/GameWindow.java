@@ -81,11 +81,10 @@ public class GameWindow extends Application implements UIListener, GameListener 
         loggingHandler.setFormatter(new LoggingFormatter());
         messages = ResourceBundle.getBundle("MessageBundle");
 
+        // TODO:  Maybe move this initialization into the Logging module?
         // Get the top most logger and add our handler.
         Logger.getLogger("com.maehem.rotor").setUseParentHandlers(false);  // Prevent INFO and HIGHER from going to stderr.
         Logger.getLogger("com.maehem.rotor").addHandler(loggingHandler);
-
-        // For our java package only, log ony FINE and above.
         Logger.getLogger("com.maehem.rotor").setLevel(Level.FINEST);
         
         LOGGER.info("Dungeoneer version:  0.0.0");
@@ -111,8 +110,7 @@ public class GameWindow extends Application implements UIListener, GameListener 
         initLayers(root);
         initGameLoop();
 
-
-        // TODO add a Game listener to do something at each tick.
+        // Listen to the game loop.
         game.addListener(this);
         
         gfx.ui.addListener(this);
@@ -125,6 +123,9 @@ public class GameWindow extends Application implements UIListener, GameListener 
         stage.setHeight(canvas.getHeight() + stage.getHeight() - stage.getScene().getHeight());
         debug.reloadDebugLog();
         debug.setShowing(false);
+        
+        game.init(); // Load world map and data after the log window is up.
+        
 
         mainMenu.show();
     }
@@ -158,7 +159,6 @@ public class GameWindow extends Application implements UIListener, GameListener 
         Timeline gameLoop = new Timeline();
         gameLoop.setCycleCount(Timeline.INDEFINITE);
 
-        //GraphicsContext gc = canvas.getGraphicsContext2D();
         KeyFrame kf = new KeyFrame(
             Duration.seconds(gfx.getTickRate()), (ActionEvent ae) -> {
                 gfx.tick();

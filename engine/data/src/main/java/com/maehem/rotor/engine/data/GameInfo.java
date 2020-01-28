@@ -44,6 +44,8 @@ public class GameInfo {
     
     public byte[] data;
 
+    private Room currentRoom = null;
+
     private String fileSaveName;
     private String name;
     private String description;
@@ -79,33 +81,17 @@ public class GameInfo {
     }
 
     public GameInfo(DataInputStream dis) throws IOException {
-        LOGGER.finer("Read Game Info block... START");
         load(dis);
-        LOGGER.finer("Read Game Info block... OK");
     }
 
-//    public GameInfo(byte[] data) {
-//        
-//        this.data = data;
-//        //load(data);
-//        
-//    }
-    
     // TODO make load/save and others part of interface implementations
 
     public final void load(DataInputStream dis) throws IOException {
-//        StringBuilder sb = new StringBuilder(NAME_LENGTH);
-//        for (int i = 0; i < NAME_LENGTH; i++) {
-//            //name = dis.readChar();
-//            sb.append(dis.readChar());
-//        }
-//        setName(sb.toString());
+        LOGGER.finer("Read Game Info block... START");
         dis.readUTF();  // <GINF>
 
         name = dis.readUTF();
         description = dis.readUTF();
-//        country = dis.readUTF();  // I18N
-//        language = dis.readUTF(); // I18N
         
         mapSize = dis.readInt();
         waterLevel = dis.readInt();
@@ -121,19 +107,20 @@ public class GameInfo {
         speed = SPEED.values()[dis.readByte()];
         
         dis.readUTF();  // <GINF_>
+        
+        LOGGER.finer("Read Game Info block... OK");
 
     }
 
     public void save(DataOutputStream dos) throws IOException {
+
+        LOGGER.finer("Write Game Info block... START");
 
         dos.writeUTF("<GINF>");
         // TODO: May not need to replace spaces in string.
         //dos.writeChars(String.format("%-" + NAME_LENGTH + "s", getName()).replace(' ', Character.MIN_VALUE));  // Unicode.  48 bytes. 24 chars. Zero padded
         dos.writeUTF(name);
         dos.writeUTF(description);
-        
-//        dos.writeUTF(country);   // I18N
-//        dos.writeUTF(language);  // I18N
         
         dos.writeInt(mapSize);
         dos.writeInt(waterLevel);
@@ -149,6 +136,8 @@ public class GameInfo {
         dos.writeByte(speed.ordinal());
         dos.writeUTF("<GINF_>");
         dos.flush();
+        
+        LOGGER.finer("Read Game Info block... OK");
     }
 
     @Override

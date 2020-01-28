@@ -16,14 +16,19 @@
     specific language governing permissions and limitations
     under the License.
 
-*/
+ */
 package com.maehem.rotor.engine.game;
 
-import com.maehem.rotor.engine.data.Data;
+import com.maehem.rotor.engine.data.World;
+import com.maehem.rotor.engine.data.WorldState;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -43,7 +48,7 @@ public class Game {
     public static final long YEAR_LENGTH = 12 * MONTH_LENGTH; // Ticks
 
     private boolean initialized = false;
-    
+
     private boolean running = false;  // Running==true or Paused==false
 
     //  corners: ['1000','0100','0010','0001'],
@@ -55,76 +60,87 @@ public class Game {
         {8, 1, 2, 4}
     };
 
-    public Data data = null;
+    private World world = null;
 
     private int subTicks = 0;
 
-    public Game( String gameName ) {
+    public Game(String gameName) {
         FileSystem.init(gameName);
     }
 
-    public void init() {
-        Data newData = new Data();
-        newData.initMap();
-        newData.setLoaded(true);
-        setData(newData);        
-    }
-
-    public final void setData(Data data) {
-        this.data = data;
-
-        if (data.isLoaded()) {
-            LOGGER.log(Level.INFO, "New city loaded: {0}", data.mapInfo.getName());
-            doNotify(GameEvent.TYPE.DATA_LOADED);
-            setRunning(running);
-
-            initialized = true;
-        }
-    }
-
     /**
-     * Game state is computed here.
+     * Called from GameWindow after graphics have been initiated.
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public final void init() throws FileNotFoundException, IOException {
+
+        // Load Static World Map
+        world = World.getInstance();
+
+        // TODO: Have FileSystem return a DataInputStream for the world map.
+        File worldMap = new File(FileSystem.getInstance().getGameDir(), "WorldMap.map");
+        DataInputStream dis = new DataInputStream(new FileInputStream(worldMap));
+
+        getWorld().load(dis);
+        
+        initialized = true;
+    }
+
+//    public final void setState(WorldState state) {
+//        this.data = data;
+//
+//        if (data.isLoaded()) {
+//            LOGGER.log(Level.INFO, "New city loaded: {0}", data.mapInfo.getName());
+//            doNotify(GameEvent.TYPE.DATA_LOADED);
+//            setRunning(running);
+//
+//            initialized = true;
+//        }
+//    }
+    /**
+     * Game state is computed here. Called by Graphics at each frame update.
      */
     public void tick() {
         if (!initialized || !running) {
             return;
         }
 
-        subTicks++;
-        if (subTicks > 511) {
-            subTicks = 0;
-        }
+        doTick();
+        
+//        subTicks++;
+//        if (subTicks > 511) {
+//            subTicks = 0;
+//        }
+//
+//        switch (data.mapInfo.speed) {
+//            case SLOW:
+//                if (subTicks % 36 == 0) {
+//                    doTick();
+//                }
+//                break;
+//            case MEDIUM:
+//                if (subTicks % 22 == 0) {
+//                    doTick();
+//                }
+//                break;
+//            case FAST:
+//                if (subTicks % 9 == 0) {
+//                    doTick();
+//                }
+//                break;
+//            default:
+//            case PLAID:
+//                doTick();
+//                break;
+//
+//        }
 
-        switch (data.mapInfo.speed) {
-            case SLOW:
-                if (subTicks % 36  == 0) {
-                    doTick();
-                }
-                break;
-            case MEDIUM:
-                if (subTicks % 22 == 0) {
-                    doTick();
-                }
-                break;
-            case FAST:
-                if (subTicks % 9 == 0) {
-                    doTick();
-                }
-                break;
-            default:
-            case PLAID:
-                doTick();
-                break;
-
-        }
-        // What speed are we running at?
-
-        //data.mapInfo.setTicksElapsed(data.mapInfo.getTicksElapsed() + 1);
-        // Update game state
     }
 
     private void doTick() {
-        data.mapInfo.setTicksElapsed(data.mapInfo.getTicksElapsed() + 1);
+        getWorld().getState().tick();
         doNotify(GameEvent.TYPE.TICK);
     }
 
@@ -142,20 +158,9 @@ public class Game {
         });
     }
 
-    public String getDate() {
-        long ticks = data.mapInfo.getTicksElapsed();
-
-        long year = ticks / YEAR_LENGTH;
-        long month = (ticks % YEAR_LENGTH) / MONTH_LENGTH + 1;
-        long day = ((ticks % YEAR_LENGTH) % MONTH_LENGTH) / DAY_LENGTH + 1;
-        year += data.mapInfo.yearFounded;
-
-        return year + "/" + month + "/" + day;
-    }
-
     public void setRunning(boolean running) {
         this.running = running;
-        if ( running ) {
+        if (running) {
             doNotify(GameEvent.TYPE.RUNNING);
             LOGGER.info("Game Running");
         } else {
@@ -164,9 +169,23 @@ public class Game {
         }
 
     }
-    
+
     public boolean isRunning() {
         return running;
+    }
+
+    /**
+     * @return the world data object
+     */
+    public World getWorld() {
+        return world;
+    }
+
+    public void initNewGame() {
+        
+        WorldState state = getWorld().initState();
+        // Start running
+        setRunning(true);
     }
 
 }

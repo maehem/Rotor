@@ -19,7 +19,8 @@
 */
 package com.maehem.rotor.ui.controls.menu.loadsavesettings;
 
-import com.maehem.rotor.engine.data.Data;
+import com.maehem.rotor.engine.data.World;
+import com.maehem.rotor.engine.data.WorldState;
 import com.maehem.rotor.engine.game.FileSystem;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.GameStateFile;
@@ -111,19 +112,21 @@ public class GameLoadDialog extends DialogPanel {
 
     private void doLoad(String fileName) {
         try {
-            Data data = new Data();
+            WorldState worldState = World.getInstance().getState();
             
             LOGGER.log(Level.INFO, "Load Game: {0}", fileName);
             FileSystem fs = FileSystem.getInstance();
-            GameStateFile.load(fs.getInputStreamFor(fileName), data);
-            if ( data.isLoaded() ) {
-                data.mapInfo.setFileSaveName(fileName);
-                game.setData(data);
+            worldState.load(fs.getInputStreamFor(fileName));
+            //GameStateFile.load(fs.getInputStreamFor(fileName), worldState);
+            if ( worldState.isLoaded() ) {
+                fs.setGameSaveName(fileName);
+                //data.mapInfo.setFileSaveName(fileName);
+                //game.setData(worldState);
             }
         } catch (IOException ex) {
             LOGGER.log( Level.SEVERE, ex.toString(), ex );
         } finally {
-            
+            // TODO: Do we need to close the input stream?
         }
     }
 }

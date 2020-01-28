@@ -19,6 +19,7 @@
 */
 package com.maehem.rotor.ui.controls.menu;
 
+import com.maehem.rotor.engine.game.FileSystem;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.renderer.ui.UI;
 import com.maehem.rotor.ui.controls.DialogLayer;
@@ -73,7 +74,7 @@ public class LoadSaveSettingsMenu extends ToolbarItem {
         return (EventHandler) (Event t) -> {
             DialogLayer dialogLayer = getDialogLayer();
             if (dialogLayer != null) {
-                if (game.data.mapInfo.getFileSaveName() != null) {
+                if (FileSystem.getInstance().getGameSaveName() != null) {
                     GameSaveDialog d = new GameSaveDialog(game, dialogLayer, 300, -600);
                 } else {
                     GameSaveAsDialog d = new GameSaveAsDialog(game, dialogLayer, 300, -600);

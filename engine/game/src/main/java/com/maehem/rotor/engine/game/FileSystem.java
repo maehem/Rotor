@@ -44,6 +44,8 @@ public class FileSystem {
 
     private static FileSystem instance = null;
     
+    private String gameSaveName = null;
+    
     public static FileSystem getInstance() {
         if ( instance == null ) {
             LOGGER.log(Level.SEVERE, "Game attempted to use FileSystem before it was initialized!");    
@@ -174,5 +176,21 @@ public class FileSystem {
             Logger.getLogger(FileSystem.class.getName()).log(Level.SEVERE, null, ex);
         }
         return fos;
+    }
+
+    /**
+     *
+     * @return text name of the current game state save file
+     */
+    public String getGameSaveName() {
+        return gameSaveName;
+    }
+
+    /**
+     *
+     * @param name of the current game state save file
+     */
+    public void setGameSaveName(String name) {
+        this.gameSaveName = name;
     }
 }

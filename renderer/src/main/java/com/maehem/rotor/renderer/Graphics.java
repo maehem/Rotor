@@ -20,12 +20,9 @@
 package com.maehem.rotor.renderer;
 
 import com.maehem.rotor.renderer.debug.Debug;
-import com.maehem.rotor.engine.data.Cell;
-import com.maehem.rotor.engine.data.Point;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.renderer.ui.EventBubble;
 import com.maehem.rotor.renderer.ui.UI;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -69,9 +66,6 @@ public class Graphics {
     public int xOffset = 0;
     public int yOffset = 0;
 
-    //public int scale = 1;
-    private Cell lookAt;
-
     public boolean showBuildings = true;
     public boolean showNetworks = true;
     public boolean showTerrain = true;
@@ -95,7 +89,7 @@ public class Graphics {
         loadTerrainTiles();
         loadBuildingTiles();
 
-        game.init();
+        //game.init();  // Moved to Game()
     }
 
     public void setCanvas(Canvas canvas) {
@@ -154,55 +148,48 @@ public class Graphics {
     }
 
     private void drawTiles(GraphicsContext gc) {
-        for (int y = 0; y < game.data.getMapSize(); y++) {
-            for (int x = 0; x < game.data.getMapSize(); x++) {
-//                Point p = game.data.getViewXY(x, y); // Get a X/Y with consideration for viewed rotation
-//                Cell cell = game.data.map[p.x][p.y];
-
-//                // Draw terrain tile
-//                if (showTerrain) {
-//                    TerrainRenderer.drawTile(this, gc, cell, p);
-//                }
+//        for (int y = 0; y < game.data.getMapSize(); y++) {
+//            for (int x = 0; x < game.data.getMapSize(); x++) {
+////                Point p = game.data.getViewXY(x, y); // Get a X/Y with consideration for viewed rotation
+////                Cell cell = game.data.map[p.x][p.y];
 //
-//                // Draw zone tile
-//                if (showZones) {
-//                    ZoneRenderer.drawTile(this, gc, p);
-//                }
-//                
-//                if ( showGrid ) {
-////                    int drawX = getDrawX(p.x, p.y);
-////                    int drawY = getDrawY(p.x, p.y);
-//                    TerrainRenderer.drawOutline(this, gc, cell.terrain.id, cell.altm.altitude, p);
-//                }
-//                
-//                // Draw network tile
-//                if (showNetworks) {
-//                    NetworkRenderer.drawTile(this, gc, cell, p);
-//                }
-//                // Draw building tile
-//                if (showBuildings) {
-//                    StructureRenderer.drawTile(this, gc, cell, p);
-//                }
-
-//                if (showBubbles) {
-//                    bubbles.forEach((b) -> {
-//                        if (b.getCell().x == p.x && b.getCell().y == p.y) {
-//                            b.draw(this, gc);
-//                        }
-//                    });
-//                    bubbles.removeIf((e) -> {
-//                        return e.isDone();
-//                    });
-//                }
-            }
-        }
-    }
-
-    // TODO need to update xOffset/yOffset for each rotation.
-    // Maybe calculate on every roatation change.
-    public void lookAt(Cell cell) {
-        this.lookAt = cell;
-//        ui.setSelectedCell(cell);
+////                // Draw terrain tile
+////                if (showTerrain) {
+////                    TerrainRenderer.drawTile(this, gc, cell, p);
+////                }
+////
+////                // Draw zone tile
+////                if (showZones) {
+////                    ZoneRenderer.drawTile(this, gc, p);
+////                }
+////                
+////                if ( showGrid ) {
+//////                    int drawX = getDrawX(p.x, p.y);
+//////                    int drawY = getDrawY(p.x, p.y);
+////                    TerrainRenderer.drawOutline(this, gc, cell.terrain.id, cell.altm.altitude, p);
+////                }
+////                
+////                // Draw network tile
+////                if (showNetworks) {
+////                    NetworkRenderer.drawTile(this, gc, cell, p);
+////                }
+////                // Draw building tile
+////                if (showBuildings) {
+////                    StructureRenderer.drawTile(this, gc, cell, p);
+////                }
+//
+////                if (showBubbles) {
+////                    bubbles.forEach((b) -> {
+////                        if (b.getCell().x == p.x && b.getCell().y == p.y) {
+////                            b.draw(this, gc);
+////                        }
+////                    });
+////                    bubbles.removeIf((e) -> {
+////                        return e.isDone();
+////                    });
+////                }
+//            }
+//        }
     }
 
     /**
@@ -241,59 +228,6 @@ public class Graphics {
 //        return (int) (animationFrame - Math.floor(animationFrame / frameCount) * frameCount);
 //    }
 
-
-    /**
-     * Gets the screen pixel center drawing X-axis location of this Cell
-     * coordinate.
-     *
-     * @param cx X grid location
-     * @param cy Y grid location
-     * @return pixel X location
-     */
-    public int getDrawX(int cx, int cy) {
-
-        int grid = TILE_WIDTH / 2;
-        int gx = cx * grid;
-        int gy = cy * grid;
-
-        switch (game.data.mapInfo.getRotation()) {
-            default:
-            case 0:
-                return xOffset /*- game.data.getMapSize() * grid*/ + gx - gy;
-            case 1:
-                return xOffset + game.data.getMapSize() * grid - gx - gy - grid; //  32 * (-cx+cy)
-            case 2:
-                return xOffset /*+ game.data.getMapSize() * grid*/ - gx + gy;
-            case 3:
-                return xOffset - game.data.getMapSize() * grid + gx + gy + grid;
-        }
-    }
-
-    /**
-     * Gets the screen pixel center drawing Y-axis location of this Cell
-     * coordinate.
-     *
-     * @param cx x grid location.
-     * @param cy y grid location.
-     * @return pixel Y location
-     */
-    public int getDrawY(int cx, int cy) {
-        int grid = TILE_WIDTH / 4;
-        int gx = cx * grid;
-        int gy = cy * grid;
-
-        switch (game.data.mapInfo.getRotation()) {
-            default:
-            case 0:
-                return yOffset + gx + gy + grid;
-            case 1:
-                return yOffset + game.data.getMapSize() * grid + gx - gy;
-            case 2:
-                return yOffset + game.data.getMapSize() * 2 * grid - gx - gy - grid;
-            case 3:
-                return yOffset + game.data.getMapSize() * grid - gx + gy;
-        }
-    }
 
     private void loadTerrainTiles() {
         // Need a tile list.

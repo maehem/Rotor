@@ -19,8 +19,6 @@
 */
 package com.maehem.rotor.renderer.debug;
 
-import com.maehem.rotor.engine.data.Cell;
-import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.renderer.Graphics;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -36,6 +34,7 @@ public class Debug {
 
     public boolean showOverlayInfo = true;
     public boolean showStatsPanel = false;  // Another pop tab
+    public boolean showTileCoordinates = false;
 
     //public int clipOffset = 0;   // ???   delete me
     //public int tileCount = 0;    // ??? delete me
@@ -104,13 +103,6 @@ public class Debug {
 
     }
 
-    public void drawDebugLayer(GraphicsContext g, Cell cell) {
-//        if (!showTileCount) {
-//            return;
-//        }
-
-    }
-
     public void debugOverlay(GraphicsContext g) {
         if (!showOverlayInfo) {
             return;
@@ -139,17 +131,17 @@ public class Debug {
 
         g.fillText("cursor x: " + gfx.ui.cursorX + ", y: " + gfx.ui.cursorY, x, y);
         y -= lineInc;
-        g.fillText("map rotation: " + gfx.game.data.mapInfo.getRotation(), x, y);
-        y -= lineInc;
+//        g.fillText("map rotation: " + gfx.game.data.mapInfo.getRotation(), x, y);
+//        y -= lineInc;
         g.fillText("zoom: " + Math.round(gfx.ui.zoom*10)/10.0f, x, y);
         y -= lineInc;
-        if (gfx.ui.selectedCell != null) {
-            g.fillText("selected tile"
-                    +  " x: " + gfx.ui.selectedCell.getMapLocation().x
-                    + ", y: " + gfx.ui.selectedCell.getMapLocation().y,
-                    x, y);
-            y -= lineInc;
-        }
+//        if (gfx.ui.selectedCell != null) {
+//            g.fillText("selected tile"
+//                    +  " x: " + gfx.ui.selectedCell.getMapLocation().x
+//                    + ", y: " + gfx.ui.selectedCell.getMapLocation().y,
+//                    x, y);
+//            y -= lineInc;
+//        }
 
         g.setFont(origFont); // Put the font settings back.
     }

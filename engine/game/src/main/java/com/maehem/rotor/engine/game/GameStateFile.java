@@ -16,10 +16,10 @@
     specific language governing permissions and limitations
     under the License.
 
-*/
+ */
 package com.maehem.rotor.engine.game;
 
-import com.maehem.rotor.engine.data.Data;
+import com.maehem.rotor.engine.data.WorldState;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -36,15 +36,14 @@ public class GameStateFile {
     private static final Logger LOGGER = Logger.getLogger(GameStateFile.class.getName());
 
     public static final String MAGIC_COOKIE = "ROCKETCOLONY";
-    
+
 //    static {
 //        LOGGER.setLevel(Level.FINE);
 //    }
-
     private GameStateFile() {
     }
 
-    public static void load(DataInputStream dis, Data data) throws IOException {
+    public static void load(DataInputStream dis, WorldState data) throws IOException {
         if (!isOurSaveFileType(dis)) {
             LOGGER.severe("File is not a valid RocketColony Save File\n");
             return;
@@ -53,47 +52,32 @@ public class GameStateFile {
         try (dis) {
             // TODO: Read file version
             data.load(dis);
-        } catch ( EOFException ex ) {
+        } catch (EOFException ex) {
             LOGGER.severe("LOAD FAILED! Game save file seems to be truncated.");
         }
     }
 
-    public static void save(FileOutputStream fos, Data data) throws IOException {
-            DataOutputStream dos = new DataOutputStream(fos);
-            // Write File Magic Number
-            writeMagicCookie(dos);
-            // TODO: Write File Version
-            
-            data.save(dos);
+    public static void save(FileOutputStream fos, WorldState data) throws IOException {
+        DataOutputStream dos = new DataOutputStream(fos);
+        // Write File Magic Number
+        writeMagicCookie(dos);
+        // TODO: Write File Version
+
+        data.save(dos);
     }
 
     public static final boolean isOurSaveFileType(DataInputStream dis) {
         try {
-            if ( dis.available() < MAGIC_COOKIE.length() ) return false;
-            
-            if (    dis.readByte() != 'R'
-                    || // 'R'
-                    dis.readByte() != 'O'
-                    || // 'O'
-                    dis.readByte() != 'C'
-                    || // 'C'
-                    dis.readByte() != 'K'
-                    || // 'K'
-                    dis.readByte() != 'E'
-                    || // 'E'
-                    dis.readByte() != 'T'
-                    || // 'T'
-                    dis.readByte() != 'C'
-                    || // 'C'
-                    dis.readByte() != 'O'
-                    || // 'O'
-                    dis.readByte() != 'L'
-                    || // 'L'
-                    dis.readByte() != 'O'
-                    || // 'O'
-                    dis.readByte() != 'N'
-                    || // 'N'
-                    dis.readByte() != 'Y') { // 'Y'
+            if (dis.available() < MAGIC_COOKIE.length()) {
+                return false;
+            }
+
+            if (       dis.readByte() != 'R'
+                    || dis.readByte() != 'O'
+                    || dis.readByte() != 'T'
+                    || dis.readByte() != 'O'
+                    || dis.readByte() != 'R'
+                ) {
                 LOGGER.severe("Magic Number does not match!\n");
                 return false;
             }

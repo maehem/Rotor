@@ -19,10 +19,6 @@
 */
 package com.maehem.rotor.ui.controls;
 
-import com.maehem.rotor.engine.data.Data;
-import com.maehem.rotor.engine.game.events.GameEvent;
-import com.maehem.rotor.engine.game.events.GameListener;
-import com.maehem.rotor.renderer.Graphics;
 import com.maehem.rotor.renderer.debug.Debug;
 import javafx.geometry.Insets;
 import javafx.scene.control.ToggleButton;
@@ -39,18 +35,17 @@ import javafx.scene.paint.Color;
  *
  * @author maehem
  */
-public class DebugTogglesPanel extends GridPane implements GameListener {
+public class DebugTogglesPanel extends GridPane /*implements GameListener*/ {
 
-    private final Data data;
     private final Debug debug;
     
     //private final ToggleButton showCoords;
 
-    public DebugTogglesPanel(Graphics gfx) {
-        this.data = gfx.game.data;
-        this.debug = gfx.debug;
+    public DebugTogglesPanel(/*Game game,*/ Debug debug) {
+        // TODO: Probably don't need to remember this var.
+        this.debug = debug;
         
-        gfx.game.addListener(this);
+        //game.addListener(this);
         setHgap(4);
         setVgap(4);
         //setGridLinesVisible(true);
@@ -59,23 +54,24 @@ public class DebugTogglesPanel extends GridPane implements GameListener {
         setBorder(new Border(new BorderStroke(Color.GREY.brighter(), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
         setPadding(new Insets(4));
         
-//        showCoords = new ToggleButton("", Toolbar.createGlyph("/glyphs/xy-visible.png"));
-//        showCoords.setTooltip(new Tooltip("Show Tile Coordinates"));
-//        showCoords.setSelected(debug.showTileCoordinates);
-//        showCoords.selectedProperty().addListener((ov, prev, current) -> {
-//            debug.showTileCoordinates = current;
-//        });
-//        add(showCoords, 0, 0);
+        ToggleButton showCoords = new ToggleButton("", Toolbar.createGlyph("/glyphs/xy-visible.png"));
+        showCoords.setTooltip(new Tooltip("Show Tile Coordinates"));
+        showCoords.setSelected(debug.showTileCoordinates);
+        showCoords.selectedProperty().addListener((ov, prev, current) -> {
+            debug.showTileCoordinates = current;
+        });
+        add(showCoords, 0, 0);
         
     }
 
-    @Override
-    public void gameEvent(GameEvent e) {
-        switch( e.type ) {
-            case DATA_LOADED:
-                // Not used yet.
-                break;
-        }
-    }
+    // TODO: We probably don't need this
+//    @Override
+//    public void gameEvent(GameEvent e) {
+//        switch( e.type ) {
+//            case DATA_LOADED:
+//                // Not used yet.
+//                break;
+//        }
+//    }
     
 }
