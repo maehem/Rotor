@@ -1,20 +1,4 @@
-
-Glyphs used here came from various sources and are credited in accordance with
-their authors credit requirements.
-
-File:  population.png
-From Astronaut icon (modified) 
-made by [ https://www.freepik.com ] Freepik 
-from https://www.flaticon.com/  Flaticon 
-and licensed under http://creativecommons.org/licenses/by/3.0/  Creative Commons 3.0
-
-
-
-=================================================================================
-
-All other glyphs are original artwork by code author Maehem,  Twitter: @MarkJKoch
-and licensed by Apache 2.0 License summarized below:
-
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -32,4 +16,20 @@ and licensed by Apache 2.0 License summarized below:
     specific language governing permissions and limitations
     under the License.
 
+*/
+package com.maehem.rotor.ui.hud;
 
+import com.maehem.rotor.engine.data.PlayerState;
+
+/**
+ *
+ * @author maehem
+ */
+public class ArrowsIndicator extends ItemAmountIndicator {
+
+    public ArrowsIndicator() {
+        super(PlayerState.PROP_BOMBS, "/glyphs/hud/arrow.png", 99);
+    }
+    
+    
+}

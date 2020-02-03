@@ -1,20 +1,4 @@
-
-Glyphs used here came from various sources and are credited in accordance with
-their authors credit requirements.
-
-File:  population.png
-From Astronaut icon (modified) 
-made by [ https://www.freepik.com ] Freepik 
-from https://www.flaticon.com/  Flaticon 
-and licensed under http://creativecommons.org/licenses/by/3.0/  Creative Commons 3.0
-
-
-
-=================================================================================
-
-All other glyphs are original artwork by code author Maehem,  Twitter: @MarkJKoch
-and licensed by Apache 2.0 License summarized below:
-
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -32,4 +16,32 @@ and licensed by Apache 2.0 License summarized below:
     specific language governing permissions and limitations
     under the License.
 
+*/
+package com.maehem.rotor.ui.hud;
 
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+
+/**
+ *
+ * @author maehem
+ */
+public class HealthBarStrip extends HBox {
+
+    public static final int HEART_SIZE = 16;
+    private final Pane hearts[] = new Pane[10];
+    
+    public HealthBarStrip() {
+        for ( int i=0; i<hearts.length; i++ ) {
+            hearts[i] = HUD.createGlyph("/glyphs/hud/heart.png", HEART_SIZE);
+            getChildren().add(hearts[i]);
+        }
+    }
+    
+    protected void setValue(int value) {
+        for ( int i=0; i< hearts.length; i++ ) {
+            hearts[i].setVisible(value/5 > i);
+        }
+    }
+    
+}

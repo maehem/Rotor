@@ -89,7 +89,7 @@ public class Graphics {
         loadTerrainTiles();
         loadBuildingTiles();
 
-        //game.init();  // Moved to Game()
+        //game.initFromFile();  // Moved to Game()
     }
 
     public void setCanvas(Canvas canvas) {
@@ -208,7 +208,7 @@ public class Graphics {
         // TODO:  Horizon gradient
         // Clear the canvas
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-        gc.setFill(Color.AQUA);
+        gc.setFill(Color.DARKGREY);
         gc.fillRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
     }
 

@@ -21,13 +21,12 @@ package com.maehem.rotor.ui.controls;
 
 import com.maehem.rotor.engine.logging.LogListener;
 import com.maehem.rotor.engine.logging.LoggingMessageList;
-import com.maehem.rotor.renderer.Graphics;
+import com.maehem.rotor.renderer.debug.Debug;
 import java.text.MessageFormat;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import javafx.animation.AnimationTimer;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -36,7 +35,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
@@ -62,15 +60,17 @@ import javafx.util.StringConverter;
  *
  * @author maehem
  */
-public class DebugTab extends Group implements LogListener {
+public class DebugPanelGroup extends Group implements LogListener {
 
-    private static final Logger LOGGER = Logger.getLogger(DebugTab.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DebugPanelGroup.class.getName());
 
     public static final double CORNER_ARC = 10;
-    public static final double HEIGHT = 700;
-    public static final double WIDTH = 100;
+    public static final double HEIGHT = 100;
+    public static final double WIDTH = 700;
 
-    final static String FAMILY = "Helvetica";
+    //final static String FAMILY = "Monospaced";
+    //final static String FAMILY = "Andale Mono";
+    final static String FAMILY = "monospace";
     final static double SIZE = 12;
     final Font REGULAR = Font.font(FAMILY, SIZE);
     final Font ITALIC = Font.font(FAMILY, FontPosture.ITALIC, SIZE);
@@ -80,73 +80,74 @@ public class DebugTab extends Group implements LogListener {
     private Formatter formatter = null;
 
     BorderPane panel = new BorderPane();
-    private boolean showing = false;
+    private boolean showing = true;
     private final LoggingMessageList messageLog;
     private Slider slider;
     private ScrollPane logMessagePane;
 
-    public DebugTab(double x, double y, LoggingMessageList messageLog, Graphics gfx) {
-        this.setLayoutX(x);
-        this.setLayoutY(y);
+    public DebugPanelGroup(LoggingMessageList messageLog, Debug debug) {
+        //this.setLayoutX(x);
+        //this.setLayoutY(y);
         this.messageLog = messageLog;
         messageLog.addListener(this);
 
         StackPane tab = initTabPane();
         panel.setCenter(getMessagePane());
-        panel.setRight(initControlsPane(gfx));
+        panel.setRight(initControlsPane(debug));
         Node tabClick = initTabClick();
 
         // Drop shadow
-        DropShadow ds = new DropShadow(30.0, new Color(0, 0, 0, 0.5));
-        tab.setEffect(ds);
+        //DropShadow ds = new DropShadow(30.0, new Color(0, 0, 0, 0.5));
+        //tab.setEffect(ds);
 
-        panel.setEffect(ds);
-        panel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, new CornerRadii(CORNER_ARC), Insets.EMPTY)));
-        panel.setBorder(new Border(new BorderStroke(Color.GREY, BorderStrokeStyle.NONE, CornerRadii.EMPTY, BorderWidths.FULL, new Insets(CORNER_ARC / 2))));
+        //panel.setEffect(ds);
+        //panel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, new CornerRadii(CORNER_ARC), Insets.EMPTY)));
+        panel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, CornerRadii.EMPTY, Insets.EMPTY)));
+        panel.setBorder(new Border(new BorderStroke(Color.LIGHTGREY, BorderStrokeStyle.NONE, CornerRadii.EMPTY, BorderWidths.FULL, new Insets(CORNER_ARC / 2))));
 
         getChildren().addAll(tab, panel, tabClick);
 
     }
 
-    public void setShowing(boolean newValue) {
-        showing = newValue;
-
-        // Animate the panel to slide in or out.
-        int steps = 15;
-        double endAmount;
-        double startAmount = getTranslateY();
-        double stepAmount;
-
-        if (showing) {
-            endAmount = -CORNER_ARC / 2;
-            //setTranslateY(-CORNER_ARC);
-        } else {
-            endAmount = -panel.getHeight();
-            //setTranslateY(-panel.getHeight());
-        }
-        stepAmount = (startAmount - endAmount) / steps;
-
-        AnimationTimer at = new AnimationTimer() {
-            @Override
-            public void handle(long l) {
-
-                setTranslateY(getTranslateY() - stepAmount);
-                if (showing) {
-                    if (getTranslateY() >= endAmount) {
-                        setTranslateY(endAmount);
-                        stop();
-                    }
-                } else {
-                    if (getTranslateY() <= endAmount) {
-                        setTranslateY(endAmount);
-                        stop();
-                    }
-                }
-            }
-        };
-
-        at.start();
-    }
+//    public void setShowing(boolean newValue) {
+//        showing = newValue;
+//
+//        // Animate the panel to slide in or out.
+//        int steps = 15;
+//        double endAmount;
+//        double startAmount = getTranslateY();
+//        double stepAmount;
+//
+//        if (showing) {
+//            endAmount = -CORNER_ARC / 2;
+//            //setTranslateY(-CORNER_ARC);
+//        } else {
+//            endAmount = -panel.getHeight();
+//            //setTranslateY(-panel.getHeight());
+//        }
+//        stepAmount = (startAmount - endAmount) / steps;
+//
+//        AnimationTimer at = new AnimationTimer() {
+//            @Override
+//            public void handle(long l) {
+//
+//                setTranslateY(getTranslateY() - stepAmount);
+//                if (showing) {
+//                    if (getTranslateY() >= endAmount) {
+//                        setTranslateY(endAmount);
+//                        stop();
+//                    }
+//                } else {
+//                    if (getTranslateY() <= endAmount) {
+//                        setTranslateY(endAmount);
+//                        stop();
+//                    }
+//                }
+//            }
+//        };
+//
+//        at.start();
+//    }
 
     private Node getMessagePane() {
         logMessagePane = new ScrollPane();
@@ -154,7 +155,7 @@ public class DebugTab extends Group implements LogListener {
         logMessagePane.setContent(tf);
 
         // The scrollpane view port is not created until later, so we
-        // trigger off the widthProperty event to chaneg the bacground color,
+        // trigger off the widthProperty event to change the bacground color,
         // which happens once the window is realized.
         logMessagePane.widthProperty().addListener((o) -> {
             Node vp = logMessagePane.lookup(".viewport");
@@ -198,7 +199,7 @@ public class DebugTab extends Group implements LogListener {
         // won't consume the mouse click.
         Rectangle tabClick = new Rectangle(48, 48, new Color(0, 0, 0, 0));
         tabClick.setOnMouseClicked((t) -> {
-            setShowing(!showing);
+//            setShowing(!showing);
         });
         // Cause the "bug" tab to appear at the bottom-right corner of the logging panel.
         tabClick.setTranslateY(-CORNER_ARC);
@@ -209,7 +210,7 @@ public class DebugTab extends Group implements LogListener {
         return tabClick;
     }
 
-    private Node initControlsPane(Graphics gfx) {
+    private Node initControlsPane(Debug debug) {
         HBox cp = new HBox();
         cp.setPadding(new Insets(4));
 
@@ -217,7 +218,7 @@ public class DebugTab extends Group implements LogListener {
         //GridPane centerPane = new GridPane();
         cp.getChildren().addAll(
                 initDebugLevelSliderPane(),
-                new DebugTogglesPanel(/*gfx.game,*/ gfx.debug)
+                new DebugTogglesPanel(/*gfx.game,*/ debug)
         );
         cp.setBorder(new Border(new BorderStroke(new Color(1, 0, 0, 1), BorderStrokeStyle.NONE, CornerRadii.EMPTY, new BorderWidths(6))));
 

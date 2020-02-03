@@ -62,11 +62,13 @@ public class Room {
     private long[] leftExit;
 
     public Room(Realm parent, DataInputStream dis) throws IOException {
+        LOGGER.config("Room Created.");
         this.parent = parent;
         load(dis);
     }
 
     public Room(Realm parent, int width, int height) {
+        LOGGER.config("Room Created.");
         this.parent = parent;
         this.width = width;
         this.height = height;
@@ -90,7 +92,7 @@ public class Room {
      * 
      * @param uid
      */
-    public void setUid( long uid ) {
+    public final void setUid( long uid ) {
         this.uid = uid;
     }
     
@@ -104,7 +106,8 @@ public class Room {
     /**
      * @param displayName the displayName to set
      */
-    public void setDisplayName(String displayName) {
+    public final void setDisplayName(String displayName) {
+        LOGGER.log(Level.CONFIG, "Room {0} named to: {1}", new Object[]{uid, displayName});
         this.displayName = displayName;
     }
 

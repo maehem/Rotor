@@ -20,6 +20,7 @@
 package com.maehem.rotor.ui.controls;
 
 import com.maehem.rotor.renderer.Graphics;
+import com.maehem.rotor.ui.hud.HUD;
 import java.util.logging.Logger;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -28,25 +29,18 @@ import javafx.scene.Node;
  *
  * @author maehem
  */
-public class ControlWidget extends Group implements DialogLayer {
-    private final static Logger LOGGER = Logger.getLogger(ControlWidget.class.getName());
-    private final double height;  // Height of the corner unit.
+public class UserInterfaceLayer extends Group implements DialogLayer {
+    private final static Logger LOGGER = Logger.getLogger(UserInterfaceLayer.class.getName());
     private Node currentDialog;
 
-    public ControlWidget(Graphics gfx) {
-        Toolbar toolbar = new Toolbar(gfx.game, gfx.ui, this);
+    public UserInterfaceLayer(Graphics gfx) {
+        //Toolbar toolbar = new Toolbar(gfx.game, gfx.ui, this);
         
-        //InfoBar2 infoBar2 = new InfoBar2(gfx.game, this);
+        HUD hud = new HUD(gfx.game, this);
+        hud.setTranslateX(20);
         
-        getChildren().addAll(toolbar/*, infoBar2 */);
+        getChildren().addAll( hud );
 
-        height = 20;
-        //infoBar2.setLayoutY(height-InfoBar2.HEIGHT);
-        //infoBar2.setLayoutX(cornerPanel.getSizeX());        
-    }
-
-    public double height() {
-        return height;
     }
 
     @Override

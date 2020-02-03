@@ -22,6 +22,7 @@ package com.maehem.rotor.engine.data;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -53,6 +54,7 @@ public class WorldState {
      */
     public WorldState( World world) {
         this.world = world;
+        LOGGER.config("World State initialization...");
     }
 
     /**
@@ -181,6 +183,7 @@ public class WorldState {
      */
     public void setPlayerCurrentRealm(long playerCurrentRealm) {
         this.playerCurrentRealm = playerCurrentRealm;
+        LOGGER.log(Level.INFO, "Current Realm set to: {0}", this.playerCurrentRealm);
     }
 
     /**
@@ -195,6 +198,7 @@ public class WorldState {
      */
     public void setPlayerCurrentRoom(long playerCurrentRoom) {
         this.playerCurrentRoom = playerCurrentRoom;
+        LOGGER.info("Current Room set to: " + this.playerCurrentRoom);
     }
 
     

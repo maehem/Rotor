@@ -37,13 +37,13 @@ import javafx.scene.paint.Color;
  */
 public class DebugTogglesPanel extends GridPane /*implements GameListener*/ {
 
-    private final Debug debug;
+    //private final Debug debug;
     
     //private final ToggleButton showCoords;
 
     public DebugTogglesPanel(/*Game game,*/ Debug debug) {
         // TODO: Probably don't need to remember this var.
-        this.debug = debug;
+        //this.debug = debug;
         
         //game.addListener(this);
         setHgap(4);

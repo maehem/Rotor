@@ -17,13 +17,14 @@
     under the License.
 
 */
-module com.maehem.rotor.colony {
+module com.maehem.rotor.dungeoneer {
     requires javafx.controls;
     requires java.logging;
     requires javafx.base;
     requires javafx.graphics;
 
     requires com.maehem.rotor.engine.game;
+    requires com.maehem.rotor.engine.data;
     requires com.maehem.rotor.engine.logging;
     requires com.maehem.rotor.renderer;
     requires com.maehem.rotor.ui;

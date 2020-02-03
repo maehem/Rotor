@@ -56,6 +56,7 @@ public class FileSystem {
         
     public static void init(String gameName) {
         if ( instance == null ) {
+            instance = new FileSystem();
             getInstance().initGameFilesDirectories(gameName);
         } else {
             LOGGER.log(Level.SEVERE, "Game directory has already been set!  No do-overs!");

@@ -19,8 +19,8 @@
  */
 package com.maehem.rotor.engine.game;
 
+import com.maehem.rotor.engine.data.Player;
 import com.maehem.rotor.engine.data.World;
-import com.maehem.rotor.engine.data.WorldState;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
 import java.io.DataInputStream;
@@ -36,6 +36,13 @@ import java.util.logging.Logger;
  * @author maehem
  */
 public class Game {
+
+    /**
+     * @return the player
+     */
+    public Player getPlayer() {
+        return player;
+    }
 
     private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
 
@@ -61,44 +68,47 @@ public class Game {
     };
 
     private World world = null;
+    private Player player = null;
 
     private int subTicks = 0;
+    private final String gameName;
 
     public Game(String gameName) {
-        FileSystem.init(gameName);
+        this.gameName = gameName;
     }
+
+    private void init() {
+        LOGGER.config("Game Initialization...");
+        FileSystem.init(gameName);
+        world = World.getInstance();
+        this.player = new Player();
+        doNotify(GameEvent.TYPE.GAME_INIT);
+     }
 
     /**
      * Called from GameWindow after graphics have been initiated.
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public final void init() throws FileNotFoundException, IOException {
-
-        // Load Static World Map
-        world = World.getInstance();
-
+    public final void initFromFile() throws FileNotFoundException, IOException {
+        init();
         // TODO: Have FileSystem return a DataInputStream for the world map.
         File worldMap = new File(FileSystem.getInstance().getGameDir(), "WorldMap.map");
         DataInputStream dis = new DataInputStream(new FileInputStream(worldMap));
 
         getWorld().load(dis);
-        
-        initialized = true;
+
     }
 
-//    public final void setState(WorldState state) {
-//        this.data = data;
-//
-//        if (data.isLoaded()) {
-//            LOGGER.log(Level.INFO, "New city loaded: {0}", data.mapInfo.getName());
-//            doNotify(GameEvent.TYPE.DATA_LOADED);
-//            setRunning(running);
-//
-//            initialized = true;
-//        }
-//    }
+    public void initNewGame() {
+        init();
+        getWorld().initState();
+        
+        getPlayer().getState().setHealth(66);
+        getPlayer().getState().setMana(74);
+    }
+
     /**
      * Game state is computed here. Called by Graphics at each frame update.
      */
@@ -108,7 +118,7 @@ public class Game {
         }
 
         doTick();
-        
+
 //        subTicks++;
 //        if (subTicks > 511) {
 //            subTicks = 0;
@@ -136,7 +146,6 @@ public class Game {
 //                break;
 //
 //        }
-
     }
 
     private void doTick() {
@@ -179,13 +188,6 @@ public class Game {
      */
     public World getWorld() {
         return world;
-    }
-
-    public void initNewGame() {
-        
-        WorldState state = getWorld().initState();
-        // Start running
-        setRunning(true);
     }
 
 }

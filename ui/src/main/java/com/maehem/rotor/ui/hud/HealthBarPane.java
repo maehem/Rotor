@@ -1,20 +1,4 @@
-
-Glyphs used here came from various sources and are credited in accordance with
-their authors credit requirements.
-
-File:  population.png
-From Astronaut icon (modified) 
-made by [ https://www.freepik.com ] Freepik 
-from https://www.flaticon.com/  Flaticon 
-and licensed under http://creativecommons.org/licenses/by/3.0/  Creative Commons 3.0
-
-
-
-=================================================================================
-
-All other glyphs are original artwork by code author Maehem,  Twitter: @MarkJKoch
-and licensed by Apache 2.0 License summarized below:
-
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -32,4 +16,28 @@ and licensed by Apache 2.0 License summarized below:
     specific language governing permissions and limitations
     under the License.
 
+ */
+package com.maehem.rotor.ui.hud;
 
+import javafx.scene.layout.VBox;
+
+/**
+ *
+ * @author maehem
+ */
+public class HealthBarPane extends VBox {
+
+    private HealthBarStrip topBar = new HealthBarStrip();
+    private HealthBarStrip bottomBar = new HealthBarStrip();
+
+    
+    public HealthBarPane() {
+
+        getChildren().addAll(topBar, bottomBar);
+    }
+
+    public void setValue( int val ) {
+        topBar.setValue(val);
+        bottomBar.setValue(val-50);
+    }
+}

@@ -36,6 +36,12 @@
             <artifactId>logging</artifactId>
             <version>0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.maehem.rotor.engine.data</groupId>
+            <artifactId>data</artifactId>
+            <version>0.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -54,6 +60,25 @@
                 <configuration>
                     <mainClass>com.maehem.rotor.dungeoneer.GameWindow</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <!-- Default configuration for running -->
+                        <id>default-cli</id>
+                        <configuration>
+                            <mainClass>com.maehem.rotor.dungeoneer.GameWindow</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Configuration for debugging -->
+                        <id>debug</id>
+                        <configuration>
+                            <options>
+                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=${jpda.address}</option>
+                            </options>
+                            <mainClass>com.maehem.rotor.dungeoneer.GameWindow</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

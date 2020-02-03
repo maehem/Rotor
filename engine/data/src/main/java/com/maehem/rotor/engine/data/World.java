@@ -44,8 +44,12 @@ public class World {
     private String displayName = "Some World";
     private long startRealm = 0L;
     private long startRoom = 0L;
+    private int screenWidth = 640;
+    private int screenHeight = 360;
 
-    private World() {}
+    private World() {
+        LOGGER.config("World Instance Created.");
+    }
     
     public static final World getInstance() {
         if ( instance == null ) {
@@ -124,8 +128,8 @@ public class World {
         }
         // Display Name
         displayName = dis.readUTF();
-        startRealm = dis.readLong();
-        startRoom = dis.readLong();
+        setStartRealm(dis.readLong());
+        setStartRoom(dis.readLong());
         
         if ( !dis.readUTF().equals("<WLD_HDR_>") ) {
             throw new IOException("Chunk has more items in the <WLD_HDR> chunk than we expected. File version mis-match?");
@@ -138,8 +142,8 @@ public class World {
         dos.writeUTF("<WLD_HDR>");
         // Display Name
         dos.writeUTF(displayName);
-        dos.writeLong(startRealm);
-        dos.writeLong(startRoom);
+        dos.writeLong(getStartRealm());
+        dos.writeLong(getStartRoom());
         
         dos.writeUTF("<WLD_HDR_>");
         LOGGER.finer("World header save done.");
@@ -148,9 +152,9 @@ public class World {
     public WorldState initState() {
         state = new WorldState(this);
         // Set current Realm
-        state.setPlayerCurrentRealm(startRealm);
+        state.setPlayerCurrentRealm(getStartRealm());
         // Set Current Room
-        state.setPlayerCurrentRoom(startRoom);
+        state.setPlayerCurrentRoom(getStartRoom());
         return getState();
     }
     
@@ -163,6 +167,60 @@ public class World {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public void setDisplayName(String name) {
+        displayName = name;
+    }
+
+    /**
+     * @return the startRealm
+     */
+    public long getStartRealm() {
+        return startRealm;
+    }
+
+    /**
+     * @param startRealm the startRealm to set
+     */
+    public void setStartRealm(long startRealm) {
+        this.startRealm = startRealm;
+    }
+
+    /**
+     * @return the startRoom
+     */
+    public long getStartRoom() {
+        return startRoom;
+    }
+
+    /**
+     * @param startRoom the startRoom to set
+     */
+    public void setStartRoom(long startRoom) {
+        this.startRoom = startRoom;
+    }
+
+    public void setScreenWidth(int width) {
+        screenWidth = width;
+    }
+
+    public void setScreenHeight(int height) {
+        screenHeight = height;
+    }
+
+    /**
+     * @return the screenWidth
+     */
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+    /**
+     * @return the screenHeight
+     */
+    public int getScreenHeight() {
+        return screenHeight;
     }
 
 }

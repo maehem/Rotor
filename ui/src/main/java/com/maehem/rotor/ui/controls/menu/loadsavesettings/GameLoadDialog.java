@@ -23,7 +23,6 @@ import com.maehem.rotor.engine.data.World;
 import com.maehem.rotor.engine.data.WorldState;
 import com.maehem.rotor.engine.game.FileSystem;
 import com.maehem.rotor.engine.game.Game;
-import com.maehem.rotor.engine.game.GameStateFile;
 import com.maehem.rotor.ui.controls.DialogLayer;
 import com.maehem.rotor.ui.controls.DialogPanel;
 import java.io.File;

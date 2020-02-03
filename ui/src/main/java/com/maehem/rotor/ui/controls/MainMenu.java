@@ -42,11 +42,13 @@ public class MainMenu extends StackPane  implements DialogLayer, GameListener {
     Rectangle r = new Rectangle();
     private final Graphics gfx;
     private Node currentDialog;
-    private Group dialogArea = new Group();
+    private final Group dialogArea = new Group();
     
     public MainMenu(Graphics gfx) {
         this.gfx = gfx;
         this.setVisible(false);
+        double buttonScale = gfx.canvas.getHeight()/300;
+        
         //setPadding(new Insets(30));
         //setMaxSize(USE_PREF_SIZE, USE_PREF_SIZE);
        
@@ -61,17 +63,17 @@ public class MainMenu extends StackPane  implements DialogLayer, GameListener {
 //            hide();
 //        });
         
-        Button newMap = new Button("New Colony...");
-        newMap.setScaleX(3.0);
-        newMap.setScaleY(3.0);
+        Button newMap = new Button("New Game...");
+        newMap.setScaleX(buttonScale);
+        newMap.setScaleY(buttonScale);
         newMap.setTranslateX(-gfx.canvas.getWidth()/5);
         newMap.setOnMouseClicked((t) -> {
             GameNewDialog d = new GameNewDialog(gfx.game, this, 0, -900);
         });
         
-        Button loadMap = new Button("Load Colony...");
-        loadMap.setScaleX(3.0);
-        loadMap.setScaleY(3.0);
+        Button loadMap = new Button("Load Game...");
+        loadMap.setScaleX(buttonScale);
+        loadMap.setScaleY(buttonScale);
         loadMap.setTranslateX(gfx.canvas.getWidth()/5);
         loadMap.setOnMouseClicked((t) -> {
             GameLoadDialog d = new GameLoadDialog(gfx.game, this, 0, -900);
@@ -92,11 +94,13 @@ public class MainMenu extends StackPane  implements DialogLayer, GameListener {
     }
 
     public void show() {
+        LOGGER.finest("Main menu presented.");
         this.setVisible(true);
     }
     
     
     public void hide() {
+        LOGGER.finest("Main menu hidden.");
         this.setVisible(false);
     }
 
@@ -118,7 +122,7 @@ public class MainMenu extends StackPane  implements DialogLayer, GameListener {
     @Override
     public void gameEvent(GameEvent e) {
         switch (e.type) {
-            case DATA_LOADED:
+            case GAME_INIT:
                 hide();
         }
     }

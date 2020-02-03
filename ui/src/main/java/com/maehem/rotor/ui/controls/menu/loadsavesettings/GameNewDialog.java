@@ -19,13 +19,14 @@
 */
 package com.maehem.rotor.ui.controls.menu.loadsavesettings;
 
-import com.maehem.rotor.engine.data.WorldState;
 import com.maehem.rotor.engine.game.Game;
+import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.ui.controls.DialogLayer;
 import com.maehem.rotor.ui.controls.DialogPanel;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -47,10 +48,7 @@ public class GameNewDialog extends DialogPanel {
 
     private final Game game;
     private TextField colonyNameField;
-    private TextField commanderNameField;
     private ToggleGroup diffGroup;
-    private ToggleGroup startGroup;
-    private ToggleGroup sizeGroup;
 
     public GameNewDialog(Game game, DialogLayer dialogLayer, double x, double y) {
         super(MSG.getString("DIALOG_LSS_TITLE_NEWGAME"), dialogLayer, x, y, true);
@@ -59,8 +57,9 @@ public class GameNewDialog extends DialogPanel {
         LOGGER.fine(MSG.getString("MENU_LSS_LOGMSG_NEWGAME_DIALOG"));
         HBox hbox = new HBox();
         //hbox.setPrefSize(1200, 700);
-        hbox.setPadding(new Insets(15, 12, 15, 12));
+        hbox.setPadding(new Insets(12, 20, 12, 20));
         hbox.setSpacing(10);
+        hbox.setAlignment(Pos.TOP_LEFT);
 
         hbox.getChildren().add(newGameSelectionPane());
 
@@ -70,22 +69,25 @@ public class GameNewDialog extends DialogPanel {
         
         getDoneButton().addEventHandler(MouseEvent.MOUSE_CLICKED, (t) -> {
             LOGGER.finer("New Game DONE button clicked.");
-            // Read all the Dialog settings and apply them here.
-            WorldState gameState = game.getWorld().initState();
-            
-            //d.mapInfo.setName(colonyNameField.getText());
-            gameState.setPlayerName(colonyNameField.getText());
-            //d.mapInfo.setMoney((int) diffGroup.getSelectedToggle().getUserData());
-            gameState.setPlayerDifficulty((int) diffGroup.getSelectedToggle().getUserData());
-          
             game.initNewGame(); // ???
+            // Read all the Dialog settings and apply them here.
+            game.getPlayer().getState().setName(colonyNameField.getText());
+            game.getPlayer().getState().setDifficulty((int) diffGroup.getSelectedToggle().getUserData());
+            
+            
+          
+            //game.getPlayer().getState().setMoney(55);
+            
+            game.doNotify(GameEvent.TYPE.DATA_LOADED);
         });
 
         // Start a timer to fade and then destroy this dialog.
     }
 
     private HBox newGameSelectionPane() {
-        Rectangle image = new Rectangle(300, 300); // Will be the eye-catch image on right.
+        double imageSize = 150;
+        
+        Rectangle image = new Rectangle(imageSize, imageSize); // Will be the eye-catch image on right.
 
         HBox hb = new HBox();
         hb.setSpacing(30);
@@ -104,7 +106,7 @@ public class GameNewDialog extends DialogPanel {
 
     private Node getColonyNamePanel() {
         VBox box = new VBox();
-        box.setPadding(new Insets(6));
+        //box.setPadding(new Insets(6));
         
         Text label = new Text("Name:");
         colonyNameField = new TextField();
@@ -116,7 +118,7 @@ public class GameNewDialog extends DialogPanel {
     private Node getDifficultyLevelPanel() {
         VBox box = new VBox();
         box.setSpacing(6);
-        box.setPadding(new Insets(6));        
+        //box.setPadding(new Insets(6));        
         
         Text label = new Text("Difficulty:");
         RadioButton easyB = new RadioButton(  "Easy");

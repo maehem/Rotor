@@ -136,12 +136,12 @@ public abstract class DialogPanel extends BorderPane {
     
     public final HBox topPanel() {
         HBox hbox = new HBox();
-        hbox.setPadding(new Insets(15, 12, 15, 4));
+        hbox.setPadding(new Insets(12, 10, 12, 4));
         hbox.setSpacing(10);
         hbox.setAlignment(Pos.TOP_RIGHT);
 
         Text titleText = new Text(title);
-        titleText.setFont(Font.font(System.getProperty("Font"), FontWeight.BOLD, 30));
+        titleText.setFont(Font.font(System.getProperty("Font"), FontWeight.BOLD, 24));
         titleText.setFill(Color.WHITE);
         titleText.setOpacity(0.2);
                 

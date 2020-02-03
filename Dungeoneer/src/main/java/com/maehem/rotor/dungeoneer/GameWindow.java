@@ -16,9 +16,11 @@
     specific language governing permissions and limitations
     under the License.
 
-*/
+ */
 package com.maehem.rotor.dungeoneer;
 
+import com.maehem.rotor.dungeoneer.realms.dungeon1.Dungeon1Realm;
+import com.maehem.rotor.engine.data.World;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
@@ -28,8 +30,8 @@ import com.maehem.rotor.engine.logging.LoggingMessageList;
 import com.maehem.rotor.renderer.Graphics;
 import com.maehem.rotor.renderer.ui.UIEvent;
 import com.maehem.rotor.renderer.ui.UIListener;
-import com.maehem.rotor.ui.controls.ControlWidget;
-import com.maehem.rotor.ui.controls.DebugTab;
+import com.maehem.rotor.ui.controls.UserInterfaceLayer;
+import com.maehem.rotor.ui.controls.DebugWindow;
 import com.maehem.rotor.ui.controls.MainMenu;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -55,21 +57,22 @@ public class GameWindow extends Application implements UIListener, GameListener 
     private static final Logger LOGGER = Logger.getLogger(GameWindow.class.getName());
 
     // Note: The Window title is derived from the MessageBundle gameTitle
-    // gameName is used for setting the folder name in the file system.
-    public static final String gameName = "Dungeoneer";
-    
+    // GAME_NAME is used for setting the folder name in the file system.
+    public static final String GAME_NAME = "Dungeoneer";
+    public static final String VERSION = "0.0.0";
+    public static final int SCREEN_WIDTH  = 640;
+    public static final int SCREEN_HEIGHT = 360;
+
     // Developers:   Use this format for exceptions printing in the log.
     // LOGGER.log( Level.SEVERE, ex.toString(), ex );
-    
-    
     private Graphics gfx;
     private Scene scene;
+    private final Game game = new Game(GAME_NAME);
 
     private final LoggingMessageList messageLog = new LoggingMessageList();
     private final LoggingHandler loggingHandler = new LoggingHandler(messageLog);
 
     private final ResourceBundle messages;
-    private DebugTab debug;
     private MainMenu mainMenu;
 
     public GameWindow() {
@@ -77,7 +80,6 @@ public class GameWindow extends Application implements UIListener, GameListener 
 
         // For locale testing.
         //Locale.setDefault(Locale.GERMANY);
-
         loggingHandler.setFormatter(new LoggingFormatter());
         messages = ResourceBundle.getBundle("MessageBundle");
 
@@ -86,23 +88,35 @@ public class GameWindow extends Application implements UIListener, GameListener 
         Logger.getLogger("com.maehem.rotor").setUseParentHandlers(false);  // Prevent INFO and HIGHER from going to stderr.
         Logger.getLogger("com.maehem.rotor").addHandler(loggingHandler);
         Logger.getLogger("com.maehem.rotor").setLevel(Level.FINEST);
-        
-        LOGGER.info("Dungeoneer version:  0.0.0");
-        LOGGER.log(Level.INFO, "JavaFX Version: {0}", System.getProperties().get("javafx.runtime.version"));
+
+        LOGGER.log(Level.INFO, "{0} version: {1}", new Object[]{messages.getString("gameTitle"), VERSION});
+        LOGGER.log(Level.CONFIG, "OS Name: {0} {1}", 
+                    new Object[]{
+                        System.getProperty("os.name"), 
+                        System.getProperty("os.version")
+                });
+        LOGGER.log(Level.CONFIG, "   Java: {0}", System.getProperty("java.version"));
+        LOGGER.log(Level.CONFIG, " JavaFX: {0}", System.getProperty("javafx.version"));
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         LOGGER.info(messages.getString("gameWindowStartMessage"));
-
-        stage.setTitle(messages.getString("gameTitle"));
+        
+        stage.setTitle(messages.getString("gameTitle") + " " + VERSION);
         Group root = new Group();
         scene = new Scene(root);
         stage.setScene(scene);
 
-        Game game = new Game(gameName);
         gfx = new Graphics(game);
-        Canvas canvas = new Canvas(1600, 900);
+        
+        // Get the Debug window displayed as soon as possible.
+        DebugWindow debugWindow = new DebugWindow(messageLog, gfx.debug, loggingHandler);
+        stage.setOnCloseRequest((t) -> {
+            debugWindow.close();
+        });
+        
+        Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         root.getChildren().add(canvas);
         gfx.setCanvas(canvas);
         gfx.init();
@@ -112,22 +126,18 @@ public class GameWindow extends Application implements UIListener, GameListener 
 
         // Listen to the game loop.
         game.addListener(this);
-        
         gfx.ui.addListener(this);
 
         stage.show();
-        //LOGGER.log(Level.FINEST, "Scene H: {0}", stage.getScene().getHeight());
-        //LOGGER.log(Level.FINEST, "Stage H: {0}", stage.getHeight());
 
-        // Title bar height = Stage H - Scene H
+        debugWindow.reloadLog();
+        
+        //initWorld(game);
         stage.setHeight(canvas.getHeight() + stage.getHeight() - stage.getScene().getHeight());
-        debug.reloadDebugLog();
-        debug.setShowing(false);
-        
-        game.init(); // Load world map and data after the log window is up.
-        
-
+        stage.setWidth(canvas.getWidth());
+        LOGGER.log(Level.FINEST, "Window Size: {0}x{1}", new Object[]{stage.getWidth(),stage.getHeight()});
         mainMenu.show();
+        
     }
 
     /**
@@ -144,15 +154,12 @@ public class GameWindow extends Application implements UIListener, GameListener 
 
     private void initLayers(Group root) {
         // GUI Controls and Debug Tab
-        ControlWidget controls = new ControlWidget(gfx);
-        controls.setLayoutY(gfx.canvas.getHeight() - controls.height());
-
-        debug = new DebugTab(600, 0, messageLog, gfx);
-        debug.setFormatter(loggingHandler.getFormatter());
+        UserInterfaceLayer uiLayer = new UserInterfaceLayer(gfx);
+        //uiLayer.setLayoutY(gfx.canvas.getHeight() - uiLayer.height());
 
         mainMenu = new MainMenu(gfx);
 
-        root.getChildren().addAll(controls, debug, mainMenu);
+        root.getChildren().addAll(uiLayer, mainMenu);
     }
 
     private void initGameLoop() {
@@ -160,21 +167,40 @@ public class GameWindow extends Application implements UIListener, GameListener 
         gameLoop.setCycleCount(Timeline.INDEFINITE);
 
         KeyFrame kf = new KeyFrame(
-            Duration.seconds(gfx.getTickRate()), (ActionEvent ae) -> {
-                gfx.tick();
+                Duration.seconds(gfx.getTickRate()), (ActionEvent ae) -> {
+            gfx.tick();
         });
 
         gameLoop.getKeyFrames().add(kf);
         gameLoop.play();
     }
 
+    @Override
+    public void gameEvent(GameEvent e) {
+        switch ( e.type ) {
+            case GAME_INIT:
+                // Someone selected the "New Game" option.
+                initWorld(game);
+        }
+    }
+
+    /**
+     * TODO: Move this to it's own class in the game content sub-dir.
+     * 
+     * @param game 
+     */
+    private void initWorld(Game game) {
+        World w = game.getWorld();
+
+        w.setDisplayName("Realms of Helios");
+
+        // Add the realms
+        w.getRealms().add(new Dungeon1Realm(w));
+
+        w.setLoaded(true);
+    }
+    
     public static void main(String[] args) {
         launch();
     }
-
-    @Override
-    public void gameEvent(GameEvent e) {
-        // Do something.
-    }
-
 }

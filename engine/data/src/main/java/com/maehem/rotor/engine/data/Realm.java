@@ -41,12 +41,17 @@ public class Realm {
     
     private final World parent;
     private long uid;
+    private String displayName = "Some Realm";
 
 
-    Realm(World parent, DataInputStream dis) throws IOException {
+    public Realm(World parent, DataInputStream dis) throws IOException {
         this.parent = parent;
         
         load(dis);
+    }
+
+    public Realm(World parent) {
+        this.parent = parent;
     }
     
     public ArrayList<Room> getRooms() {
@@ -109,6 +114,27 @@ public class Realm {
     }
 
     /**
+     * @param uid the uid to set
+     */
+    protected final void setUid(long uid) {
+        this.uid = uid;
+    }
+ 
+    /**
+     * @return the displayName
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * @param displayName the displayName to set
+     */
+    public final void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+   /**
      * @return the state
      */
     public RealmState getState() {

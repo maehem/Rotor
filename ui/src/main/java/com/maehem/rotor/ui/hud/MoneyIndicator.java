@@ -16,28 +16,40 @@
     specific language governing permissions and limitations
     under the License.
 
-*/
-package com.maehem.rotor.engine.game.events;
+ */
+package com.maehem.rotor.ui.hud;
 
-import com.maehem.rotor.engine.game.Game;
+import com.maehem.rotor.engine.data.DataListener;
+import com.maehem.rotor.engine.data.PlayerState;
 
 /**
  *
  * @author maehem
  */
-public class GameEvent {
+public class MoneyIndicator extends ItemAmountIndicator implements DataListener {
 
-    private final Game game;
-    public static enum TYPE { GAME_INIT, DATA_LOADED, PAUSED, RUNNING, TICK, DATA_SAVED, SPEED }
-
-    public final TYPE type;
-
-    public GameEvent( Game game, TYPE type ) {
-        this.game = game;
-        this.type = type;
-    }
     
-    public Game getSource() {
-        return game;
+    public MoneyIndicator() {
+        super(PlayerState.PROP_MONEY, "/glyphs/hud/money.png", 999);
     }
+
+//    @Override
+//    public void gameEvent(GameEvent e) {
+//        switch (e.type) {
+//            case DATA_LOADED:
+//                PlayerState state = e.getSource().getPlayer().getState();
+//
+//                state.addDataChangeListener(KEY, this);
+//                break;
+//
+//        }
+//    }
+//
+//    @Override
+//    public void dataChange(String key, Object oldValue, Object newValue) {
+//        if ( key.equals(KEY) ) {
+//            setValue((int) newValue);
+//        }
+//    }
+//
 }
