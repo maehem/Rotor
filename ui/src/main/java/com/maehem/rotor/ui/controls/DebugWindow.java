@@ -25,6 +25,7 @@ import com.maehem.rotor.renderer.debug.Debug;
 import java.util.logging.Logger;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -60,6 +61,10 @@ public class DebugWindow extends Stage {
 
     public void reloadLog() {
         debugPanel.reloadDebugLog();
+    }
+
+    public FlowPane getTogglesPane() {
+        return debugPanel.getTogglesPane();
     }
     
 }

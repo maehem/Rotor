@@ -31,17 +31,23 @@ public class PlayerState {
     
     private final DataChangeSupport changes = new DataChangeSupport();
 
+    private static final int MANA_MAX = 99;
+    private static final int MONEY_MAX = 999;
+    private static final int BOMBS_MAX = 99;
+    private static final int ARROWS_MAX = 99;
+    private static final int HEALTH_MAX = 99;
+    
     public static final String PROP_MANA = "mana";
     public static final String PROP_MONEY = "money";
     public static final String PROP_BOMBS = "bombs";
     public static final String PROP_ARROWS = "arrows";
     public static final String PROP_HEALTH = "health";
     
-    private int mana = 100;
+    private int mana = 99;
     private int money = 999;
     private int bombs = 99;
     private int arrows = 99;
-    private int health = 100;
+    private int health = 99;
     private int difficulty;
     private String name;
     
@@ -61,7 +67,8 @@ public class PlayerState {
      */
     public void setMana(int val) {
         int oldMoney = this.mana;
-        this.mana = val;
+        this.mana = checkNumber(val, 0, MANA_MAX);
+        
         changes.firePropertyChange(PROP_MANA, oldMoney, val);
     }
 
@@ -73,11 +80,13 @@ public class PlayerState {
     }
     
     /**
-     * @param money the money to set
+     * 
+     * @param val
      */
-    public void setMoney(int money) {
+    public void setMoney(int val) {
         int oldMoney = this.money;
-        this.money = money;
+        this.money = checkNumber(val, 0, MONEY_MAX);
+        
         changes.firePropertyChange(PROP_MONEY, oldMoney, money);
     }
 
@@ -95,7 +104,8 @@ public class PlayerState {
      */
     public void setBombs(int val) {
         int oldVal = this.bombs;
-        this.bombs = val;
+        this.bombs = checkNumber(val, 0, BOMBS_MAX);
+        
         changes.firePropertyChange(PROP_BOMBS, oldVal, val);
     }
 
@@ -113,7 +123,7 @@ public class PlayerState {
      */
     public void setArrows(int val) {
         int oldVal = this.arrows;
-        this.arrows = val;
+        this.arrows = checkNumber(val, 0, ARROWS_MAX);
         changes.firePropertyChange(PROP_ARROWS, oldVal, val);
     }
 
@@ -131,7 +141,7 @@ public class PlayerState {
      */
     public void setHealth(int val) {
         int oldVal = this.health;
-        this.health = val;
+        this.health = checkNumber(val, 0, HEALTH_MAX);
         changes.firePropertyChange(PROP_HEALTH, oldVal, val);
     }
 
@@ -173,5 +183,14 @@ public class PlayerState {
         changes.removeDataChangeListener(key, l);
     }
 
+    private int checkNumber( int val, int min, int max ) {
+        if ( val < 0 ) {
+            return 0;
+        } else if ( val > max ) {
+            return max;
+        } else {
+            return val;
+        }        
+    }
 
 }

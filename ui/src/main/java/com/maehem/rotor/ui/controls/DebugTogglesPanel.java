@@ -28,14 +28,14 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 
 /**
  *
  * @author maehem
  */
-public class DebugTogglesPanel extends GridPane /*implements GameListener*/ {
+public class DebugTogglesPanel extends FlowPane /*implements GameListener*/ {
 
     //private final Debug debug;
     
@@ -49,7 +49,7 @@ public class DebugTogglesPanel extends GridPane /*implements GameListener*/ {
         setHgap(4);
         setVgap(4);
         //setGridLinesVisible(true);
-        
+        setPrefWrapLength(200);
         
         setBorder(new Border(new BorderStroke(Color.GREY.brighter(), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
         setPadding(new Insets(4));
@@ -60,18 +60,10 @@ public class DebugTogglesPanel extends GridPane /*implements GameListener*/ {
         showCoords.selectedProperty().addListener((ov, prev, current) -> {
             debug.showTileCoordinates = current;
         });
-        add(showCoords, 0, 0);
+        //add(showCoords, 0, 0);
+        getChildren().add(showCoords);
+        
         
     }
-
-    // TODO: We probably don't need this
-//    @Override
-//    public void gameEvent(GameEvent e) {
-//        switch( e.type ) {
-//            case DATA_LOADED:
-//                // Not used yet.
-//                break;
-//        }
-//    }
     
 }

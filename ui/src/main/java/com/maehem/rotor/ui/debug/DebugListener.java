@@ -17,20 +17,15 @@
     under the License.
 
 */
-package com.maehem.rotor.ui.hud;
+package com.maehem.rotor.ui.debug;
 
-import com.maehem.rotor.engine.data.PlayerState;
-import com.maehem.rotor.ui.debug.DebugChangeSupport;
+import com.maehem.rotor.ui.controls.UserInterfaceLayer;
 
 /**
  *
  * @author maehem
  */
-public class ArrowsIndicator extends ItemAmountIndicator {
-
-    public ArrowsIndicator(DebugChangeSupport changes) {
-        super(PlayerState.PROP_BOMBS, "/glyphs/hud/arrow.png", 99,changes);
-    }
+public interface DebugListener {
     
-    
+    public void debugPropertyChange( UserInterfaceLayer.DebugProp propertyName, Object oldValue, Object newValue );
 }

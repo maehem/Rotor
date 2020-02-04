@@ -20,10 +20,14 @@
 package com.maehem.rotor.ui.controls;
 
 import com.maehem.rotor.renderer.Graphics;
+import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.hud.HUD;
 import java.util.logging.Logger;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
 
 /**
  *
@@ -31,16 +35,21 @@ import javafx.scene.Node;
  */
 public class UserInterfaceLayer extends Group implements DialogLayer {
     private final static Logger LOGGER = Logger.getLogger(UserInterfaceLayer.class.getName());
+
+    //public final static String PROP_SHOW_UI_PANE_BORDERS = "UIPaneBorders";
+    public enum DebugProp {SHOW_UI_PANE_BORDERS};
+    
     private Node currentDialog;
+    private final DebugChangeSupport changes = new DebugChangeSupport();
+    
+    private boolean showUIPaneBorders = false; // Draw debugging border around UI pane elements.
 
     public UserInterfaceLayer(Graphics gfx) {
-        //Toolbar toolbar = new Toolbar(gfx.game, gfx.ui, this);
-        
-        HUD hud = new HUD(gfx.game, this);
-        hud.setTranslateX(20);
+        LOGGER.config("User Interface Layer Initialization.");
+        HUD hud = new HUD(gfx, changes);
+        hud.setTranslateX(30);
         
         getChildren().addAll( hud );
-
     }
 
     @Override
@@ -58,4 +67,33 @@ public class UserInterfaceLayer extends Group implements DialogLayer {
         getChildren().remove(dialog);
     }
     
+    /**
+     * @return true if debug pane borders are showing
+     */
+    public boolean showUIPaneBorders() {
+        return showUIPaneBorders;
+    }
+
+    /**
+     * @param show the debug pane borders
+     */
+    public void setShowUIPaneBorders(boolean show) {
+        boolean oldValue = this.showUIPaneBorders;
+        this.showUIPaneBorders = show;
+        changes.fireDebugChange(DebugProp.SHOW_UI_PANE_BORDERS, oldValue, show);
+    }
+    
+    public void populateDebugToggles(FlowPane togglesPane) {
+        LOGGER.fine("UI Layer Populate Debug Toggles.");
+        // Create and place debug toggles here.
+        ToggleButton paneBorders = new ToggleButton("", Toolbar.createGlyph("/glyphs/xy-visible.png"));
+        paneBorders.setTooltip(new Tooltip("Show Pane Borders"));
+        paneBorders.setSelected(showUIPaneBorders());
+        paneBorders.selectedProperty().addListener((ov, prev, current) -> {
+            setShowUIPaneBorders(current);
+        });
+        togglesPane.getChildren().add(paneBorders);
+        
+    }
+
 }

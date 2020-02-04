@@ -19,10 +19,13 @@
 */
 package com.maehem.rotor.ui.hud;
 
-import com.maehem.rotor.engine.game.Game;
+import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
-import com.maehem.rotor.ui.controls.DialogLayer;
+import com.maehem.rotor.renderer.Graphics;
+import com.maehem.rotor.ui.controls.UserInterfaceLayer;
+import com.maehem.rotor.ui.debug.DebugChangeSupport;
+import com.maehem.rotor.ui.debug.DebugListener;
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -46,7 +49,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author maehem
  */
-public class HUD extends HBox implements GameListener {
+public class HUD extends HBox implements GameListener, DebugListener {
 
     private static final Logger LOGGER = Logger.getLogger(HUD.class.getName());
     
@@ -55,8 +58,8 @@ public class HUD extends HBox implements GameListener {
     public static final double PADDING = 4;
     //public static final double STUB_WIDTH = 24;
 
-    private final Game game;
-    private final DialogLayer dialogLayer;
+    private final Graphics gfx;
+    
     //private final StackPane tabPopGlyph;
     //private final StackPane tabTuckGlyph;
     //private double tuckedX = -100;
@@ -70,30 +73,32 @@ public class HUD extends HBox implements GameListener {
 
     private boolean popped = true;
 
-    public HUD(Game game, DialogLayer dialogLayer) {
-        this.game = game;
-        this.dialogLayer = dialogLayer;
+    public HUD(Graphics gfx, DebugChangeSupport changes) {
+        this.gfx = gfx;
         
+        changes.addDebugChangeListener(UserInterfaceLayer.DebugProp.SHOW_UI_PANE_BORDERS, this);
         setAlignment(Pos.TOP_CENTER);
         
-        setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+        //setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
         
         setPadding(new Insets(PADDING));
         setSpacing(20);
         
-        mana =    new ManaIndicator();  // Magic
-        equiped = new EquipedItemIndicator(); // Equiped Item
-        money =   new MoneyIndicator();     // Money
-        bombs =   new BombsIndicator();     // Bombs
-        arrows =  new ArrowsIndicator();    // Arrows
-        life =    new LifeIndicator();  // LifeIndicator
+        mana =    new ManaIndicator(changes);  // Magic
+        
+        equiped = new EquipedItemIndicator(changes); // Equiped Item
+        money =   new MoneyIndicator(changes);     // Money
+        bombs =   new BombsIndicator(changes);     // Bombs
+        arrows =  new ArrowsIndicator(changes);    // Arrows
+        life =    new LifeIndicator(changes);  // LifeIndicator
 
+        // Create a gap between arrows and life panels
         Pane spacer = new Pane( new Rectangle(40, 20, Color.TRANSPARENT));
-        spacer.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+        //spacer.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
         getChildren().addAll(mana, equiped, money, bombs, arrows, spacer, life);
         
-        game.addListener(this);
+        gfx.game.addListener(this);
     }
     
     public static StackPane createGlyph(String path, double size) {
@@ -113,13 +118,32 @@ public class HUD extends HBox implements GameListener {
     public void gameEvent(GameEvent e) {
         switch ( e.type ) {
             case DATA_LOADED:
-                mana.setValue(game.getPlayer().getState().getMana());
+                PlayerState state = gfx.game.getPlayer().getState();
+                mana.setValue(state.getMana());
                 // equiped item
-                money.setValue(game.getPlayer().getState().getMoney());
-                bombs.setValue(game.getPlayer().getState().getBombs());
-                arrows.setValue(game.getPlayer().getState().getArrows());
-                life.setValue(game.getPlayer().getState().getHealth());
+                money.setValue(state.getMoney());
+                bombs.setValue(state.getBombs());
+                arrows.setValue(state.getArrows());
+                life.setValue(state.getHealth());
+
+        }
+    }
+    
+    @Override
+    public void debugPropertyChange(UserInterfaceLayer.DebugProp property, Object oldValue, Object newValue) {
+        LOGGER.finest("HUD.debugPropertyChange.");
+        switch(property) {
+            case SHOW_UI_PANE_BORDERS:
+                showDebugBorders((boolean)newValue);
+                break;
         }
     }
 
+    private void showDebugBorders(boolean show) {
+        if ( show ) {
+            setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
+        } else {
+            setBorder(Border.EMPTY);
+        }
+    }
 }

@@ -46,13 +46,13 @@ public class GameNewDialog extends DialogPanel {
     private static final Logger LOGGER = Logger.getLogger(GameNewDialog.class.getName());
     private static final ResourceBundle MSG = ResourceBundle.getBundle("MessageBundle");
 
-    private final Game game;
-    private TextField colonyNameField;
+    //private final Game game;
+    private TextField playerNameField;
     private ToggleGroup diffGroup;
 
     public GameNewDialog(Game game, DialogLayer dialogLayer, double x, double y) {
         super(MSG.getString("DIALOG_LSS_TITLE_NEWGAME"), dialogLayer, x, y, true);
-        this.game = game;
+        //this.game = game;
 
         LOGGER.fine(MSG.getString("MENU_LSS_LOGMSG_NEWGAME_DIALOG"));
         HBox hbox = new HBox();
@@ -71,13 +71,9 @@ public class GameNewDialog extends DialogPanel {
             LOGGER.finer("New Game DONE button clicked.");
             game.initNewGame(); // ???
             // Read all the Dialog settings and apply them here.
-            game.getPlayer().getState().setName(colonyNameField.getText());
+            game.getPlayer().getState().setName(playerNameField.getText());
             game.getPlayer().getState().setDifficulty((int) diffGroup.getSelectedToggle().getUserData());
-            
-            
-          
-            //game.getPlayer().getState().setMoney(55);
-            
+                        
             game.doNotify(GameEvent.TYPE.DATA_LOADED);
         });
 
@@ -109,9 +105,9 @@ public class GameNewDialog extends DialogPanel {
         //box.setPadding(new Insets(6));
         
         Text label = new Text("Name:");
-        colonyNameField = new TextField();
+        playerNameField = new TextField();
         
-        box.getChildren().addAll(label, colonyNameField);
+        box.getChildren().addAll(label, playerNameField);
         return box;
     }
 

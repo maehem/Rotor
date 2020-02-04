@@ -36,42 +36,32 @@ import java.util.logging.Logger;
  * @author maehem
  */
 public class Game {
-
-    /**
-     * @return the player
-     */
-    public Player getPlayer() {
-        return player;
-    }
-
     private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
 
-    public ArrayList<GameListener> listeners = new ArrayList<>();
-
-    public static final String CURRENCY_SYMBOL = "$";
-
-    public static final long DAY_LENGTH = 4; // Ticks
-    public static final long MONTH_LENGTH = 28 * DAY_LENGTH; // Ticks
-    public static final long YEAR_LENGTH = 12 * MONTH_LENGTH; // Ticks
-
-    private boolean initialized = false;
-
-    private boolean running = false;  // Running==true or Paused==false
-
-    //  corners: ['1000','0100','0010','0001'],
-    //public final int corners[] = {0b1000, 0b0100, 0b0010, 0b0001};
-    public final int corners[][] = {
-        {4, 8, 1, 2},
-        {2, 4, 8, 1},
-        {1, 2, 4, 8},
-        {8, 1, 2, 4}
-    };
-
+    private final String gameName;
     private World world = null;
     private Player player = null;
 
+
+//    public static final long DAY_LENGTH = 4; // Ticks
+//    public static final long MONTH_LENGTH = 28 * DAY_LENGTH; // Ticks
+//    public static final long YEAR_LENGTH = 12 * MONTH_LENGTH; // Ticks
+//
+    private boolean initialized = false;
+    private boolean running = false;  // Running==true or Paused==false
+
+//    //  corners: ['1000','0100','0010','0001'],
+//    //public final int corners[] = {0b1000, 0b0100, 0b0010, 0b0001};
+//    public final int corners[][] = {
+//        {4, 8, 1, 2},
+//        {2, 4, 8, 1},
+//        {1, 2, 4, 8},
+//        {8, 1, 2, 4}
+//    };
+//
     private int subTicks = 0;
-    private final String gameName;
+    
+    public ArrayList<GameListener> listeners = new ArrayList<>();
 
     public Game(String gameName) {
         this.gameName = gameName;
@@ -98,7 +88,6 @@ public class Game {
         DataInputStream dis = new DataInputStream(new FileInputStream(worldMap));
 
         getWorld().load(dis);
-
     }
 
     public void initNewGame() {
@@ -176,7 +165,6 @@ public class Game {
             doNotify(GameEvent.TYPE.PAUSED);
             LOGGER.info("Game Paused");
         }
-
     }
 
     public boolean isRunning() {
@@ -188,6 +176,13 @@ public class Game {
      */
     public World getWorld() {
         return world;
+    }
+
+    /**
+     * @return the player
+     */
+    public Player getPlayer() {
+        return player;
     }
 
 }

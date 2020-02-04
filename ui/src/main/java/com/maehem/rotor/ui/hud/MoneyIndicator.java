@@ -19,18 +19,18 @@
  */
 package com.maehem.rotor.ui.hud;
 
-import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.data.PlayerState;
+import com.maehem.rotor.ui.debug.DebugChangeSupport;
 
 /**
  *
  * @author maehem
  */
-public class MoneyIndicator extends ItemAmountIndicator implements DataListener {
+public class MoneyIndicator extends ItemAmountIndicator {
 
     
-    public MoneyIndicator() {
-        super(PlayerState.PROP_MONEY, "/glyphs/hud/money.png", 999);
+    public MoneyIndicator(DebugChangeSupport changes) {
+        super(PlayerState.PROP_MONEY, "/glyphs/hud/money.png", 999, changes);
     }
 
 //    @Override

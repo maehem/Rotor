@@ -20,6 +20,7 @@
 package com.maehem.rotor.ui.hud;
 
 import com.maehem.rotor.engine.data.PlayerState;
+import com.maehem.rotor.ui.debug.DebugChangeSupport;
 
 /**
  *
@@ -27,8 +28,8 @@ import com.maehem.rotor.engine.data.PlayerState;
  */
 public class BombsIndicator extends ItemAmountIndicator {
 
-    public BombsIndicator() {
-        super(PlayerState.PROP_BOMBS, "/glyphs/hud/bomb.png", 99);
+    public BombsIndicator(DebugChangeSupport changes) {
+        super(PlayerState.PROP_BOMBS, "/glyphs/hud/bomb.png", 99, changes);
     }
     
 }

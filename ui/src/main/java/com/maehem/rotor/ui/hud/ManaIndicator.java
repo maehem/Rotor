@@ -23,6 +23,9 @@ import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
+import com.maehem.rotor.ui.controls.UserInterfaceLayer;
+import com.maehem.rotor.ui.debug.DebugChangeSupport;
+import com.maehem.rotor.ui.debug.DebugListener;
 import javafx.geometry.Insets;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -39,7 +42,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author maehem
  */
-public class ManaIndicator extends VBox implements GameListener, DataListener{
+public class ManaIndicator extends VBox implements GameListener, DataListener, DebugListener {
     private final String key = PlayerState.PROP_MANA;
     
     private static final int NBARS = 10;
@@ -47,16 +50,18 @@ public class ManaIndicator extends VBox implements GameListener, DataListener{
     
     Rectangle[] bars = new Rectangle[NBARS];
 
-    public ManaIndicator() {
+    public ManaIndicator(DebugChangeSupport changes) {
         
-        setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+        changes.addDebugChangeListener(UserInterfaceLayer.DebugProp.SHOW_UI_PANE_BORDERS, this);
+
         VBox box = new VBox();
                 BorderStroke strokes[] = new BorderStroke[2];
         strokes[0] = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(4), new BorderWidths(2));
-        strokes[1] = new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(2), new BorderWidths(4), new Insets(2));
+        strokes[1] = new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(2), new BorderWidths(3), new Insets(2));
 
-        box.setBorder(new Border(strokes));
-        box.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        //box.setBorder(new Border(strokes));
+        box.setBorder(new Border(strokes[1]));
+        box.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(6), Insets.EMPTY)));
         
         for ( int i=0; i< NBARS; i++ ) {
             bars[i] = new Rectangle(24, 6);
@@ -102,5 +107,21 @@ public class ManaIndicator extends VBox implements GameListener, DataListener{
         }
     }
 
+    @Override
+    public void debugPropertyChange(UserInterfaceLayer.DebugProp property, Object oldValue, Object newValue) {
+        switch(property) {
+            case SHOW_UI_PANE_BORDERS:
+                showDebugBorders((boolean)newValue);
+                break;
+        }
+    }
+
+    private void showDebugBorders(boolean show) {
+        if ( show ) {
+            setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
+        } else {
+            setBorder(Border.EMPTY);
+        }
+    }
     
 }

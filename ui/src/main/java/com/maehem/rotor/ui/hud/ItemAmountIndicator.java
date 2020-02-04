@@ -23,6 +23,10 @@ import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
+import com.maehem.rotor.ui.controls.UserInterfaceLayer;
+import com.maehem.rotor.ui.debug.DebugChangeSupport;
+import com.maehem.rotor.ui.debug.DebugListener;
+import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.Border;
@@ -37,17 +41,21 @@ import javafx.scene.paint.Color;
  *
  * @author maehem
  */
-public abstract class ItemAmountIndicator extends VBox implements GameListener, DataListener {
+public abstract class ItemAmountIndicator extends VBox implements GameListener, DataListener, DebugListener {
+    private static final Logger LOGGER = Logger.getLogger(ItemAmountIndicator.class.getName());
+
     public static final double GLYPH_SIZE = 32;
     private static final double TEXT_SIZE = 16;
     
     //private Text quanityLabel;
     private final HudText quantityLabel;
-    private String key;
+    private final String key;
     
-    public ItemAmountIndicator( String key, String glyphName, int quantity) {
+    public ItemAmountIndicator( String key, String glyphName, int quantity, DebugChangeSupport changes) {
         this.key = key;
-        setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+        
+        changes.addDebugChangeListener(UserInterfaceLayer.DebugProp.SHOW_UI_PANE_BORDERS, this);
+
         setSpacing(2);
         setPadding(new Insets(4));
         setAlignment(Pos.TOP_CENTER);
@@ -66,7 +74,6 @@ public abstract class ItemAmountIndicator extends VBox implements GameListener, 
         switch (e.type) {
             case DATA_LOADED:
                 PlayerState state = e.getSource().getPlayer().getState();
-
                 state.addDataChangeListener(this.key, this);
                 break;
 
@@ -80,4 +87,21 @@ public abstract class ItemAmountIndicator extends VBox implements GameListener, 
         }
     }
 
+    @Override
+    public void debugPropertyChange(UserInterfaceLayer.DebugProp property, Object oldValue, Object newValue) {
+        //LOGGER.finest(key + " debugPropertyChange");
+        switch(property) {
+            case SHOW_UI_PANE_BORDERS:
+                showDebugBorders((boolean)newValue);
+                break;
+        }
+    }
+
+    private void showDebugBorders(boolean show) {
+        if ( show ) {
+            setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
+        } else {
+            setBorder(Border.EMPTY);
+        }
+    }
 }

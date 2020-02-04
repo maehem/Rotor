@@ -68,7 +68,8 @@ public class GameWindow extends Application implements UIListener, GameListener 
     private Graphics gfx;
     private Scene scene;
     private final Game game = new Game(GAME_NAME);
-
+    private DebugWindow debugWindow;
+    
     private final LoggingMessageList messageLog = new LoggingMessageList();
     private final LoggingHandler loggingHandler = new LoggingHandler(messageLog);
 
@@ -111,7 +112,7 @@ public class GameWindow extends Application implements UIListener, GameListener 
         gfx = new Graphics(game);
         
         // Get the Debug window displayed as soon as possible.
-        DebugWindow debugWindow = new DebugWindow(messageLog, gfx.debug, loggingHandler);
+        debugWindow = new DebugWindow(messageLog, gfx.debug, loggingHandler);
         stage.setOnCloseRequest((t) -> {
             debugWindow.close();
         });
@@ -122,7 +123,7 @@ public class GameWindow extends Application implements UIListener, GameListener 
         gfx.init();
 
         initLayers(root);
-        initGameLoop();
+//        initGameLoop();
 
         // Listen to the game loop.
         game.addListener(this);
@@ -153,16 +154,20 @@ public class GameWindow extends Application implements UIListener, GameListener 
     }
 
     private void initLayers(Group root) {
+        LOGGER.config("Layers Initialization.");
         // GUI Controls and Debug Tab
         UserInterfaceLayer uiLayer = new UserInterfaceLayer(gfx);
-        //uiLayer.setLayoutY(gfx.canvas.getHeight() - uiLayer.height());
-
+        
+        // Add debug toggles for the UI overlay layer.
+        uiLayer.populateDebugToggles(debugWindow.getTogglesPane());
+        
         mainMenu = new MainMenu(gfx);
 
         root.getChildren().addAll(uiLayer, mainMenu);
     }
 
     private void initGameLoop() {
+        LOGGER.config("Game Loop Init.");
         Timeline gameLoop = new Timeline();
         gameLoop.setCycleCount(Timeline.INDEFINITE);
 
@@ -173,6 +178,8 @@ public class GameWindow extends Application implements UIListener, GameListener 
 
         gameLoop.getKeyFrames().add(kf);
         gameLoop.play();
+        
+        game.setRunning(true);
     }
 
     @Override
@@ -181,6 +188,10 @@ public class GameWindow extends Application implements UIListener, GameListener 
             case GAME_INIT:
                 // Someone selected the "New Game" option.
                 initWorld(game);
+                break;
+            case DATA_LOADED:
+                initGameLoop();
+                break;
         }
     }
 

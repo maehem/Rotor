@@ -62,6 +62,13 @@ import javafx.util.StringConverter;
  */
 public class DebugPanelGroup extends Group implements LogListener {
 
+    /**
+     * @return the togglesPane
+     */
+    public DebugTogglesPanel getTogglesPane() {
+        return togglesPane;
+    }
+
     private static final Logger LOGGER = Logger.getLogger(DebugPanelGroup.class.getName());
 
     public static final double CORNER_ARC = 10;
@@ -80,6 +87,8 @@ public class DebugPanelGroup extends Group implements LogListener {
     private Formatter formatter = null;
 
     BorderPane panel = new BorderPane();
+    private DebugTogglesPanel togglesPane;
+    
     private boolean showing = true;
     private final LoggingMessageList messageLog;
     private Slider slider;
@@ -88,7 +97,10 @@ public class DebugPanelGroup extends Group implements LogListener {
     public DebugPanelGroup(LoggingMessageList messageLog, Debug debug) {
         //this.setLayoutX(x);
         //this.setLayoutY(y);
+        togglesPane = new DebugTogglesPanel(debug);
+        
         this.messageLog = messageLog;
+        
         messageLog.addListener(this);
 
         StackPane tab = initTabPane();
@@ -214,12 +226,7 @@ public class DebugPanelGroup extends Group implements LogListener {
         HBox cp = new HBox();
         cp.setPadding(new Insets(4));
 
-        //VBox leftPane = new VBox();
-        //GridPane centerPane = new GridPane();
-        cp.getChildren().addAll(
-                initDebugLevelSliderPane(),
-                new DebugTogglesPanel(/*gfx.game,*/ debug)
-        );
+        cp.getChildren().addAll(initDebugLevelSliderPane(), getTogglesPane());
         cp.setBorder(new Border(new BorderStroke(new Color(1, 0, 0, 1), BorderStrokeStyle.NONE, CornerRadii.EMPTY, new BorderWidths(6))));
 
         return cp;
@@ -387,4 +394,6 @@ public class DebugPanelGroup extends Group implements LogListener {
         tf.getChildren().add(messageText);
         //logMessagePane.setVvalue(logMessagePane.getVmax());
     }
+
+    
 }

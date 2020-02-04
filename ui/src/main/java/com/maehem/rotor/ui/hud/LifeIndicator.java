@@ -23,6 +23,10 @@ import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
+import com.maehem.rotor.ui.controls.UserInterfaceLayer;
+import com.maehem.rotor.ui.debug.DebugChangeSupport;
+import com.maehem.rotor.ui.debug.DebugListener;
+import java.util.logging.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.layout.Border;
@@ -41,14 +45,16 @@ import javafx.scene.text.Text;
  *
  * @author maehem
  */
-public class LifeIndicator extends VBox  implements GameListener, DataListener{
+public class LifeIndicator extends VBox  implements GameListener, DataListener, DebugListener {
+    private static final Logger LOGGER = Logger.getLogger(LifeIndicator.class.getName());
+    
     HealthBarPane hearts = new HealthBarPane();
     private final String KEY = PlayerState.PROP_HEALTH;
     private final String TITLE = "---- LIFE ----";
-    private final static double TEXT_SIZE = 16;
+    private final static double TEXT_SIZE = 12;
 
-    public LifeIndicator() {
-        setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+    public LifeIndicator(DebugChangeSupport changes) {
+        changes.addDebugChangeListener(UserInterfaceLayer.DebugProp.SHOW_UI_PANE_BORDERS, this);
 
         //Text title = new Text("---- LIFE ----");
         //title.setFont(Font.font(System.getProperty("Font"), FontWeight.BOLD, FontPosture.ITALIC, 16));
@@ -96,5 +102,23 @@ public class LifeIndicator extends VBox  implements GameListener, DataListener{
         g.getChildren().addAll(titleBlack, titleWhite);
         
         return g;
+    }
+    
+    @Override
+    public void debugPropertyChange(UserInterfaceLayer.DebugProp property, Object oldValue, Object newValue) {
+        //LOGGER.finest("Life Indicator debugPropertyChange.");
+        switch(property) {
+            case SHOW_UI_PANE_BORDERS:
+                showDebugBorders((boolean)newValue);
+                break;
+        }
+    }
+
+    private void showDebugBorders(boolean show) {
+        if ( show ) {
+            setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
+        } else {
+            setBorder(Border.EMPTY);
+        }
     }
 }

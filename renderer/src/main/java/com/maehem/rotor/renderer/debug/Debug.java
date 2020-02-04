@@ -25,7 +25,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 /**
- *
+ * Debug toggles for the game's world @Renderer.
+ * 
+ * NOTE: The debug toggles for the HUD UI are handled in the UI.
+ * 
  * @author Mark J Koch <rocketcolony-maintainer@maehem.com>
  */
 public class Debug {
@@ -84,7 +87,7 @@ public class Debug {
 
         return time;
     }
-
+    
     public void showFrameStats(GraphicsContext g) {
         int width = 260;
         int height = 30;
@@ -178,6 +181,8 @@ public class Debug {
 
         g.fillText(textData.toString(), lineX, lineY);
     }
+
+
 
 
 }

@@ -45,6 +45,7 @@ public class MainMenu extends StackPane  implements DialogLayer, GameListener {
     private final Group dialogArea = new Group();
     
     public MainMenu(Graphics gfx) {
+        LOGGER.config("Main Menu Initialization.");
         this.gfx = gfx;
         this.setVisible(false);
         double buttonScale = gfx.canvas.getHeight()/300;
