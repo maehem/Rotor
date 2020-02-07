@@ -20,10 +20,11 @@
 package com.maehem.rotor.ui.hud;
 
 import com.maehem.rotor.engine.data.PlayerState;
+import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
 import com.maehem.rotor.renderer.Graphics;
-import com.maehem.rotor.ui.controls.UserInterfaceLayer;
+import com.maehem.rotor.ui.UserInterfaceLayer;
 import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.debug.DebugListener;
 import java.io.IOException;
@@ -58,7 +59,7 @@ public class HUD extends HBox implements GameListener, DebugListener {
     public static final double PADDING = 4;
     //public static final double STUB_WIDTH = 24;
 
-    private final Graphics gfx;
+    //private final Graphics gfx;
     
     //private final StackPane tabPopGlyph;
     //private final StackPane tabTuckGlyph;
@@ -73,8 +74,8 @@ public class HUD extends HBox implements GameListener, DebugListener {
 
     private boolean popped = true;
 
-    public HUD(Graphics gfx, DebugChangeSupport changes) {
-        this.gfx = gfx;
+    public HUD(Game game, DebugChangeSupport changes) {
+        //this.gfx = gfx;
         
         changes.addDebugChangeListener(UserInterfaceLayer.DebugProp.SHOW_UI_PANE_BORDERS, this);
         setAlignment(Pos.TOP_CENTER);
@@ -98,7 +99,7 @@ public class HUD extends HBox implements GameListener, DebugListener {
 
         getChildren().addAll(mana, equiped, money, bombs, arrows, spacer, life);
         
-        gfx.game.addListener(this);
+        game.addListener(this);
     }
     
     public static StackPane createGlyph(String path, double size) {
@@ -118,7 +119,7 @@ public class HUD extends HBox implements GameListener, DebugListener {
     public void gameEvent(GameEvent e) {
         switch ( e.type ) {
             case DATA_LOADED:
-                PlayerState state = gfx.game.getPlayer().getState();
+                PlayerState state = e.getSource().getPlayer().getState();
                 mana.setValue(state.getMana());
                 // equiped item
                 money.setValue(state.getMoney());

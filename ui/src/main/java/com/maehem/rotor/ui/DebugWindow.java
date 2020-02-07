@@ -17,11 +17,12 @@
     under the License.
 
  */
-package com.maehem.rotor.ui.controls;
+package com.maehem.rotor.ui;
 
 import com.maehem.rotor.engine.logging.LoggingHandler;
 import com.maehem.rotor.engine.logging.LoggingMessageList;
 import com.maehem.rotor.renderer.debug.Debug;
+import com.maehem.rotor.ui.controls.DebugPanelGroup;
 import java.util.logging.Logger;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;

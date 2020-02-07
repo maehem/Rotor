@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 /**
@@ -61,7 +62,7 @@ public class Game {
 //
     private int subTicks = 0;
     
-    public ArrayList<GameListener> listeners = new ArrayList<>();
+    public CopyOnWriteArrayList<GameListener> listeners = new CopyOnWriteArrayList<>();
 
     public Game(String gameName) {
         this.gameName = gameName;
@@ -72,6 +73,8 @@ public class Game {
         FileSystem.init(gameName);
         world = World.getInstance();
         this.player = new Player();
+        
+        initialized = true;
         doNotify(GameEvent.TYPE.GAME_INIT);
      }
 
@@ -106,13 +109,18 @@ public class Game {
             return;
         }
 
-        doTick();
+        //doTick();
 
-//        subTicks++;
-//        if (subTicks > 511) {
-//            subTicks = 0;
-//        }
-//
+        subTicks++;
+        if (subTicks > 511) {
+            subTicks = 0;
+        }
+        
+        
+        if (subTicks % 8 == 0) {
+            doTick();
+        }
+
 //        switch (data.mapInfo.speed) {
 //            case SLOW:
 //                if (subTicks % 36 == 0) {
@@ -138,6 +146,7 @@ public class Game {
     }
 
     private void doTick() {
+        //LOGGER.finer("Game.doTick()");
         getWorld().getState().tick();
         doNotify(GameEvent.TYPE.TICK);
     }

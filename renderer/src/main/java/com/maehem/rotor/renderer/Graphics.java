@@ -47,6 +47,8 @@ public class Graphics {
     public final static String TERRAIN_TILES_DIR = "terrain";
     public final static String BUILDING_TILES_DIR = "structures";
 
+    private PlayerNode playerSprite = null;
+    
 //    public final TerrainTile terrainTiles[] = new TerrainTile[100];
 //    public final StructureTile tiles[] = new StructureTile[500];
 
@@ -89,7 +91,7 @@ public class Graphics {
         loadTerrainTiles();
         loadBuildingTiles();
 
-        //game.initFromFile();  // Moved to Game()
+        
     }
 
     public void setCanvas(Canvas canvas) {
@@ -134,13 +136,13 @@ public class Graphics {
         gc.translate(gc.getCanvas().getWidth() / 2, gc.getCanvas().getHeight() / 2);
         gc.scale(ui.zoom, ui.zoom); // Scale the view to our zoom setting.
 
-//        TerrainRenderer.drawDirtEdge(this, gc);
         drawTiles(gc);
-//        TerrainRenderer.drawWaterEdge(this, gc);
 
+        // Draw the player
+        //gc.drawImage(playerSprite.getSprite().getViewport(), 0, 0);
+        
         ui.draw(gc);
 
-//        debug.drawCrosshairs(g);
         gc.setTransform(originalTransform);
         // Now draw window-relative information.
         //debug.debugOverlay(g2);

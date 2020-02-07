@@ -17,28 +17,28 @@
     under the License.
 
 */
-package com.maehem.rotor.dungeoneer.realms.dungeon1;
+package com.maehem.rotor.renderer;
 
-import com.maehem.rotor.engine.data.Realm;
-import com.maehem.rotor.engine.data.Room;
-import com.maehem.rotor.engine.data.World;
+import java.io.IOException;
+import java.util.logging.Logger;
+import javafx.scene.Group;
 
 /**
  *
  * @author maehem
  */
-public class Dungeon1Realm extends Realm {
+public class CharacterNode extends Group {
+    private final static Logger LOGGER = Logger.getLogger(CharacterNode.class.getName());
 
-    public static final long UID = 10000;
+    private final WalkSheet graphic;
     
-    public Dungeon1Realm( World parent) {
-        super(parent);
-        
-        setUid(UID);
-        setDisplayName("Realm of Light");
-        
-        getRooms().add(new Room(this, 32, 24));
+    public CharacterNode(String filePath, double size ) throws IOException {
+        graphic = new WalkSheet(filePath, size);
+        getChildren().add(graphic);
     }
     
-    
+    public WalkSheet getWalkSheet() {
+        return graphic;
+    }
+        
 }

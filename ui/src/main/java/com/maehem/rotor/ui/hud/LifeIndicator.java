@@ -23,7 +23,7 @@ import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
-import com.maehem.rotor.ui.controls.UserInterfaceLayer;
+import com.maehem.rotor.ui.UserInterfaceLayer;
 import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.debug.DebugListener;
 import java.util.logging.Logger;

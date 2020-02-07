@@ -28,6 +28,6 @@ module com.maehem.rotor.ui {
     requires com.maehem.rotor.engine.logging;
     requires com.maehem.rotor.renderer;
 
-    exports com.maehem.rotor.ui.controls;
+    exports com.maehem.rotor.ui;
 
 }

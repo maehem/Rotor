@@ -42,15 +42,18 @@ public class PlayerState {
     public static final String PROP_BOMBS = "bombs";
     public static final String PROP_ARROWS = "arrows";
     public static final String PROP_HEALTH = "health";
+    public static final String PROP_POSITION = "position";
     
+    private String name;
     private int mana = 99;
     private int money = 999;
     private int bombs = 99;
     private int arrows = 99;
     private int health = 99;
     private int difficulty;
-    private String name;
     
+    private final Point position = new Point(0,0);
+        
     public PlayerState() {
         LOGGER.config("Player State created.");
     }
@@ -191,6 +194,29 @@ public class PlayerState {
         } else {
             return val;
         }        
+    }
+
+    public void moveBy(int dx, int dy) {
+//        if (dx == 0 && dy == 0) {
+//            return;
+//        }
+
+        
+//        final double cx = hero.getBoundsInLocal().getWidth() / 2;
+//        final double cy = hero.getBoundsInLocal().getHeight() / 2;
+//
+//        double x = cx + hero.getLayoutX() + dx;
+//        double y = cy + hero.getLayoutY() + dy;
+
+        //moveHeroTo(x, y);
+        Point oldPos = new Point(position.x, position.y);
+        
+        position.x += dx;
+        position.y += dy;
+        
+        changes.firePropertyChange(PROP_POSITION, oldPos, position);
+        
+    
     }
 
 }

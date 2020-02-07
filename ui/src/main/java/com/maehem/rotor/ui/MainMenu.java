@@ -17,11 +17,12 @@
     under the License.
 
 */
-package com.maehem.rotor.ui.controls;
+package com.maehem.rotor.ui;
 
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
 import com.maehem.rotor.renderer.Graphics;
+import com.maehem.rotor.ui.controls.DialogLayer;
 import com.maehem.rotor.ui.controls.menu.loadsavesettings.GameLoadDialog;
 import com.maehem.rotor.ui.controls.menu.loadsavesettings.GameNewDialog;
 import java.util.logging.Logger;

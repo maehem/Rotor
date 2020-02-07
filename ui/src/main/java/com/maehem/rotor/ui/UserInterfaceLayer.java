@@ -17,9 +17,12 @@
     under the License.
 
 */
-package com.maehem.rotor.ui.controls;
+package com.maehem.rotor.ui;
 
+import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.renderer.Graphics;
+import com.maehem.rotor.ui.controls.DialogLayer;
+import com.maehem.rotor.ui.controls.Toolbar;
 import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.hud.HUD;
 import java.util.logging.Logger;
@@ -44,9 +47,9 @@ public class UserInterfaceLayer extends Group implements DialogLayer {
     
     private boolean showUIPaneBorders = false; // Draw debugging border around UI pane elements.
 
-    public UserInterfaceLayer(Graphics gfx) {
+    public UserInterfaceLayer(Game game) {
         LOGGER.config("User Interface Layer Initialization.");
-        HUD hud = new HUD(gfx, changes);
+        HUD hud = new HUD(game, changes);
         hud.setTranslateX(30);
         
         getChildren().addAll( hud );

@@ -19,7 +19,7 @@
 */
 package com.maehem.rotor.ui.debug;
 
-import com.maehem.rotor.ui.controls.UserInterfaceLayer;
+import com.maehem.rotor.ui.UserInterfaceLayer;
 import java.util.ArrayList;
 
 /**

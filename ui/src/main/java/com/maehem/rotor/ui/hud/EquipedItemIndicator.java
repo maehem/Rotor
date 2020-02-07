@@ -19,7 +19,7 @@
 */
 package com.maehem.rotor.ui.hud;
 
-import com.maehem.rotor.ui.controls.UserInterfaceLayer;
+import com.maehem.rotor.ui.UserInterfaceLayer;
 import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.debug.DebugListener;
 import java.util.logging.Logger;
