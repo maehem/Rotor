@@ -23,7 +23,6 @@ import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
-import com.maehem.rotor.renderer.Graphics;
 import com.maehem.rotor.ui.UserInterfaceLayer;
 import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.debug.DebugListener;
@@ -119,7 +118,7 @@ public class HUD extends HBox implements GameListener, DebugListener {
     public void gameEvent(GameEvent e) {
         switch ( e.type ) {
             case DATA_LOADED:
-                PlayerState state = e.getSource().getPlayer().getState();
+                PlayerState state = e.getSource().getWorld().getPlayer().getState();
                 mana.setValue(state.getMana());
                 // equiped item
                 money.setValue(state.getMoney());

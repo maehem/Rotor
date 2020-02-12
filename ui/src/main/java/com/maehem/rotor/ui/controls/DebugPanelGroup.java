@@ -94,10 +94,10 @@ public class DebugPanelGroup extends Group implements LogListener {
     private Slider slider;
     private ScrollPane logMessagePane;
 
-    public DebugPanelGroup(LoggingMessageList messageLog, Debug debug) {
+    public DebugPanelGroup(LoggingMessageList messageLog/*, Debug debug*/) {
         //this.setLayoutX(x);
         //this.setLayoutY(y);
-        togglesPane = new DebugTogglesPanel(debug);
+        togglesPane = new DebugTogglesPanel(/*debug*/);
         
         this.messageLog = messageLog;
         
@@ -105,7 +105,7 @@ public class DebugPanelGroup extends Group implements LogListener {
 
         StackPane tab = initTabPane();
         panel.setCenter(getMessagePane());
-        panel.setRight(initControlsPane(debug));
+        panel.setRight(initControlsPane(/*debug*/));
         Node tabClick = initTabClick();
 
         // Drop shadow
@@ -222,7 +222,7 @@ public class DebugPanelGroup extends Group implements LogListener {
         return tabClick;
     }
 
-    private Node initControlsPane(Debug debug) {
+    private Node initControlsPane(/*Debug debug*/) {
         HBox cp = new HBox();
         cp.setPadding(new Insets(4));
 

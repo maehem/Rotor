@@ -21,7 +21,6 @@ package com.maehem.rotor.ui;
 
 import com.maehem.rotor.engine.logging.LoggingHandler;
 import com.maehem.rotor.engine.logging.LoggingMessageList;
-import com.maehem.rotor.renderer.debug.Debug;
 import com.maehem.rotor.ui.controls.DebugPanelGroup;
 import java.util.logging.Logger;
 import javafx.geometry.Rectangle2D;
@@ -39,8 +38,8 @@ public class DebugWindow extends Stage {
 
     DebugPanelGroup debugPanel;
     
-    public DebugWindow(LoggingMessageList messageLog, Debug gfxDebug, LoggingHandler loggingHandler) {
-        this.debugPanel = new DebugPanelGroup(messageLog, gfxDebug);
+    public DebugWindow(LoggingMessageList messageLog, /*Debug gfxDebug, */ LoggingHandler loggingHandler) {
+        this.debugPanel = new DebugPanelGroup(messageLog/*, gfxDebug*/);
         debugPanel.setFormatter(loggingHandler.getFormatter());
 
         setTitle("Debug Window");

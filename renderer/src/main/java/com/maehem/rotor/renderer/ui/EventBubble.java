@@ -19,7 +19,7 @@
 */
 package com.maehem.rotor.renderer.ui;
 
-import com.maehem.rotor.engine.data.Point;
+import com.maehem.rotor.engine.data.PointInt;
 import com.maehem.rotor.renderer.Graphics;
 import javafx.animation.AnimationTimer;
 import javafx.scene.SnapshotParameters;
@@ -42,13 +42,13 @@ public class EventBubble extends StackPane {
 
     public static final double DEF_W = 100;
     public static final double DEF_H = 24;
-    private final Point cell;
+    private final PointInt cell;
     private final Image image;
     private double opacity = 1.0;
     private double opacityAmount = 0.001;
     private boolean done = false;
 
-    public EventBubble(Point cell, String text) {
+    public EventBubble(PointInt cell, String text) {
         this.cell = cell;
         this.setLayoutX(-DEF_W/2);
         this.setLayoutY(-100);
@@ -86,7 +86,7 @@ public class EventBubble extends StackPane {
         at.start();
     }
 
-    public Point getCell() {
+    public PointInt getCell() {
         return cell;
     }
 

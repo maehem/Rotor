@@ -71,8 +71,8 @@ public class GameNewDialog extends DialogPanel {
             LOGGER.finer("New Game DONE button clicked.");
             game.initNewGame(); // ???
             // Read all the Dialog settings and apply them here.
-            game.getPlayer().getState().setName(playerNameField.getText());
-            game.getPlayer().getState().setDifficulty((int) diffGroup.getSelectedToggle().getUserData());
+            game.getWorld().getPlayer().getState().setName(playerNameField.getText());
+            game.getWorld().getPlayer().getState().setDifficulty((int) diffGroup.getSelectedToggle().getUserData());
                         
             game.doNotify(GameEvent.TYPE.DATA_LOADED);
         });

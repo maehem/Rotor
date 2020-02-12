@@ -20,7 +20,6 @@
 package com.maehem.rotor.dungeoneer.realms.dungeon1;
 
 import com.maehem.rotor.engine.data.Realm;
-import com.maehem.rotor.engine.data.Room;
 import com.maehem.rotor.engine.data.World;
 
 /**
@@ -37,7 +36,7 @@ public class Dungeon1Realm extends Realm {
         setUid(UID);
         setDisplayName("Realm of Light");
         
-        getRooms().add(new Room(this, 32, 24));
+        getRooms().add(new Room001(this));
     }
     
     

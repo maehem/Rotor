@@ -68,7 +68,7 @@ public class LifeIndicator extends VBox  implements GameListener, DataListener, 
     public void gameEvent(GameEvent e) {
         switch (e.type) {
             case DATA_LOADED:
-                PlayerState state = e.getSource().getPlayer().getState();
+                PlayerState state = e.getSource().getWorld().getPlayer().getState();
 
                 state.addDataChangeListener(this.KEY, this);
                 break;

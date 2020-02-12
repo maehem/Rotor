@@ -26,12 +26,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 /**
@@ -61,9 +57,9 @@ public class GameSettingsDialog extends DialogPanel {
 
     private VBox nameDescriptionPane() {
         Label playerName = new Label("Name:");  // TODO: MessageBundle
-        TextField colonyNameTextField = new TextField(game.getWorld().getState().getPlayerName());
+        TextField colonyNameTextField = new TextField(game.getWorld().getPlayer().getState().getName());
         colonyNameTextField.textProperty().addListener((o) -> {
-            game.getWorld().getState().setPlayerName(colonyNameTextField.getText());
+            game.getWorld().getPlayer().getState().setName(colonyNameTextField.getText());
         });        
         
 //        Label descriptionLabel = new Label("Description:");

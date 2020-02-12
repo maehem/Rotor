@@ -73,7 +73,7 @@ public abstract class ItemAmountIndicator extends VBox implements GameListener, 
     public void gameEvent(GameEvent e) {
         switch (e.type) {
             case DATA_LOADED:
-                PlayerState state = e.getSource().getPlayer().getState();
+                PlayerState state = e.getSource().getWorld().getPlayer().getState();
                 state.addDataChangeListener(this.key, this);
                 break;
 

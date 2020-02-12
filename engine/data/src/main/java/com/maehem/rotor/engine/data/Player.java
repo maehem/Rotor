@@ -26,11 +26,17 @@ import java.util.logging.Logger;
  * @author maehem
  */
 public class Player {
+
     private static final Logger LOGGER = Logger.getLogger(Player.class.getName());
 
     private final PlayerState state = new PlayerState();
+    private final World parent;
     
-    public Player() {
+    public static final double WALK_SPEED = 0.005;
+    public static final double RUN_MULT = 3.0;
+    
+    public Player( World parent ) {
+        this.parent = parent;
         LOGGER.config("Create Player.");
     }
     
@@ -41,5 +47,22 @@ public class Player {
         return state;
     }
 
-    
+    public void moveBy( double dx, double dy ) {
+        Point p = getState().getPosition();
+        
+        // TODO:  Use double to track Player position as 0.0 to 1.0
+        // Check if we are able to move into the next location.
+        boolean blocked = getParent().getCurrentRoom().isBlocked( p.x + dx, p.y + dy );
+        if ( blocked ) {
+            LOGGER.finer("Path is blocked.");
+        } else  {
+            getState().move(dx,dy);
+        }
+    }
+    /**
+     * @return the parent
+     */
+    public World getParent() {
+        return parent;
+    }
 }

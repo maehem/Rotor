@@ -19,7 +19,6 @@
  */
 package com.maehem.rotor.engine.game;
 
-import com.maehem.rotor.engine.data.Player;
 import com.maehem.rotor.engine.data.World;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
@@ -28,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
@@ -41,25 +39,10 @@ public class Game {
 
     private final String gameName;
     private World world = null;
-    private Player player = null;
-
-
-//    public static final long DAY_LENGTH = 4; // Ticks
-//    public static final long MONTH_LENGTH = 28 * DAY_LENGTH; // Ticks
-//    public static final long YEAR_LENGTH = 12 * MONTH_LENGTH; // Ticks
-//
+    //private Player player = null;
     private boolean initialized = false;
     private boolean running = false;  // Running==true or Paused==false
 
-//    //  corners: ['1000','0100','0010','0001'],
-//    //public final int corners[] = {0b1000, 0b0100, 0b0010, 0b0001};
-//    public final int corners[][] = {
-//        {4, 8, 1, 2},
-//        {2, 4, 8, 1},
-//        {1, 2, 4, 8},
-//        {8, 1, 2, 4}
-//    };
-//
     private int subTicks = 0;
     
     public CopyOnWriteArrayList<GameListener> listeners = new CopyOnWriteArrayList<>();
@@ -72,7 +55,7 @@ public class Game {
         LOGGER.config("Game Initialization...");
         FileSystem.init(gameName);
         world = World.getInstance();
-        this.player = new Player();
+        //this.player = new Player();
         
         initialized = true;
         doNotify(GameEvent.TYPE.GAME_INIT);
@@ -97,8 +80,8 @@ public class Game {
         init();
         getWorld().initState();
         
-        getPlayer().getState().setHealth(66);
-        getPlayer().getState().setMana(74);
+        getWorld().getPlayer().getState().setHealth(66);
+        getWorld().getPlayer().getState().setMana(74);
     }
 
     /**
@@ -185,13 +168,6 @@ public class Game {
      */
     public World getWorld() {
         return world;
-    }
-
-    /**
-     * @return the player
-     */
-    public Player getPlayer() {
-        return player;
     }
 
 }

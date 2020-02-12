@@ -88,8 +88,8 @@ public class Graphics {
 
     public final void init() {
         this.animationFrame = MAX_ANIMATION_FRAMES;
-        loadTerrainTiles();
-        loadBuildingTiles();
+//        loadTerrainTiles();
+//        loadBuildingTiles();
 
         
     }
@@ -231,44 +231,40 @@ public class Graphics {
 //    }
 
 
-    private void loadTerrainTiles() {
-        // Need a tile list.
-        LOGGER.log(Level.INFO, "Loading Terrain Tiles...");
-
-//        for (int i = 0; i < 100; i++) {
-//            try {
-//                terrainTiles[i] = new TerrainTile(TERRAIN_TILES_DIR, i);
-//            } catch (FileNotFoundException ex) {
-//                LOGGER.log(Level.FINEST, ex.toString(), ex);
-//                break;
-//            }
-//        }
-    }
-
-    private void loadBuildingTiles() {
-        // Need a tile list.
-        LOGGER.log(Level.INFO, "Loading Building Tiles...");
-
-//        for (int i = 0; i < 500; i++) {
-//            try {
-//                tiles[i] = new StructureTile(BUILDING_TILES_DIR, i, TILE_WIDTH);
-//            } catch (FileNotFoundException ex) {
-//                LOGGER.log(Level.FINEST, ex.toString(), ex);
-//                break;
-//            }
-//        }
-    }
-    
-    public double getTickRate() {
-        return 0.066; // 66mS == 15FPS
-    }
-    
+//    private void loadTerrainTiles() {
+//        // Need a tile list.
+//        LOGGER.log(Level.INFO, "Loading Terrain Tiles...");
+//
+////        for (int i = 0; i < 100; i++) {
+////            try {
+////                terrainTiles[i] = new TerrainTile(TERRAIN_TILES_DIR, i);
+////            } catch (FileNotFoundException ex) {
+////                LOGGER.log(Level.FINEST, ex.toString(), ex);
+////                break;
+////            }
+////        }
+//    }
+//
+//    private void loadBuildingTiles() {
+//        // Need a tile list.
+//        LOGGER.log(Level.INFO, "Loading Building Tiles...");
+//
+////        for (int i = 0; i < 500; i++) {
+////            try {
+////                tiles[i] = new StructureTile(BUILDING_TILES_DIR, i, TILE_WIDTH);
+////            } catch (FileNotFoundException ex) {
+////                LOGGER.log(Level.FINEST, ex.toString(), ex);
+////                break;
+////            }
+////        }
+//    }
+//    
     /**
      * This is the game loop.
      * 
      */
     public void tick() {
-            game.tick();  // Game logic state update.
+//            game.tick();  // Game logic state update.
 
             animationFrames(); // Update animated tiles state.                    
             render(canvas.getGraphicsContext2D());        

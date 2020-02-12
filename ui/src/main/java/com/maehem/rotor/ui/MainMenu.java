@@ -19,9 +19,9 @@
 */
 package com.maehem.rotor.ui;
 
+import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
-import com.maehem.rotor.renderer.Graphics;
 import com.maehem.rotor.ui.controls.DialogLayer;
 import com.maehem.rotor.ui.controls.menu.loadsavesettings.GameLoadDialog;
 import com.maehem.rotor.ui.controls.menu.loadsavesettings.GameNewDialog;
@@ -41,20 +41,22 @@ public class MainMenu extends StackPane  implements DialogLayer, GameListener {
     private static final Logger LOGGER = Logger.getLogger(MainMenu.class.getName());
 
     Rectangle r = new Rectangle();
-    private final Graphics gfx;
+    //private final Graphics gfx;
     private Node currentDialog;
     private final Group dialogArea = new Group();
     
-    public MainMenu(Graphics gfx) {
+    public MainMenu(/*Graphics gfx*/ Game game, int w, int h) {
         LOGGER.config("Main Menu Initialization.");
-        this.gfx = gfx;
+        //this.gfx = gfx;
         this.setVisible(false);
-        double buttonScale = gfx.canvas.getHeight()/300;
+        //double buttonScale = gfx.canvas.getHeight()/300;
+        double buttonScale = h/333.3;
         
         //setPadding(new Insets(30));
         //setMaxSize(USE_PREF_SIZE, USE_PREF_SIZE);
        
-        Rectangle r = new Rectangle(gfx.canvas.getWidth(), gfx.canvas.getHeight());
+        //Rectangle r = new Rectangle(gfx.canvas.getWidth(), gfx.canvas.getHeight());
+        Rectangle r = new Rectangle(w, h);
         r.setFill(new Color(0.5, 0.2, 0.0, 1.0));
         
 //        Button b = new Button("OK");
@@ -68,31 +70,33 @@ public class MainMenu extends StackPane  implements DialogLayer, GameListener {
         Button newMap = new Button("New Game...");
         newMap.setScaleX(buttonScale);
         newMap.setScaleY(buttonScale);
-        newMap.setTranslateX(-gfx.canvas.getWidth()/5);
+        //newMap.setTranslateX(-gfx.canvas.getWidth()/5);
+        newMap.setTranslateX(-w/5);
         newMap.setOnMouseClicked((t) -> {
-            GameNewDialog d = new GameNewDialog(gfx.game, this, 0, -900);
+            GameNewDialog d = new GameNewDialog(game, this, 0, -900);
         });
         
         Button loadMap = new Button("Load Game...");
         loadMap.setScaleX(buttonScale);
         loadMap.setScaleY(buttonScale);
-        loadMap.setTranslateX(gfx.canvas.getWidth()/5);
+        //loadMap.setTranslateX(gfx.canvas.getWidth()/5);
+        loadMap.setTranslateX(w/5);
         loadMap.setOnMouseClicked((t) -> {
-            GameLoadDialog d = new GameLoadDialog(gfx.game, this, 0, -900);
+            GameLoadDialog d = new GameLoadDialog(game, this, 0, -900);
         });
         
-        gfx.canvas.widthProperty().addListener((o, old, newV) -> {
-            r.setWidth(newV.doubleValue());
-            //b.setTranslateX(-c.getWidth()/20);
-        });
-        gfx.canvas.heightProperty().addListener((o,old, newV) -> {
-            r.setHeight(newV.doubleValue());
-            //b.setTranslateY(-c.getHeight()/20);
-        });
+//        gfx.canvas.widthProperty().addListener((o, old, newV) -> {
+//            r.setWidth(newV.doubleValue());
+//            //b.setTranslateX(-c.getWidth()/20);
+//        });
+//        gfx.canvas.heightProperty().addListener((o,old, newV) -> {
+//            r.setHeight(newV.doubleValue());
+//            //b.setTranslateY(-c.getHeight()/20);
+//        });
 
         getChildren().addAll(r,/*b,*/ newMap, loadMap, dialogArea);
         
-        gfx.game.addListener(this);
+        game.addListener(this);
     }
 
     public void show() {

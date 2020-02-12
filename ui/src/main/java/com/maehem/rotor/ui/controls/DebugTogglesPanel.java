@@ -41,7 +41,7 @@ public class DebugTogglesPanel extends FlowPane /*implements GameListener*/ {
     
     //private final ToggleButton showCoords;
 
-    public DebugTogglesPanel(/*Game game,*/ Debug debug) {
+    public DebugTogglesPanel(/*Game game, Debug debug*/) {
         // TODO: Probably don't need to remember this var.
         //this.debug = debug;
         
@@ -54,14 +54,14 @@ public class DebugTogglesPanel extends FlowPane /*implements GameListener*/ {
         setBorder(new Border(new BorderStroke(Color.GREY.brighter(), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
         setPadding(new Insets(4));
         
-        ToggleButton showCoords = new ToggleButton("", Toolbar.createGlyph("/glyphs/xy-visible.png"));
-        showCoords.setTooltip(new Tooltip("Show Tile Coordinates"));
-        showCoords.setSelected(debug.showTileCoordinates);
-        showCoords.selectedProperty().addListener((ov, prev, current) -> {
-            debug.showTileCoordinates = current;
-        });
+        //ToggleButton showCoords = new ToggleButton("", Toolbar.createGlyph("/glyphs/xy-visible.png"));
+        //showCoords.setTooltip(new Tooltip("Show Tile Coordinates"));
+        //showCoords.setSelected(debug.showTileCoordinates);
+        //showCoords.selectedProperty().addListener((ov, prev, current) -> {
+        //    debug.showTileCoordinates = current;
+        //});
         //add(showCoords, 0, 0);
-        getChildren().add(showCoords);
+        //getChildren().add(showCoords);
         
         
     }

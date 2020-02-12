@@ -41,14 +41,17 @@ public class World {
     
     private final ArrayList<Realm> realms = new ArrayList<>();
 
+    private Player player = null;
     private String displayName = "Some World";
     private long startRealm = 0L;
     private long startRoom = 0L;
     private int screenWidth = 640;
     private int screenHeight = 360;
+    private int tileSize = 32;
 
     private World() {
         LOGGER.config("World Instance Created.");
+        this.player = new Player(this);
     }
     
     public static final World getInstance() {
@@ -152,9 +155,10 @@ public class World {
     public WorldState initState() {
         state = new WorldState(this);
         // Set current Realm
-        state.setPlayerCurrentRealm(getStartRealm());
+        state.setCurrentRealm(getStartRealm());
         // Set Current Room
-        state.setPlayerCurrentRoom(getStartRoom());
+        state.setCurrentRoom(getStartRoom());
+        
         return getState();
     }
     
@@ -223,4 +227,26 @@ public class World {
         return screenHeight;
     }
 
+    public int getTileSize() {
+        return tileSize;
+    }
+    
+    public void setTileSize(int size) {
+        this.tileSize = size;
+    }
+
+    /**
+     * @return the player
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Realm getCurrentRealm() {
+        return getRealm(getState().getCurrentRealm());
+    }
+    
+    public Room getCurrentRoom() {
+        return getCurrentRealm().getRoom(getState().getCurrentRoom());
+    }
 }

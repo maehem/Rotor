@@ -50,9 +50,9 @@ public class PlayerState {
     private int bombs = 99;
     private int arrows = 99;
     private int health = 99;
-    private int difficulty;
+    private int difficulty = 1;
     
-    private final Point position = new Point(0,0);
+    private final Point position = new Point(0.25,0.5);
         
     public PlayerState() {
         LOGGER.config("Player State created.");
@@ -178,11 +178,11 @@ public class PlayerState {
         this.difficulty = difficulty;
     }
 
-    public void addDataChangeListener(String key, DataListener l) {
+    public final void addDataChangeListener(String key, DataListener l) {
         changes.addDataChangeListener(key, l);
     }
 
-    public void removeDataChangeListener(String key, DataListener l) {
+    public final void removeDataChangeListener(String key, DataListener l) {
         changes.removeDataChangeListener(key, l);
     }
 
@@ -196,7 +196,7 @@ public class PlayerState {
         }        
     }
 
-    public void moveBy(int dx, int dy) {
+    public void move(double dx, double dy) {
 //        if (dx == 0 && dy == 0) {
 //            return;
 //        }
@@ -209,14 +209,21 @@ public class PlayerState {
 //        double y = cy + hero.getLayoutY() + dy;
 
         //moveHeroTo(x, y);
-        Point oldPos = new Point(position.x, position.y);
+        Point oldPos = new Point(getPosition().x, getPosition().y);
         
         position.x += dx;
         position.y += dy;
         
-        changes.firePropertyChange(PROP_POSITION, oldPos, position);
+        changes.firePropertyChange(PROP_POSITION, oldPos, getPosition());
         
     
+    }
+
+    /**
+     * @return the position
+     */
+    public Point getPosition() {
+        return position;
     }
 
 }

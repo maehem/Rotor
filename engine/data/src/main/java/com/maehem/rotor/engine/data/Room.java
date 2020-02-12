@@ -33,18 +33,24 @@ import java.util.logging.Logger;
 public class Room {
     private static final Logger LOGGER = Logger.getLogger(Room.class.getName());
 
-    public Realm parent;
-    
+    public Realm parent;    
     private RoomState state = null;  // Only set if player has visited.
 
     public static final int MAX_WIDTH = 8;
     public static final int MAX_HEIGHT = 8;
+    
+    public int nTilesX;
+    public int nTilesY;    
+    private Tile[][] tiles;
+    
+    private Object assetSheetObject;
 
     public enum Edge {
         TOP, LEFT, BOTTOM, RIGHT
     }
 
-    private long uid = Math.round(Math.random());
+    public long uid = Math.round(Math.random());
+    
     private String displayName = "";
     
     // Width and Height in world units.  A world unit is a standard pixel area 
@@ -64,6 +70,7 @@ public class Room {
     public Room(Realm parent, DataInputStream dis) throws IOException {
         LOGGER.config("Room Created.");
         this.parent = parent;
+        
         load(dis);
     }
 
@@ -72,6 +79,13 @@ public class Room {
         this.parent = parent;
         this.width = width;
         this.height = height;
+        
+        World w = parent.getParent();
+        this.nTilesX = w.getScreenWidth()/w.getTileSize()*width;
+        this.nTilesY = w.getScreenHeight()/w.getTileSize()*height;
+        
+        tiles = new Tile[nTilesX][nTilesY];
+        
         this.topExit = new long[width];
         this.rightExit = new long[height];
         this.bottomExit = new long[width];
@@ -111,6 +125,14 @@ public class Room {
         this.displayName = displayName;
     }
 
+    public final void setAssetSheet(Object sheet ) {
+        this.assetSheetObject = sheet;
+    }
+    
+    public Object getAssetSheet() {
+        return assetSheetObject;
+    }
+    
     /**
      *
      * @return width in screen-blocks of room.
@@ -127,6 +149,18 @@ public class Room {
         return height;
     }
     
+    public boolean isBlocked(double x, double y) {
+        int blockX = (int) (x*nTilesX+0.5);
+        int blockY = (int) (y*nTilesY+1);
+        
+        Tile tile = get(blockX, blockY);
+        if ( tile == null ) {
+            LOGGER.log(Level.WARNING, "Player walked off the map!  Fix the map at {0},{1}", new Object[]{blockX, blockY});
+            return true;
+        }
+        return tile.isBlock();
+    }
+
     /**
      *
      * @return room state object.  @null if not visited.
@@ -166,6 +200,19 @@ public class Room {
         }
      }
 
+    public final Tile get(int x, int y) {
+        try {
+            return tiles[x][y];
+        } catch ( ArrayIndexOutOfBoundsException ex ) {
+            return null;
+        }
+    }
+    
+    public final void put(int x, int y, Tile tile) {
+        // TODO need some range checking?
+        tiles[x][y] = tile;
+    }
+    
     public final void load(DataInputStream dis) throws IOException {
         // <ROOM>
         if ( !dis.readUTF().equals("<ROOM>") ) {

@@ -54,7 +54,7 @@ public class Realm {
         this.parent = parent;
     }
     
-    public ArrayList<Room> getRooms() {
+    public final ArrayList<Room> getRooms() {
         return rooms;
     }
     
@@ -155,4 +155,10 @@ public class Realm {
         return null;
     }
 
+    /**
+     * @return the parent
+     */
+    public World getParent() {
+        return parent;
+    }
 }

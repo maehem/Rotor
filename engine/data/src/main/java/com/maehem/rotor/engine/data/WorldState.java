@@ -40,11 +40,11 @@ public class WorldState {
     private long ticksElapsed = 0;
     
     // Savable Player State
-    private String playerName = "Charlie";
-    private int playerDifficulty = 3;
-    private int  playerHealth = 0;
-    private long playerCurrentRealm = 0;  // UID of current realm
-    private long playerCurrentRoom = 0;   // UID of current room
+    //private String playerName = "Charlie";
+    //private int playerDifficulty = 3;
+    //private int  playerHealth = 0;
+    private long currentRealm = 0;  // UID of current realm
+    private long currentRoom = 0;   // UID of current room
     // Current Weapon UID
     
     /**
@@ -57,20 +57,20 @@ public class WorldState {
         LOGGER.config("World State initialization...");
     }
 
-    /**
-     * @return the playerName
-     */
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    /**
-     * @param playerName the playerName to set
-     */
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
+//    /**
+//     * @return the playerName
+//     */
+//    public String getPlayerName() {
+//        return playerName;
+//    }
+//
+//    /**
+//     * @param playerName the playerName to set
+//     */
+//    public void setPlayerName(String playerName) {
+//        this.playerName = playerName;
+//    }
+//
     /**
      * After loading, resolve anything here.
      */
@@ -93,9 +93,9 @@ public class WorldState {
         }
         // Read local settings block
         ticksElapsed = dis.readLong();
-        setPlayerHealth(dis.readInt());
-        setPlayerCurrentRealm(dis.readLong());
-        setPlayerCurrentRoom(dis.readLong());
+        //setPlayerHealth(dis.readInt());
+        setCurrentRealm(dis.readLong());
+        setCurrentRoom(dis.readLong());
 
         // Load Realm states
         int nRealms = dis.readChar();
@@ -121,9 +121,9 @@ public class WorldState {
 
         // Write World local state
         dos.writeLong(ticksElapsed);
-        dos.writeInt(getPlayerHealth());
-        dos.writeLong(getPlayerCurrentRealm());
-        dos.writeLong(getPlayerCurrentRoom());
+        //dos.writeInt(getPlayerHealth());
+        dos.writeLong(getCurrentRealm());
+        dos.writeLong(getCurrentRoom());
         
         // Write state for each realm
         for ( Realm realm : world.getRealms() ) {
@@ -146,59 +146,59 @@ public class WorldState {
         ticksElapsed++;
     }
 
+//    /**
+//     * @return the playerDifficulty
+//     */
+//    public int getPlayerDifficulty() {
+//        return playerDifficulty;
+//    }
+//
+//    public void setPlayerDifficulty(int amount) {
+//        playerDifficulty = amount;
+//    }
+//
+//    /**
+//     * @return the playerHealth
+//     */
+//    public int getPlayerHealth() {
+//        return playerHealth;
+//    }
+//
+//    /**
+//     * @param playerHealth the playerHealth to set
+//     */
+//    public void setPlayerHealth(int playerHealth) {
+//        this.playerHealth = playerHealth;
+//    }
+//
     /**
-     * @return the playerDifficulty
+     * @return the currentRealm
      */
-    public int getPlayerDifficulty() {
-        return playerDifficulty;
-    }
-
-    public void setPlayerDifficulty(int amount) {
-        playerDifficulty = amount;
-    }
-
-    /**
-     * @return the playerHealth
-     */
-    public int getPlayerHealth() {
-        return playerHealth;
-    }
-
-    /**
-     * @param playerHealth the playerHealth to set
-     */
-    public void setPlayerHealth(int playerHealth) {
-        this.playerHealth = playerHealth;
-    }
-
-    /**
-     * @return the playerCurrentRealm
-     */
-    public long getPlayerCurrentRealm() {
-        return playerCurrentRealm;
-    }
-
-    /**
-     * @param playerCurrentRealm the playerCurrentRealm to set
-     */
-    public void setPlayerCurrentRealm(long playerCurrentRealm) {
-        this.playerCurrentRealm = playerCurrentRealm;
-        LOGGER.log(Level.INFO, "Current Realm set to: {0}", this.playerCurrentRealm);
+    public long getCurrentRealm() {
+        return currentRealm;
     }
 
     /**
-     * @return the playerCurrentRoom
+     * @param currentRealm the currentRealm to set
      */
-    public long getPlayerCurrentRoom() {
-        return playerCurrentRoom;
+    public void setCurrentRealm(long currentRealm) {
+        this.currentRealm = currentRealm;
+        LOGGER.log(Level.INFO, "Current Realm set to: {0}", this.currentRealm);
     }
 
     /**
-     * @param playerCurrentRoom the playerCurrentRoom to set
+     * @return the currentRoom
      */
-    public void setPlayerCurrentRoom(long playerCurrentRoom) {
-        this.playerCurrentRoom = playerCurrentRoom;
-        LOGGER.info("Current Room set to: " + this.playerCurrentRoom);
+    public long getCurrentRoom() {
+        return currentRoom;
+    }
+
+    /**
+     * @param currentRoom the currentRoom to set
+     */
+    public void setCurrentRoom(long currentRoom) {
+        this.currentRoom = currentRoom;
+        LOGGER.log(Level.INFO, "Current Room set to: {0}", this.currentRoom);
     }
 
     

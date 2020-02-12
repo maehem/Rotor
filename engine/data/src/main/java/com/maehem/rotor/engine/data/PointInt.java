@@ -16,20 +16,20 @@
     specific language governing permissions and limitations
     under the License.
 
- */
+*/
 package com.maehem.rotor.engine.data;
 
 /**
  *
- * @author mark
+ * @author maehem
  */
-public class Point {
-
-    public double x, y;
+public class PointInt {
+    public int x;
+    public int y;
     
-    public Point(double x, double y) {
+    public PointInt( int x, int y) {
         this.x = x;
-        this.y = y;
-    }    
+        this.y = y;        
+    }
     
 }

@@ -92,7 +92,7 @@ public class ManaIndicator extends VBox implements GameListener, DataListener, D
     public void gameEvent(GameEvent e) {
         switch (e.type) {
             case DATA_LOADED:
-                PlayerState state = e.getSource().getPlayer().getState();
+                PlayerState state = e.getSource().getWorld().getPlayer().getState();
 
                 state.addDataChangeListener(this.key, this);
                 break;
