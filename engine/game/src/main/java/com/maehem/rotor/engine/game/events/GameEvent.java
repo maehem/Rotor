@@ -28,7 +28,7 @@ import com.maehem.rotor.engine.game.Game;
 public class GameEvent {
 
     private final Game game;
-    public static enum TYPE { GAME_INIT, DATA_LOADED, PAUSED, RUNNING, TICK, DATA_SAVED, SPEED }
+    public static enum TYPE { GAME_INIT, DATA_LOADED, PAUSED, REALM_CHANGE, ROOM_LEAVE, RUNNING, TICK, DATA_SAVED, SPEED }
 
     public final TYPE type;
 

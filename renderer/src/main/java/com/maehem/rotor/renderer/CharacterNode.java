@@ -19,7 +19,6 @@
 */
 package com.maehem.rotor.renderer;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 import javafx.scene.Group;
 
@@ -32,8 +31,8 @@ public class CharacterNode extends Group {
 
     private final WalkSheet graphic;
     
-    public CharacterNode(String filePath, double size ) throws IOException {
-        graphic = new WalkSheet(filePath, size);
+    public CharacterNode(WalkSheet walkSheet, double size ) {
+        this.graphic = walkSheet;
         getChildren().add(graphic);
     }
     

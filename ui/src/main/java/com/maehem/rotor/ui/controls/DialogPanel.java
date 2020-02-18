@@ -96,7 +96,7 @@ public abstract class DialogPanel extends BorderPane {
         panel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, new CornerRadii(10), Insets.EMPTY)));
         // Drop shadow
         //DropShadow ds = new DropShadow(20.0, new Color(0,0,0,0.5));
-        panel.setEffect(Toolbar.DROP_SHADOW);
+        //panel.setEffect(Toolbar.DROP_SHADOW);
         
         return panel;
     }

@@ -19,6 +19,8 @@
 */
 package com.maehem.rotor.dungeoneer.realms.dungeon1;
 
+import com.maehem.rotor.engine.data.PortKey;
+import com.maehem.rotor.engine.data.Point;
 import com.maehem.rotor.engine.data.Realm;
 import com.maehem.rotor.engine.data.Room;
 import com.maehem.rotor.engine.data.Tile;
@@ -40,10 +42,19 @@ public class Room001 extends Room {
         setDisplayName("The Room of Starting");
         setAssetSheet(new OverworldAssetSheet(parent.getParent().getTileSize()));
         
-        //ArrayList<Tile> tiles = getTiles();
+        addDoor(new PortKey(
+                new Point(0.55, 0.1), new Point(0.05, 0.05),
+                Room002.UID, new Point(0.5, 0.7)
+        ));
         
-        put( 0, 0, new Tile("clifFace1", new FLAG[]{BLK}));
+//        try {
+//            setDoor(Edge.TOP, 0, Room002.UID);
+//        } catch (RoomDimensionException ex) {
+//            Logger.getLogger(Room001.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         
+                
+        put(  0, 0, new Tile("clifFace1", new FLAG[]{BLK}));        
         put(  1, 0, new Tile("clifFace2", new FLAG[]{BLK}));
         put(  2, 0, new Tile("clifFace1", new FLAG[]{BLK}));
         put(  3, 0, new Tile("clifFace2", new FLAG[]{BLK}));
@@ -75,7 +86,7 @@ public class Room001 extends Room {
         put(  8, 1, new Tile("floor1", "clifBaseC",  new FLAG[]{BLK}));
         put(  9, 1, new Tile("floor1", "clifBaseC",  new FLAG[]{BLK}));
         put( 10, 1, new Tile("floor1", "clifBaseC",  new FLAG[]{BLK}));
-        put( 11, 1, new Tile("floor1", "clifBaseCave",  new FLAG[]{BLK}));
+        put( 11, 1, new Tile("floor1", "clifBaseCave"));
         put( 12, 1, new Tile("floor1", "clifBaseC",  new FLAG[]{BLK}));
         put( 13, 1, new Tile("floor1", "clifBaseC",  new FLAG[]{BLK}));
         put( 14, 1, new Tile("floor1", "clifBaseC",  new FLAG[]{BLK}));

@@ -33,19 +33,15 @@ public class WorldState {
 
     private static final Logger LOGGER = Logger.getLogger(WorldState.class.getName());
 
-    private World world;    
+    private final DataChangeSupport changes = new DataChangeSupport();
+    public static final String PROP_ROOM = "room";
+
+    private final World world;    
     private boolean loaded = false;
-    
-    // Saveable Local Values
     private long ticksElapsed = 0;
     
-    // Savable Player State
-    //private String playerName = "Charlie";
-    //private int playerDifficulty = 3;
-    //private int  playerHealth = 0;
     private long currentRealm = 0;  // UID of current realm
     private long currentRoom = 0;   // UID of current room
-    // Current Weapon UID
     
     /**
      * Create state for the world.
@@ -201,5 +197,4 @@ public class WorldState {
         LOGGER.log(Level.INFO, "Current Room set to: {0}", this.currentRoom);
     }
 
-    
 }

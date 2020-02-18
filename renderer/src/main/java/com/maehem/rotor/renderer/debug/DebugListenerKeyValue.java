@@ -17,28 +17,27 @@
     under the License.
 
 */
-package com.maehem.rotor.dungeoneer.realms.dungeon1;
+package com.maehem.rotor.renderer.debug;
 
-import com.maehem.rotor.engine.data.Realm;
-import com.maehem.rotor.engine.data.World;
 
 /**
  *
  * @author maehem
  */
-public class Dungeon1Realm extends Realm {
+public class DebugListenerKeyValue {
+    private final Debug.Prop key;
+    private final DebugListener listener;
 
-    public static final long UID = 10000;
-    
-    public Dungeon1Realm( World parent) {
-        super(parent);
+    public DebugListenerKeyValue( Debug.Prop key, DebugListener listener) {
+        this.key = key;
+        this.listener = listener;
+    }
         
-        setUid(UID);
-        setDisplayName("Realm of Light");
-        
-        getRooms().add(new Room001(this));
-        getRooms().add(new Room002(this));
+    public Debug.Prop getKey() {
+        return key;
     }
     
-    
+    public DebugListener getListener() {
+        return listener;
+    }
 }

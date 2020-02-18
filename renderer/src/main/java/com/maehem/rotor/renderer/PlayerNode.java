@@ -23,7 +23,6 @@ import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.data.Player;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.data.Point;
-import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -34,14 +33,14 @@ public class PlayerNode extends CharacterNode implements DataListener {
 
     private final static Logger LOGGER = Logger.getLogger(PlayerNode.class.getName());
 
-    Player player;
+    protected final Player player;
 
-    public PlayerNode(Player player) throws IOException {
-        super("/characters/person-1.png", player.getParent().getTileSize());
+    public PlayerNode(Player player) {
+        super((WalkSheet) player.getWalkSheet(), player.getParent().getTileSize());
 
         this.player = player;
         updateLayout(player.getState().getPosition());
-        
+
         player.getState().addDataChangeListener(PlayerState.PROP_POSITION, this);
 
         LOGGER.finer("Create Player Node.");
@@ -71,11 +70,19 @@ public class PlayerNode extends CharacterNode implements DataListener {
                 }
 
                 getWalkSheet().step();
-                updateLayout(pos);
+                
+                updateLayout((Point) newValue);
+                break;
+//            case World.PROP_ROOM:
+//                if (player.hasPortKey()) {
+//                    player.gotoPortKey();
+//                }
+//                break;
+
         }
     }
 
-    private void updateLayout(Point pos) {
+    public final void updateLayout(Point pos) {
         setLayoutX(pos.x * player.getParent().getScreenWidth());
         setLayoutY(pos.y * player.getParent().getScreenHeight());
 

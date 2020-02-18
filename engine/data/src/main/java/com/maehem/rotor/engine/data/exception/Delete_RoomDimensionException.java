@@ -17,27 +17,19 @@
     under the License.
 
 */
-package com.maehem.rotor.dungeoneer.realms.dungeon1;
+package com.maehem.rotor.engine.data.exception;
 
-import com.maehem.rotor.engine.data.Realm;
-import com.maehem.rotor.engine.data.World;
+import com.maehem.rotor.engine.data.Room;
 
 /**
  *
  * @author maehem
  */
-public class Dungeon1Realm extends Realm {
+public class Delete_RoomDimensionException extends Exception {
 
-    public static final long UID = 10000;
-    
-    public Dungeon1Realm( World parent) {
-        super(parent);
-        
-        setUid(UID);
-        setDisplayName("Realm of Light");
-        
-        getRooms().add(new Room001(this));
-        getRooms().add(new Room002(this));
+    public Delete_RoomDimensionException(Room room, Room.Edge e, int index, long destRoom) {
+        super("Destination door index was larger than rooms size: " + room.getDisplayName()+ 
+                " " + e.toString() + "[" + index + "]  room dest UID: " + destRoom);
     }
     
     

@@ -51,7 +51,7 @@ public class TileNode extends Group {
             ImageView tileImage = sheet.getAsset2(tile.getAssetName(i));
             if (tileImage != null) {
                 getChildren().add(tileImage);
-                LOGGER.log(Level.CONFIG, "Add asset: {0}", tile.getAssetName(i));
+                //LOGGER.log(Level.CONFIG, "Add asset: {0}", tile.getAssetName(i));
             } else {
                 LOGGER.log(Level.SEVERE, "Could not find image asset for {0}", tile.getAssetName(i));
             }

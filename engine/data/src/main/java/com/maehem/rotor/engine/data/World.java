@@ -33,11 +33,15 @@ import java.util.logging.Logger;
 public class World {
     private static final Logger LOGGER = Logger.getLogger(World.class.getName());
     
+    public static final String PROP_ROOM = "room";
+    public static final String PROP_REALM = "realm";
+
     private static World instance;
 
     private boolean loaded = false;
     
     private WorldState state;
+    private final DataChangeSupport changes = new DataChangeSupport();
     
     private final ArrayList<Realm> realms = new ArrayList<>();
 
@@ -152,14 +156,15 @@ public class World {
         LOGGER.finer("World header save done.");
     }
 
-    public WorldState initState() {
+    public void initState() {
         state = new WorldState(this);
         // Set current Realm
-        state.setCurrentRealm(getStartRealm());
+        //state.setCurrentRealm(getStartRealm());
         // Set Current Room
-        state.setCurrentRoom(getStartRoom());
+        //state.setCurrentRoom(getStartRoom());
         
-        return getState();
+        setCurrentRealm(startRealm);
+        setCurrentRoom(startRoom);        
     }
     
     /**
@@ -246,7 +251,30 @@ public class World {
         return getRealm(getState().getCurrentRealm());
     }
     
+    public void setCurrentRealm(long realm) {
+        long oldRealm = getState().getCurrentRealm();
+        getState().setCurrentRealm(realm);
+        
+        changes.firePropertyChange(PROP_REALM, oldRealm, realm);
+    }
+    
     public Room getCurrentRoom() {
         return getCurrentRealm().getRoom(getState().getCurrentRoom());
     }
+    
+    public void setCurrentRoom( long room ) {
+        long oldRoom = getState().getCurrentRoom();        
+        getState().setCurrentRoom(room);
+        
+        changes.firePropertyChange(PROP_ROOM, oldRoom, room);
+    }
+    
+    public final void addDataChangeListener(String key, DataListener l) {
+        changes.addDataChangeListener(key, l);
+    }
+
+    public final void removeDataChangeListener(String key, DataListener l) {
+        changes.removeDataChangeListener(key, l);
+    }
+
 }

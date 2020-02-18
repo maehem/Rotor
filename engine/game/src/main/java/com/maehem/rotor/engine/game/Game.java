@@ -151,11 +151,11 @@ public class Game {
     public void setRunning(boolean running) {
         this.running = running;
         if (running) {
-            doNotify(GameEvent.TYPE.RUNNING);
             LOGGER.info("Game Running");
+            doNotify(GameEvent.TYPE.RUNNING);
         } else {
-            doNotify(GameEvent.TYPE.PAUSED);
             LOGGER.info("Game Paused");
+            doNotify(GameEvent.TYPE.PAUSED);
         }
     }
 

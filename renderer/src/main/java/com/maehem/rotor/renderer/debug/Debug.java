@@ -19,170 +19,111 @@
 */
 package com.maehem.rotor.renderer.debug;
 
-import com.maehem.rotor.renderer.Graphics;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
 
 /**
- * Debug toggles for the game's world @Renderer.
- * 
- * NOTE: The debug toggles for the HUD UI are handled in the UI.
- * 
- * @author Mark J Koch <rocketcolony-maintainer@maehem.com>
+ *
+ * @author maehem
  */
 public class Debug {
-
-    public boolean enabled = false;
-
-    public boolean showOverlayInfo = true;
-    public boolean showStatsPanel = false;  // Another pop tab
-    public boolean showTileCoordinates = false;
-
-    //public int clipOffset = 0;   // ???   delete me
-    //public int tileCount = 0;    // ??? delete me
-
-    public long beginTime = System.nanoTime();
-    public long previousTime = System.nanoTime();
-    public int frameTime = 0;
-    public int frames = 0;
-    public int frameCount = 0;
-    public int fps = 0;
-    private int msPerFrame = 0;
-
-    private final Graphics gfx;
-
-    public Debug(Graphics gfx) {
-        this.gfx = gfx;
-    }
-
-    public void main(GraphicsContext g) {
-        if (!enabled) {
-            return;
+    private final static Logger LOGGER = Logger.getLogger(Debug.class.getName());
+    
+    private static Debug instance;
+    
+    public enum Prop { SHOW_PORTKEYS }
+    
+    public static final int GLYPH_HEIGHT = 24;
+    
+    private boolean showPortKey = false; // Draw debugging border around portkeys.
+   
+    private Debug() {}
+    
+    public static final Debug getInstance() {
+        if ( instance == null ) {
+            instance = new Debug();
         }
-
-        debugOverlay(g);
-        showTileInfo(g);
-        showFrameStats(g);
-    }
-
-    public void begin() {
-        beginTime = System.nanoTime();
-        //tileCount = 0;
-    }
-
-    public long end() {
-        long time = System.nanoTime();
-        frames++;
-
-        if (time > previousTime + 1000000) {
-            msPerFrame = Math.round(time - beginTime)/1000;
-
-            fps = Math.round((frames * 1000000000) / (time - previousTime));
-            previousTime = time;
-
-            frameCount += frames;
-            frames = 0;
-        }
-
-        return time;
+        
+        return instance;
     }
     
-    public void showFrameStats(GraphicsContext g) {
-        int width = 260;
-        int height = 30;
+    /**
+     * @return true if debug pane borders are showing
+     */
+    public boolean showPortKeys() {
+        return showPortKey;
+    }
 
-        int x = (int) (g.getCanvas().getWidth() - width);
-        int y = (int) (g.getCanvas().getHeight() - height);
+    /**
+     * @param show the debug pane borders
+     */
+    public void setShowPortKeys(boolean show) {
+        boolean oldValue = this.showPortKey;
+        this.showPortKey = show;
+        fireDebugChange(Prop.SHOW_PORTKEYS, oldValue, show);
+    }
 
-        g.fillRect(0, 0, width, height);
-
-        g.setFont(new Font("Verdana", (int)(height*0.5)));
-        g.setFill(new Color(255, 255, 255, 126));
-
-
-        g.fillText(msPerFrame / 1000 + " m/s per frame (" + fps + " FPS)",
-                x + 20, y + height/3);
+    public void populateDebugToggles(FlowPane togglesPane) {
+        LOGGER.fine("Game Scene - Populate Debug Toggles.");
+        
+        // Create and place debug toggles here.
+        ToggleButton portKeyBorders = new ToggleButton("", createGlyph("/renderer/glyphs/settings.png"));
+        portKeyBorders.setTooltip(new Tooltip("Show PortKey Borders"));
+        portKeyBorders.setSelected(showPortKeys());
+        portKeyBorders.selectedProperty().addListener((ov, prev, current) -> {
+            setShowPortKeys(current);
+        });
+        togglesPane.getChildren().add(portKeyBorders);
 
     }
 
-    public void debugOverlay(GraphicsContext g) {
-        if (!showOverlayInfo) {
-            return;
+    public static StackPane createGlyph(String path) {
+        try {
+            URL glyphResource = Debug.class.getResource(path);
+            ImageView glyphImage = new ImageView(new Image(glyphResource.openStream()));
+            glyphImage.setPreserveRatio(true);
+            glyphImage.setFitHeight(GLYPH_HEIGHT);
+            return new StackPane(glyphImage);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+            return new StackPane();
         }
+    
+    }
+    
+        private final ArrayList<DebugListenerKeyValue> listeners = new ArrayList<>();
 
-        float fontSize = 20.0f;
-        int width = 320;
-        int height = (int) (fontSize*6);
-        int lineInc = (int) fontSize;
-
-        int x = 20;
-        int y = (int) gfx.canvas.getHeight();
-
-        g.setFill(new Color( 0,0,0,60));
-        g.fillRect(x-5, y-height, width, y-5);
-
-        g.setLineWidth(1.0);
-        g.setStroke(Color.DARKGREY);
-        g.strokeRect(x-5, y-height, width, y-5);
-
-        y -= lineInc;
-        Font origFont = g.getFont();
-        g.setFont(new Font(g.getFont().getFamily(), fontSize));
-        g.setFill(new Color(255, 255, 255, 180));
-
-
-        g.fillText("cursor x: " + gfx.ui.cursorX + ", y: " + gfx.ui.cursorY, x, y);
-        y -= lineInc;
-//        g.fillText("map rotation: " + gfx.game.data.mapInfo.getRotation(), x, y);
-//        y -= lineInc;
-        g.fillText("zoom: " + Math.round(gfx.ui.zoom*10)/10.0f, x, y);
-        y -= lineInc;
-//        if (gfx.ui.selectedCell != null) {
-//            g.fillText("selected tile"
-//                    +  " x: " + gfx.ui.selectedCell.getMapLocation().x
-//                    + ", y: " + gfx.ui.selectedCell.getMapLocation().y,
-//                    x, y);
-//            y -= lineInc;
-//        }
-
-        g.setFont(origFont); // Put the font settings back.
+    public void addDebugChangeListener(Debug.Prop propertyName, DebugListener dl) {
+        listeners.add(new DebugListenerKeyValue(propertyName, dl));
     }
 
-    public void showTileInfo(GraphicsContext g) {
-//        if (!showSelectedTileInfo) {
-//            return;
-//        }
-
-        //Cell cell = gfx.game.data.getMapCell(gfx.ui.cursorTileX, gfx.ui.cursorTileY);
-
-        // TODO   No cells are ever null!
-//        if (cell == null) {
-//            return;
-//        }
-
-        StringBuilder textData = new StringBuilder();
-
-//        // todo: this should be moved to a function for drawing text?
-//        textData.append("Cell Position:");
-//        textData.append("Current X: ").append(cell.getMapLocation().x)
-//                .append(", Y: ").append(cell.getMapLocation().y)
-//                .append(", Z: ").append(cell.altm.altitude);
-
-        int height = 20 + (textData.length() * 15);
-        int width = 220;
-
-        g.fillRect(0, 0, width, height);
-        int lineX = gfx.ui.cursorX + 20;
-        int lineY = gfx.ui.cursorY + 25;
-
-        g.setFont(new Font("Verdana", 10));
-        g.setFill(new Color(255, 255, 255, 230));
-
-        g.fillText(textData.toString(), lineX, lineY);
+    public void removeDebugChangeListener(Debug.Prop propertyName, DebugListener dl) {
+        for (DebugListenerKeyValue l : listeners) {
+            if ( l.getKey().equals(propertyName) && l.getListener().equals(dl) ) {
+                listeners.remove(l);
+                return;
+            }
+        }
     }
+    
+    public DebugListenerKeyValue[] getDebugChangeListeners() {
+        return listeners.toArray(new DebugListenerKeyValue[listeners.size()]);
+    }
+    
+    public void fireDebugChange​(Debug.Prop property, Object oldValue, Object newValue) {
+        listeners.stream().filter((l) -> (property.equals(l.getKey()))).forEachOrdered((l) -> {
+            l.getListener().debugPropertyChange(property, oldValue, newValue);
+        });
+    }               
 
-
-
-
+    
 }

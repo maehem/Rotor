@@ -19,10 +19,16 @@
  */
 package com.maehem.rotor.renderer;
 
+import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.data.Player;
+import com.maehem.rotor.engine.data.PlayerState;
+import com.maehem.rotor.engine.data.World;
 import com.maehem.rotor.engine.game.Game;
+import com.maehem.rotor.engine.game.events.GameEvent;
+import com.maehem.rotor.engine.game.events.GameListener;
 import com.maehem.rotor.renderer.ui.UIEvent;
 import com.maehem.rotor.renderer.ui.UIListener;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -39,18 +45,27 @@ import javafx.util.Duration;
  *
  * @author mark
  */
-public class GameScene extends Scene implements UIListener {
+public class GameScene extends Scene implements GameListener, UIListener, DataListener {
+
     private static final Logger LOGGER = Logger.getLogger(GameScene.class.getName());
+
+    private final Group roomLayer = new Group();
+    private final Group scrimLayer = new Group();
+
+    //private Node mainMenu;
+    private RoomNode currentRoomNode;
+    private WorldNode worldNode;
+
+    private SceneFader scrim;
 
     // TODO Move this into Player
     public boolean running, goNorth, goSouth, goEast, goWest;
-    
-//    public final static double WALK = 0.01;
-//    public final static double RUN  = WALK * 3.0;
+    private final Game game;
 
-    //Group root = new Group();
-    public GameScene() {
+    public GameScene(Game game) {
         super(new Group());
+        this.game = game;
+        game.addListener(this);
 
         initKeyEvents();
     }
@@ -73,6 +88,11 @@ public class GameScene extends Scene implements UIListener {
         if (e.type == UIEvent.Type.CURSOR_CHANGE) {
             setCursor(new ImageCursor((Image) e.objects[0]));
         }
+    }
+
+    public void initLayers(Node menuLayer, Node hudLayer) {
+        LOGGER.config("Layers Initialization.");
+        addAll(roomLayer, hudLayer, scrimLayer, menuLayer);
     }
 
     private void initKeyEvents() {
@@ -117,38 +137,47 @@ public class GameScene extends Scene implements UIListener {
     }
 
     public void tick(Game game) {
-        game.tick();  // Game logic state update.
-        
-        
-        // TODO: Move this into Player
-        
-        double dx = 0, dy = 0;
+        if (game.isRunning()) {
 
-        if (goNorth) {
-            dy -= Player.WALK_SPEED;
-        }
-        if (goSouth) {
-            dy += Player.WALK_SPEED;
-        }
-        if (goEast) {
-            dx += Player.WALK_SPEED;
-        }
-        if (goWest) {
-            dx -= Player.WALK_SPEED;
-        }
-        if (running) {
-            dx *= Player.RUN_MULT;
-            dy *= Player.RUN_MULT;
-        }
+            game.tick();  // Game logic state update.
 
-        game.getWorld().getPlayer().moveBy(dx, dy);
+            // TODO: Move this into Player
+            double dx = 0, dy = 0;
+
+            if (goNorth) {
+                dy -= Player.WALK_SPEED;
+            }
+            if (goSouth) {
+                dy += Player.WALK_SPEED;
+            }
+            if (goEast) {
+                dx += Player.WALK_SPEED;
+            }
+            if (goWest) {
+                dx -= Player.WALK_SPEED;
+            }
+            if (running) {
+                dx *= Player.RUN_MULT;
+                dy *= Player.RUN_MULT;
+            }
+
+            game.getWorld().getPlayer().moveBy(dx, dy);
+        } 
+        else {
+            if (scrim.isFading()) {
+                scrim.update();
+            }
+//            else {
+//                game.setRunning(true);
+//            }
+        }
     }
 
     public double getTickRate() {
         return 0.066; // 66mS == 15FPS
     }
-    
-    public void initGameLoop( Game game ) {
+
+    public void initGameLoop(Game game) {
         LOGGER.config("Game Loop Init.");
         Timeline gameLoop = new Timeline();
         gameLoop.setCycleCount(Timeline.INDEFINITE);
@@ -162,6 +191,68 @@ public class GameScene extends Scene implements UIListener {
         gameLoop.play();
 
         game.setRunning(true);
+    }
+
+    @Override
+    public void dataChange(String key, Object oldValue, Object newValue) {
+        switch (key) {
+            case World.PROP_ROOM:
+                LOGGER.log(Level.CONFIG, "Game Scene: Change Room to: {0}", newValue);
+
+                if (currentRoomNode != null) {
+                    roomLayer.getChildren().remove(currentRoomNode);
+                }
+                currentRoomNode = worldNode.getCurrentRealmNode().getCurrentRoomNode();
+                currentRoomNode.enter(game, worldNode.getPlayerNode());
+                roomLayer.getChildren().add(currentRoomNode);
+                scrim.initClosing(worldNode.getPlayerNode().getLayoutX(), worldNode.getPlayerNode().getLayoutY());
+                scrim.startFade(); // Game loop handles animation updates.
+                scrim.setOnFadeInFinished((data_type) -> {
+                    game.setRunning(true);
+                });
+                break;
+            case PlayerState.STATE_LEAVE:
+                LOGGER.log(Level.CONFIG, "Game Scene: Player left room. New destination: {0}", newValue);
+                // Pause game
+                game.setRunning(false);
+                // Run transistion
+                scrim.initOpening(worldNode.getPlayerNode().getLayoutX(), worldNode.getPlayerNode().getLayoutY());
+                scrim.startFade(); // Game loop handles animation updates.
+                scrim.setOnFadeOutFinished((data_type) -> {
+                    // Unload old room.
+                    worldNode.getCurrentRealmNode().getCurrentRoomNode().leave();
+                    World.getInstance().setCurrentRoom((long) newValue);
+
+                });
+
+            // Run Transistion
+            // Un-pause game.
+        }
+    }
+
+    @Override
+    public void gameEvent(GameEvent e) {
+        switch (e.type) {
+            case DATA_LOADED:
+                this.worldNode = new WorldNode(game.getWorld());
+                worldNode.getPlayerNode().player.getState().addDataChangeListener(PlayerState.STATE_LEAVE, this);
+                scrim = new SceneFader(getWidth(), getHeight());
+                scrimLayer.getChildren().add(scrim);
+
+                LOGGER.log(Level.CONFIG, "Add SceneFader of size: {0}x{1}", new Object[]{getWidth(), getHeight()});
+
+                game.getWorld().addDataChangeListener(World.PROP_ROOM, this);
+
+//                PlayerNode playerNode = new PlayerNode(e.getSource().getWorld().getPlayer());
+//                
+//                // TODO Move this off somewhere so we can call it when switching rooms.
+//                //worldNode = new WorldNode(e.getSource().getWorld());
+//                
+//                currentRoomNode = worldNode.getCurrentRealmNode().getCurrentRoomNode();
+//                currentRoomNode.enter(e.getSource(), playerNode);
+//                roomLayer.getChildren().add(currentRoomNode);
+                break;
+        }
     }
 
 }

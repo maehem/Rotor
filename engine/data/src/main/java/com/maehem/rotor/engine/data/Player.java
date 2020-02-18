@@ -19,6 +19,7 @@
  */
 package com.maehem.rotor.engine.data;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -29,11 +30,15 @@ public class Player {
 
     private static final Logger LOGGER = Logger.getLogger(Player.class.getName());
 
+    public static final double WALK_SPEED = 0.005;
+    public static final double RUN_MULT = 3.0;
+    
     private final PlayerState state = new PlayerState();
     private final World parent;
     
-    public static final double WALK_SPEED = 0.005;
-    public static final double RUN_MULT = 3.0;
+    private PortKey portKey;
+    
+    private Object walkSheet;
     
     public Player( World parent ) {
         this.parent = parent;
@@ -47,6 +52,10 @@ public class Player {
         return state;
     }
 
+    public void warpPosition( double x, double y ) {
+        getState().warpPosition(x,y);
+    }
+    
     public void moveBy( double dx, double dy ) {
         Point p = getState().getPosition();
         
@@ -64,5 +73,44 @@ public class Player {
      */
     public World getParent() {
         return parent;
+    }
+
+    /**
+     * @return the walkSheet
+     */
+    public Object getWalkSheet() {
+        return walkSheet;
+    }
+
+    /**
+     * @param walkSheet the walkSheet to set
+     */
+    public void setWalkSheet(Object walkSheet) {
+        this.walkSheet = walkSheet;
+    }
+    
+    /**
+     * @return the portKey
+     */
+    public PortKey getPortKey() {
+        return portKey;
+    }
+
+    /**
+     * @param portKey the portKey to set
+     */
+    public void setPortKey(PortKey portKey) {
+        this.portKey = portKey;
+        getState().changeRoom(portKey.destRoomUID);
+    }
+
+    public boolean hasPortKey() {
+        return portKey != null;
+    }
+    
+    public void gotoPortKey() {
+        warpPosition(portKey.destPos.x, portKey.destPos.y);
+        LOGGER.log(Level.CONFIG, "Set player destination position to: {0},{1}", new Object[]{portKey.destPos.x, portKey.destPos.y});
+        portKey = null; // Consume the Port Key
     }
 }

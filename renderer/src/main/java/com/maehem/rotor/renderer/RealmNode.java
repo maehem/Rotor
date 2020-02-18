@@ -20,6 +20,7 @@
 package com.maehem.rotor.renderer;
 
 import com.maehem.rotor.engine.data.Realm;
+import com.maehem.rotor.engine.data.Room;
 import java.util.ArrayList;
 
 /**
@@ -30,15 +31,15 @@ public class RealmNode {
 
     private final ArrayList<RoomNode> roomNodes = new ArrayList<>();
     private final Realm realm;
-    
+
     public RealmNode(Realm realm) {
         this.realm = realm;
-        
+
         realm.getRooms().forEach((room) -> {
             roomNodes.add(new RoomNode(room));
         });
     }
-    
+
     /**
      * @return the roomNodes
      */
@@ -54,18 +55,21 @@ public class RealmNode {
     }
 
     public RoomNode getCurrentRoomNode() {
-        long currentRoomUID = realm.getParent().getState().getCurrentRoom();
-        
-        for ( var r: realm.getRooms() ) {
-            if ( r.getUid() == currentRoomUID ) {
-                for ( RoomNode rn : getRoomNodes() ) {
-                    if ( rn.getRoom() == r ) {
-                        return rn;
+        Room currentRoom = realm.getParent().getCurrentRoom();
+        if (currentRoom != null) {
+            long currentRoomUID = currentRoom.getUid();
+
+            for (var r : realm.getRooms()) {
+                if (r.getUid() == currentRoomUID) {
+                    for (RoomNode rn : getRoomNodes()) {
+                        if (rn.getRoom() == r) {
+                            return rn;
+                        }
                     }
                 }
             }
         }
-        
+
         return null;
     }
 

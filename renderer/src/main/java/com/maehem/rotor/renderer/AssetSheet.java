@@ -72,7 +72,7 @@ public class AssetSheet extends Image {
             LOGGER.log(Level.SEVERE, "Could not find asset for: {0}", key);
             return null;
         }
-        LOGGER.log(Level.CONFIG, "Get asset for : {0} {1},{2}", new Object[]{key, p.x, p.y});
+        //LOGGER.log(Level.CONFIG, "Get asset for : {0} {1},{2}", new Object[]{key, p.x, p.y});
         return createView(p.x, p.y);
     }
 }

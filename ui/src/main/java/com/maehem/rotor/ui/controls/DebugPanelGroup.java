@@ -197,10 +197,10 @@ public class DebugPanelGroup extends Group implements LogListener {
         Rectangle rectangle = new Rectangle(48, 48, Color.LIGHTGREY);
         rectangle.setArcWidth(CORNER_ARC);
         rectangle.setArcHeight(CORNER_ARC);
-        StackPane glyph = Toolbar.createGlyph("/glyphs/debug.png");
-        glyph.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.NONE, CornerRadii.EMPTY, BorderWidths.FULL, new Insets(CORNER_ARC, 0, 0, 0))));
+//        StackPane glyph = Toolbar.createGlyph("/glyphs/debug.png");
+//        glyph.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.NONE, CornerRadii.EMPTY, BorderWidths.FULL, new Insets(CORNER_ARC, 0, 0, 0))));
 
-        tab.getChildren().addAll(rectangle, glyph);
+        tab.getChildren().addAll(rectangle/*, glyph*/);
 
         return tab;
     }

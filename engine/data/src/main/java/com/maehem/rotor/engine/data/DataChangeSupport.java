@@ -19,14 +19,14 @@
 */
 package com.maehem.rotor.engine.data;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *
  * @author maehem
  */
 public class DataChangeSupport {
-    private final ArrayList<DataListenerKeyValue> listeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<DataListenerKeyValue> listeners = new CopyOnWriteArrayList<>();
 
     public void addDataChangeListener(String propertyName, DataListener dl) {
         listeners.add(new DataListenerKeyValue(propertyName, dl));

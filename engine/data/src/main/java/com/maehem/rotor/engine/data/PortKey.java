@@ -16,29 +16,36 @@
     specific language governing permissions and limitations
     under the License.
 
-*/
-package com.maehem.rotor.dungeoneer.realms.dungeon1;
-
-import com.maehem.rotor.engine.data.Realm;
-import com.maehem.rotor.engine.data.World;
+ */
+package com.maehem.rotor.engine.data;
 
 /**
+ * A token to indicate a destination @Room and destination @Point for the player
+ * to teleport to.
  *
  * @author maehem
  */
-public class Dungeon1Realm extends Realm {
+public class PortKey {
 
-    public static final long UID = 10000;
+    public final long destRoomUID;
+    public final Point destPos;
     
-    public Dungeon1Realm( World parent) {
-        super(parent);
+    public final Point layoutPos;
+    public final Point size;
+
+    /**
+     * 
+     * @param layoutPos relative placement of upper left corner 0.0 - 1.0 per room unit size.
+     * @param size
+     * @param destRoomUID
+     * @param destPos 
+     */
+    public PortKey(Point layoutPos, Point size, long destRoomUID, Point destPos ) {
+        this.layoutPos = layoutPos;
+        this.size = size;
         
-        setUid(UID);
-        setDisplayName("Realm of Light");
-        
-        getRooms().add(new Room001(this));
-        getRooms().add(new Room002(this));
+        this.destRoomUID = destRoomUID;
+        this.destPos = destPos;
     }
-    
-    
+
 }

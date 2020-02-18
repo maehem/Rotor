@@ -19,10 +19,10 @@
  */
 package com.maehem.rotor.engine.data;
 
-import com.maehem.rotor.engine.data.exception.RoomDimensionException;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,18 +31,20 @@ import java.util.logging.Logger;
  * @author maehem
  */
 public class Room {
+
     private static final Logger LOGGER = Logger.getLogger(Room.class.getName());
 
-    public Realm parent;    
+    public Realm parent;
     private RoomState state = null;  // Only set if player has visited.
+    private final ArrayList<PortKey> doors = new ArrayList<>();
 
     public static final int MAX_WIDTH = 8;
     public static final int MAX_HEIGHT = 8;
-    
+
     public int nTilesX;
-    public int nTilesY;    
+    public int nTilesY;
     private Tile[][] tiles;
-    
+
     private Object assetSheetObject;
 
     public enum Edge {
@@ -50,9 +52,9 @@ public class Room {
     }
 
     public long uid = Math.round(Math.random());
-    
+
     private String displayName = "";
-    
+
     // Width and Height in world units.  A world unit is a standard pixel area 
     // that is the screen's width and height (i.e. 320x240 ). So a width unit 
     // is 320pixels and a height unit is 240 pixels.  The Game object gets inited
@@ -70,7 +72,7 @@ public class Room {
     public Room(Realm parent, DataInputStream dis) throws IOException {
         LOGGER.config("Room Created.");
         this.parent = parent;
-        
+
         load(dis);
     }
 
@@ -79,13 +81,13 @@ public class Room {
         this.parent = parent;
         this.width = width;
         this.height = height;
-        
+
         World w = parent.getParent();
-        this.nTilesX = w.getScreenWidth()/w.getTileSize()*width;
-        this.nTilesY = w.getScreenHeight()/w.getTileSize()*height;
-        
+        this.nTilesX = w.getScreenWidth() / w.getTileSize() * width;
+        this.nTilesY = w.getScreenHeight() / w.getTileSize() * height;
+
         tiles = new Tile[nTilesX][nTilesY];
-        
+
         this.topExit = new long[width];
         this.rightExit = new long[height];
         this.bottomExit = new long[width];
@@ -94,22 +96,22 @@ public class Room {
 
     /**
      * Get unique ID of this room.
-     * 
+     *
      * @return
      */
     public long getUid() {
         return uid;
     }
-    
+
     /**
      * Set unique ID for this room.
-     * 
+     *
      * @param uid
      */
-    public final void setUid( long uid ) {
+    public final void setUid(long uid) {
         this.uid = uid;
     }
-    
+
     /**
      * @return the displayName
      */
@@ -125,14 +127,14 @@ public class Room {
         this.displayName = displayName;
     }
 
-    public final void setAssetSheet(Object sheet ) {
+    public final void setAssetSheet(Object sheet) {
         this.assetSheetObject = sheet;
     }
-    
+
     public Object getAssetSheet() {
         return assetSheetObject;
     }
-    
+
     /**
      *
      * @return width in screen-blocks of room.
@@ -140,7 +142,7 @@ public class Room {
     public int getWidth() {
         return width;
     }
-    
+
     /**
      *
      * @return height in screen-blocks of room.
@@ -148,13 +150,13 @@ public class Room {
     public int getHeight() {
         return height;
     }
-    
+
     public boolean isBlocked(double x, double y) {
-        int blockX = (int) (x*nTilesX+0.5);
-        int blockY = (int) (y*nTilesY+1);
-        
+        int blockX = (int) (x / width * nTilesX + 0.5);
+        int blockY = (int) (y / height * nTilesY + 1);
+
         Tile tile = get(blockX, blockY);
-        if ( tile == null ) {
+        if (tile == null) {
             LOGGER.log(Level.WARNING, "Player walked off the map!  Fix the map at {0},{1}", new Object[]{blockX, blockY});
             return true;
         }
@@ -163,107 +165,147 @@ public class Room {
 
     /**
      *
-     * @return room state object.  @null if not visited.
+     * @return room state object. @null if not visited.
      */
     public RoomState getState() {
         return state;
     }
-    
+
     /**
      * Set the state object if room has been visited.
-     * 
+     *
      * @param state
      */
     protected void setState(RoomState state) {
         this.state = state;
     }
 
-    public void setDoor(Edge e, int index, Room destRoom) throws RoomDimensionException {
+//    public final void setDoor(Edge e, int index, long destRoomUID) throws RoomDimensionException {
+//
+//        try {
+//            switch (e) {
+//                case TOP:
+//                    topExit[index] = destRoomUID;
+//                    break;
+//                case RIGHT:
+//                    rightExit[index] = destRoomUID;
+//                    break;
+//                case BOTTOM:
+//                    bottomExit[index] = destRoomUID;
+//                    break;
+//                case LEFT:
+//                    leftExit[index] = destRoomUID;
+//                    break;
+//            }
+//        } catch (ArrayIndexOutOfBoundsException ex) {
+//            throw new RoomDimensionException(this, e, index, destRoomUID);
+//        }
+//    }
 
-        try {
-            switch (e) {
-                case TOP:
-                    topExit[index] = destRoom.uid;
-                    break;
-                case RIGHT:
-                    rightExit[index] = destRoom.uid;
-                    break;
-                case BOTTOM:
-                    bottomExit[index] = destRoom.uid;
-                    break;
-                case LEFT:
-                    leftExit[index] = destRoom.uid;
-                    break;
-            }
-        } catch ( ArrayIndexOutOfBoundsException ex ) {
-            throw new RoomDimensionException(this, e, index, destRoom);
-        }
-     }
+//    public long getDoor(Edge edge, int index) {
+//        switch (edge) {
+//            case TOP:
+//                return topExit[index];
+//            case RIGHT:
+//                return rightExit[index];
+//            case BOTTOM:
+//                return bottomExit[index];
+//            case LEFT:
+//                return leftExit[index];
+//        }
+//        return 0;
+//    }
+//    
+    /**
+     * @return the doors
+     */
+    public ArrayList<PortKey> getDoors() {
+        return doors;
+    }
+
+
+    public final void addDoor( PortKey d ) {
+        doors.add(d);
+    }
 
     public final Tile get(int x, int y) {
         try {
             return tiles[x][y];
-        } catch ( ArrayIndexOutOfBoundsException ex ) {
+        } catch (ArrayIndexOutOfBoundsException ex) {
             return null;
         }
     }
-    
+
     public final void put(int x, int y, Tile tile) {
         // TODO need some range checking?
         tiles[x][y] = tile;
     }
-    
+
+//    public Point getEntryPos(Edge e, int index) {
+//        switch (e) {
+//            case TOP:
+//                return new Point(index + 0.5, 0.1);
+//            case RIGHT:
+//                return new Point(getWidth() - 0.1, index + 0.5);
+//            case BOTTOM:
+//                return new Point(index + 0.5, getHeight() - 0.1);
+//            case LEFT:
+//                return new Point(0.1, index + 0.5);
+//            default:
+//                return null;
+//        }
+//    }
+//
     public final void load(DataInputStream dis) throws IOException {
         // <ROOM>
-        if ( !dis.readUTF().equals("<ROOM>") ) {
+        if (!dis.readUTF().equals("<ROOM>")) {
             throw new IOException("Expected <ROOM> mnemonic in file!");
         }
         uid = dis.readLong();   // UID
         //Check that UID is not already used.
-        if ( uid == 0 ) {
+        if (uid == 0) {
             throw new IOException("UID cannot be zero!");
         }
         // UID must be unique.
-        for( Room r : parent.getRooms() ) {
-            if ( r.uid == uid ) {
+        for (Room r : parent.getRooms()) {
+            if (r.uid == uid) {
                 throw new IOException("UID " + uid + " is not unique!");
             }
         }
-        
-        
+
         displayName = dis.readUTF(); // Display Name
-        
+
         LOGGER.log(Level.FINER, "Loading Room: {0}", displayName);
-        
-        width  = dis.readInt(); // Width
+
+        width = dis.readInt(); // Width
         height = dis.readInt(); // Height
         // Top Exit
         topExit = new long[dis.readInt()];
-        for ( int i=0; i<topExit.length; i++) {
+        for (int i = 0; i < topExit.length; i++) {
             topExit[i] = dis.readLong();
         }
         // Right Exit
         // Bottom Exit
         // Left Exit
-        
+
         dis.readUTF();  // <ROOM_>
-        
+
     }
 
     public final void save(DataOutputStream dos) throws IOException {
         dos.writeUTF("<ROOM>");
         dos.writeLong(uid);  // UID
         dos.writeUTF(displayName); // Display Name
-        
+
         dos.writeInt(width);
         dos.writeInt(height);
-        
+
         // Top Exit
         dos.writeInt(topExit.length);
-        for(int i = 0; i < topExit.length; i++) {
+        for (int i = 0; i < topExit.length; i++) {
             dos.writeLong(topExit[i]);
         }
-        
+
         dos.writeUTF("<ROOM_>");
     }
 

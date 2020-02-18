@@ -17,20 +17,14 @@
     under the License.
 
 */
-package com.maehem.rotor.engine.data.exception;
+package com.maehem.rotor.renderer.debug;
 
-import com.maehem.rotor.engine.data.Room;
 
 /**
  *
  * @author maehem
  */
-public class RoomDimensionException extends Exception {
-
-    public RoomDimensionException(Room room, Room.Edge e, int index, Room destRoom) {
-        super("Destination door index was larger than rooms size: " + room.getDisplayName()+ 
-                " " + e.toString() + "[" + index + "]  dest: " + destRoom.getDisplayName());
-    }
+public interface DebugListener {
     
-    
+    public void debugPropertyChange( Debug.Prop propertyName, Object oldValue, Object newValue );
 }

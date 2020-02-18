@@ -16,48 +16,56 @@
     specific language governing permissions and limitations
     under the License.
 
-*/
+ */
 package com.maehem.rotor.ui;
 
 import com.maehem.rotor.engine.game.Game;
-import com.maehem.rotor.renderer.Graphics;
 import com.maehem.rotor.ui.controls.DialogLayer;
-import com.maehem.rotor.ui.controls.Toolbar;
 import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.hud.HUD;
+import java.io.IOException;
+import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
 
 /**
  *
  * @author maehem
  */
 public class UserInterfaceLayer extends Group implements DialogLayer {
+
     private final static Logger LOGGER = Logger.getLogger(UserInterfaceLayer.class.getName());
 
-    //public final static String PROP_SHOW_UI_PANE_BORDERS = "UIPaneBorders";
-    public enum DebugProp {SHOW_UI_PANE_BORDERS};
+    public enum DebugProp {
+        SHOW_UI_PANE_BORDERS
+    };
+
+    public static final int GLYPH_HEIGHT = 24;
     
     private Node currentDialog;
     private final DebugChangeSupport changes = new DebugChangeSupport();
-    
+
     private boolean showUIPaneBorders = false; // Draw debugging border around UI pane elements.
 
     public UserInterfaceLayer(Game game) {
         LOGGER.config("User Interface Layer Initialization.");
         HUD hud = new HUD(game, changes);
         hud.setTranslateX(30);
-        
-        getChildren().addAll( hud );
+
+        getChildren().addAll(hud);
     }
 
     @Override
     public void presentDialog(Node dialog) {
-        if ( currentDialog != null ) {
+        if (currentDialog != null) {
             getChildren().remove(currentDialog);
             currentDialog = null;
         }
@@ -69,7 +77,7 @@ public class UserInterfaceLayer extends Group implements DialogLayer {
     public void destroyDialog(Node dialog) {
         getChildren().remove(dialog);
     }
-    
+
     /**
      * @return true if debug pane borders are showing
      */
@@ -85,18 +93,30 @@ public class UserInterfaceLayer extends Group implements DialogLayer {
         this.showUIPaneBorders = show;
         changes.fireDebugChange(DebugProp.SHOW_UI_PANE_BORDERS, oldValue, show);
     }
-    
+
     public void populateDebugToggles(FlowPane togglesPane) {
         LOGGER.fine("UI Layer Populate Debug Toggles.");
         // Create and place debug toggles here.
-        ToggleButton paneBorders = new ToggleButton("", Toolbar.createGlyph("/glyphs/xy-visible.png"));
+        ToggleButton paneBorders = new ToggleButton("", createGlyph("/glyphs/xy-visible.png"));
         paneBorders.setTooltip(new Tooltip("Show Pane Borders"));
         paneBorders.setSelected(showUIPaneBorders());
         paneBorders.selectedProperty().addListener((ov, prev, current) -> {
             setShowUIPaneBorders(current);
         });
         togglesPane.getChildren().add(paneBorders);
-        
+
     }
 
+    public static StackPane createGlyph(String path) {
+        try {
+            URL glyphResource = UserInterfaceLayer.class.getResource(path);
+            ImageView glyphImage = new ImageView(new Image(glyphResource.openStream()));
+            glyphImage.setPreserveRatio(true);
+            glyphImage.setFitHeight(GLYPH_HEIGHT);
+            return new StackPane(glyphImage);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+            return new StackPane();
+        }
+    }
 }

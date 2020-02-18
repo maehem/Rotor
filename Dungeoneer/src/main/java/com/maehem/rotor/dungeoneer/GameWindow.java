@@ -29,9 +29,8 @@ import com.maehem.rotor.engine.logging.LoggingFormatter;
 import com.maehem.rotor.engine.logging.LoggingHandler;
 import com.maehem.rotor.engine.logging.LoggingMessageList;
 import com.maehem.rotor.renderer.GameScene;
-import com.maehem.rotor.renderer.PlayerNode;
-import com.maehem.rotor.renderer.RoomNode;
-import com.maehem.rotor.renderer.WorldNode;
+import com.maehem.rotor.renderer.WalkSheet;
+import com.maehem.rotor.renderer.debug.Debug;
 import com.maehem.rotor.ui.UserInterfaceLayer;
 import com.maehem.rotor.ui.DebugWindow;
 import com.maehem.rotor.ui.MainMenu;
@@ -40,7 +39,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.stage.Stage;
 
 /**
@@ -61,7 +59,7 @@ public class GameWindow extends Application implements GameListener {
     // Developers:   Use this format for exceptions printing in the log.
     // LOGGER.log( Level.SEVERE, ex.toString(), ex );
     GameScene gameScene;
-    
+
     private final Game game = new Game(GAME_NAME);
     private DebugWindow debugWindow;
 
@@ -70,8 +68,6 @@ public class GameWindow extends Application implements GameListener {
 
     private final ResourceBundle messages;
     private MainMenu mainMenu;
-    private final Group roomLayer = new Group();
-    private WorldNode worldNode;
 
     public GameWindow() {
         super();
@@ -104,8 +100,8 @@ public class GameWindow extends Application implements GameListener {
         stage.setTitle(messages.getString("gameTitle") + " " + VERSION);
         stage.setWidth(SCREEN_WIDTH);
         stage.setHeight(SCREEN_HEIGHT);
-        
-        gameScene = new GameScene();
+
+        gameScene = new GameScene(game);
         stage.setScene(gameScene);
 
         // Get the Debug window displayed as soon as possible.
@@ -114,7 +110,15 @@ public class GameWindow extends Application implements GameListener {
             debugWindow.close();
         });
 
-        initLayers(gameScene);        
+        UserInterfaceLayer uiLayer = new UserInterfaceLayer(game);  // HUD
+        // Add debug toggles for the UI overlay layer.
+        uiLayer.populateDebugToggles(debugWindow.getTogglesPane());
+        
+        Debug.getInstance().populateDebugToggles(debugWindow.getTogglesPane());
+        
+        mainMenu = new MainMenu(game, SCREEN_WIDTH, SCREEN_HEIGHT);
+        gameScene.initLayers(mainMenu, uiLayer);
+        
         game.addListener(this);  // Listen to the game loop.
 
         stage.show();
@@ -123,17 +127,6 @@ public class GameWindow extends Application implements GameListener {
 
         LOGGER.log(Level.FINEST, "Window Size: {0}x{1}", new Object[]{stage.getWidth(), stage.getHeight()});
         mainMenu.show();
-    }
-
-    private void initLayers(GameScene root) {
-        LOGGER.config("Layers Initialization.");
-        UserInterfaceLayer uiLayer = new UserInterfaceLayer(game);  // HUD
-        // Add debug toggles for the UI overlay layer.
-        uiLayer.populateDebugToggles(debugWindow.getTogglesPane());
-
-        mainMenu = new MainMenu(game, SCREEN_WIDTH, SCREEN_HEIGHT );
-        
-        root.addAll(roomLayer, uiLayer, mainMenu);
     }
 
     @Override
@@ -145,19 +138,7 @@ public class GameWindow extends Application implements GameListener {
                 break;
             case DATA_LOADED:
                 gameScene.initGameLoop(e.getSource());
-                try {
-                    PlayerNode playerNode = new PlayerNode(e.getSource().getWorld().getPlayer());
-                    worldNode = new WorldNode(e.getSource().getWorld());
-                    RoomNode roomNode = worldNode.getCurrentRealmNode().getCurrentRoomNode();
-                    roomNode.enter(e.getSource(), playerNode);
-                    //RoomNode roomNode = worldNode.getRealmNodes().get(0).getRoomNodes().get(0);
-                    //Room001AssetSheet sheet = new OverworldAssetSheet();
-                    //roomNode.enter(e.getSource(), playerNode);
-                    roomLayer.getChildren().add(roomNode);
-                    
-                } catch (IOException ex) {
-                    Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                game.getWorld().setCurrentRoom(game.getWorld().getStartRoom());
                 break;
         }
     }
@@ -175,13 +156,17 @@ public class GameWindow extends Application implements GameListener {
         w.setStartRealm(Dungeon1Realm.UID);
         w.setStartRoom(Room001.UID);
 
+        try {
+            w.getPlayer().setWalkSheet(new WalkSheet(GameWindow.class.getResourceAsStream("/characters/person-1.png"), 32));
+        } catch (IOException ex) {
+            Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
         // Add the realms
         w.getRealms().add(new Dungeon1Realm(w));
 
         w.setLoaded(true);
-        
+
         // Build Nodes
-        
     }
 
     public static void main(String[] args) {

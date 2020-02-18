@@ -19,6 +19,10 @@
  */
 package com.maehem.rotor.renderer;
 
+import com.maehem.rotor.engine.data.DataListener;
+import com.maehem.rotor.engine.data.PortKey;
+import com.maehem.rotor.engine.data.PlayerState;
+import com.maehem.rotor.engine.data.Point;
 import com.maehem.rotor.engine.data.Room;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.events.GameEvent;
@@ -32,17 +36,18 @@ import javafx.scene.Group;
  *
  * @author maehem
  */
-public class RoomNode extends Group implements GameListener {
+public class RoomNode extends Group implements GameListener, DataListener {
 
     private static final Logger LOGGER = Logger.getLogger(RoomNode.class.getName());
 
     private final Room room;
     private PlayerNode playerNode;
-
-    private final ArrayList<TileNode> tileNodes = new ArrayList<>();
+    private final ArrayList<DoorNode> doorNodes = new ArrayList<>();
+    
 
     public RoomNode(Room room) {
         this.room = room;
+        
     }
 
     public void enter(Game game, PlayerNode playerNode) {
@@ -51,15 +56,23 @@ public class RoomNode extends Group implements GameListener {
 
         constructRoom(game);
 
-        // TODO:  Insert playerNode when this becomes the active room.
         getChildren().add(playerNode);
+        if (playerNode.player.hasPortKey()) {
+            playerNode.player.gotoPortKey();
+            playerNode.updateLayout(playerNode.player.getState().getPosition());
+        }
 
-        // TODO: Listen to the game when room becomes active node.
+        //blackness.toFront();
+        
+        playerNode.player.getState().addDataChangeListener(PlayerState.PROP_POSITION, this);
+
         game.addListener(this);
     }
 
     public void leave() {
+
         getChildren().removeAll();
+        doorNodes.clear();
 
         this.playerNode = null;
     }
@@ -78,6 +91,18 @@ public class RoomNode extends Group implements GameListener {
                 }
             }
         }
+
+        // Doors
+        for (PortKey d : room.getDoors()) {
+            //LOGGER.config("Add port key rectangle for: " + d.destRoomUID);
+            DoorNode dn = new DoorNode(d, room.parent.getParent());
+            getChildren().add(dn);
+            doorNodes.add(dn);
+        }
+
+        //getChildren().add(blackness);
+        
+        LOGGER.log(Level.FINE, "Room Size is: {0}x{1}", new Object[]{getBoundsInLocal().getWidth(), getBoundsInLocal().getHeight()});
     }
 
     @Override
@@ -85,7 +110,6 @@ public class RoomNode extends Group implements GameListener {
         switch (e.type) {
             case TICK:
                 //LOGGER.finest("tick");
-                //playerNode.getWalkSheet().step();
                 break;
         }
     }
@@ -97,4 +121,39 @@ public class RoomNode extends Group implements GameListener {
         return room;
     }
 
+    @Override
+    public void dataChange(String key, Object oldValue, Object newValue) {
+        switch (key) {
+            case PlayerState.PROP_POSITION:
+                Point oPos = (Point) oldValue;
+                Point pos = (Point) newValue;
+
+                // Camera panning
+                // If room size > 1 && player.pos > 0.5 of screen width
+                // then adjust LayoutX to bring player to 0.5
+                if (room.getWidth() > 1) {  // Only need to pan if the room is wider than screen.
+                    if (pos.x > 0.5 && pos.x < room.getWidth() - 0.5) {
+                        setTranslateX(-(pos.x - 0.5) * getBoundsInLocal().getWidth() / room.getWidth());
+                    }
+                }
+                if (room.getHeight() > 1) {  // Only need to pan if the room is wider than screen.
+                    if (pos.y > 0.5 && pos.y < room.getHeight() - 0.5) {
+                        setTranslateY(-(pos.y - 0.5) * getBoundsInLocal().getHeight() / room.getHeight());
+                    }
+                }
+
+                for (DoorNode dn : doorNodes) {
+                    if (playerNode.getBoundsInParent().intersects(dn.getBoundsInParent())) {
+                        LOGGER.log(Level.CONFIG, "Player contacted door to room: {0}", dn.door.destRoomUID);
+                        playerNode.player.getState().removeDataChangeListener(PlayerState.PROP_POSITION, this);
+                        playerNode.player.setPortKey(dn.door); // Triggers room transition fade.
+                        return;
+                    }
+                }
+                
+
+                break;
+        }
+    }
+    
 }

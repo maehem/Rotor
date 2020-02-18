@@ -20,6 +20,7 @@
 package com.maehem.rotor.renderer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Logger;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -52,8 +53,8 @@ public class WalkSheet extends ImageView {
     private DIR currentDir = DIR.TOWARD;
     private int currentWalk = 0;
 
-    public WalkSheet(String filePath, double size) throws IOException {
-        super(new Image(WalkSheet.class.getResource(filePath).openStream()));
+    public WalkSheet(InputStream in, double size) throws IOException {
+        super(new Image(in));
 
         this.size = getImage().getHeight() / 4.0;
         

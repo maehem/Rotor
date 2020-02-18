@@ -28,7 +28,8 @@ import java.util.logging.Logger;
 public class PlayerState {
 
     private static final Logger LOGGER = Logger.getLogger(Player.class.getName());
-    
+
+    // TODO move up into Player.
     private final DataChangeSupport changes = new DataChangeSupport();
 
     private static final int MANA_MAX = 99;
@@ -36,7 +37,7 @@ public class PlayerState {
     private static final int BOMBS_MAX = 99;
     private static final int ARROWS_MAX = 99;
     private static final int HEALTH_MAX = 99;
-    
+
     public static final String PROP_MANA = "mana";
     public static final String PROP_MONEY = "money";
     public static final String PROP_BOMBS = "bombs";
@@ -44,6 +45,8 @@ public class PlayerState {
     public static final String PROP_HEALTH = "health";
     public static final String PROP_POSITION = "position";
     
+    public static final String STATE_LEAVE = "stateLeave";
+
     private String name;
     private int mana = 99;
     private int money = 999;
@@ -51,13 +54,13 @@ public class PlayerState {
     private int arrows = 99;
     private int health = 99;
     private int difficulty = 1;
-    
-    private final Point position = new Point(0.25,0.5);
-        
+
+    private final Point position = new Point(0.25, 0.5);
+
     public PlayerState() {
         LOGGER.config("Player State created.");
     }
-    
+
     /**
      * @return the mana
      */
@@ -71,7 +74,7 @@ public class PlayerState {
     public void setMana(int val) {
         int oldMoney = this.mana;
         this.mana = checkNumber(val, 0, MANA_MAX);
-        
+
         changes.firePropertyChange(PROP_MANA, oldMoney, val);
     }
 
@@ -81,15 +84,15 @@ public class PlayerState {
     public int getMoney() {
         return money;
     }
-    
+
     /**
-     * 
+     *
      * @param val
      */
     public void setMoney(int val) {
         int oldMoney = this.money;
         this.money = checkNumber(val, 0, MONEY_MAX);
-        
+
         changes.firePropertyChange(PROP_MONEY, oldMoney, money);
     }
 
@@ -102,13 +105,13 @@ public class PlayerState {
 
     /**
      * Set bombs.
-     * 
-     * @param val 
+     *
+     * @param val
      */
     public void setBombs(int val) {
         int oldVal = this.bombs;
         this.bombs = checkNumber(val, 0, BOMBS_MAX);
-        
+
         changes.firePropertyChange(PROP_BOMBS, oldVal, val);
     }
 
@@ -121,8 +124,8 @@ public class PlayerState {
 
     /**
      * Set arrows.
-     * 
-     * @param val 
+     *
+     * @param val
      */
     public void setArrows(int val) {
         int oldVal = this.arrows;
@@ -139,8 +142,8 @@ public class PlayerState {
 
     /**
      * Set health.
-     * 
-     * @param val 
+     *
+     * @param val
      */
     public void setHealth(int val) {
         int oldVal = this.health;
@@ -154,10 +157,10 @@ public class PlayerState {
     public String getName() {
         return name;
     }
-    
+
     /**
-     * 
-     * @param text 
+     *
+     * @param text
      */
     public void setName(String text) {
         this.name = text;
@@ -171,8 +174,8 @@ public class PlayerState {
     }
 
     /**
-     * 
-     * @param difficulty 
+     *
+     * @param difficulty
      */
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
@@ -186,37 +189,22 @@ public class PlayerState {
         changes.removeDataChangeListener(key, l);
     }
 
-    private int checkNumber( int val, int min, int max ) {
-        if ( val < 0 ) {
+    private int checkNumber(int val, int min, int max) {
+        if (val < 0) {
             return 0;
-        } else if ( val > max ) {
+        } else if (val > max) {
             return max;
         } else {
             return val;
-        }        
+        }
     }
 
     public void move(double dx, double dy) {
-//        if (dx == 0 && dy == 0) {
-//            return;
-//        }
-
-        
-//        final double cx = hero.getBoundsInLocal().getWidth() / 2;
-//        final double cy = hero.getBoundsInLocal().getHeight() / 2;
-//
-//        double x = cx + hero.getLayoutX() + dx;
-//        double y = cy + hero.getLayoutY() + dy;
-
-        //moveHeroTo(x, y);
         Point oldPos = new Point(getPosition().x, getPosition().y);
-        
         position.x += dx;
         position.y += dy;
-        
+
         changes.firePropertyChange(PROP_POSITION, oldPos, getPosition());
-        
-    
     }
 
     /**
@@ -226,4 +214,13 @@ public class PlayerState {
         return position;
     }
 
+    public void warpPosition(double x, double y) {
+        Point oldPos = new Point(position.x, position.y);
+        position.x = x;
+        position.y = y;
+    }
+    
+    public void changeRoom( long newRoomUID ) {
+        changes.firePropertyChange(STATE_LEAVE, null, newRoomUID);
+    }
 }
