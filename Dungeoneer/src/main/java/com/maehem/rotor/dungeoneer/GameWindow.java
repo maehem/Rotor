@@ -54,7 +54,7 @@ public class GameWindow extends Application implements GameListener {
     public static final String GAME_NAME = "Dungeoneer";
     public static final String VERSION = "0.0.0";
     public static final int SCREEN_WIDTH = 640;
-    public static final int SCREEN_HEIGHT = 360;
+    public static final int SCREEN_HEIGHT = 352;
 
     // Developers:   Use this format for exceptions printing in the log.
     // LOGGER.log( Level.SEVERE, ex.toString(), ex );
@@ -100,9 +100,13 @@ public class GameWindow extends Application implements GameListener {
         stage.setTitle(messages.getString("gameTitle") + " " + VERSION);
         stage.setWidth(SCREEN_WIDTH);
         stage.setHeight(SCREEN_HEIGHT);
+        
 
-        gameScene = new GameScene(game);
+        gameScene = new GameScene(game, SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setScene(gameScene);
+//        int aspectRatio = SCREEN_WIDTH/SCREEN_HEIGHT;
+//        stage.minWidthProperty().bind(gameScene.heightProperty().multiply(2));
+//        stage.minHeightProperty().bind(gameScene.widthProperty().divide(2));
 
         // Get the Debug window displayed as soon as possible.
         debugWindow = new DebugWindow(messageLog, loggingHandler);
@@ -113,12 +117,12 @@ public class GameWindow extends Application implements GameListener {
         UserInterfaceLayer uiLayer = new UserInterfaceLayer(game);  // HUD
         // Add debug toggles for the UI overlay layer.
         uiLayer.populateDebugToggles(debugWindow.getTogglesPane());
-        
+
         Debug.getInstance().populateDebugToggles(debugWindow.getTogglesPane());
-        
+
         mainMenu = new MainMenu(game, SCREEN_WIDTH, SCREEN_HEIGHT);
         gameScene.initLayers(mainMenu, uiLayer);
-        
+
         game.addListener(this);  // Listen to the game loop.
 
         stage.show();
@@ -155,6 +159,8 @@ public class GameWindow extends Application implements GameListener {
         w.setTileSize(32); // 1x scale rendered tile size
         w.setStartRealm(Dungeon1Realm.UID);
         w.setStartRoom(Room001.UID);
+        w.setScreenWidth(640);
+        w.setScreenHeight(374);
 
         try {
             w.getPlayer().setWalkSheet(new WalkSheet(GameWindow.class.getResourceAsStream("/characters/person-1.png"), 32));

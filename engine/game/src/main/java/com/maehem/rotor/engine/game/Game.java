@@ -55,11 +55,10 @@ public class Game {
         LOGGER.config("Game Initialization...");
         FileSystem.init(gameName);
         world = World.getInstance();
-        //this.player = new Player();
         
         initialized = true;
         doNotify(GameEvent.TYPE.GAME_INIT);
-     }
+    }
 
     /**
      * Called from GameWindow after graphics have been initiated.
@@ -100,9 +99,9 @@ public class Game {
         }
         
         
-        if (subTicks % 8 == 0) {
+        //if (subTicks % 8 == 0) {
             doTick();
-        }
+        //}
 
 //        switch (data.mapInfo.speed) {
 //            case SLOW:

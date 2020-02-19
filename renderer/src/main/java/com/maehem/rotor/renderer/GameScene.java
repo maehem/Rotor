@@ -39,6 +39,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**
@@ -51,21 +53,36 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
 
     private final Group roomLayer = new Group();
     private final Group scrimLayer = new Group();
+    private final AtmosphereLayer atmosphereLayer;
 
-    //private Node mainMenu;
     private RoomNode currentRoomNode;
     private WorldNode worldNode;
-
     private SceneFader scrim;
 
     // TODO Move this into Player
     public boolean running, goNorth, goSouth, goEast, goWest;
     private final Game game;
 
-    public GameScene(Game game) {
+    public GameScene(Game game, double width, double height) {
         super(new Group());
         this.game = game;
         game.addListener(this);
+        
+        setFill(Color.BLACK);                
+        roomLayer.setClip(new Rectangle(width, height));
+        atmosphereLayer = new AtmosphereLayer(width, height);
+        game.addListener(atmosphereLayer);
+        
+        // Adjust root node position and scale whenever window size changes.
+        widthProperty().addListener((o) -> {
+            fitWindowContents(width, height);
+        });
+        heightProperty().addListener((o) -> {
+            fitWindowContents(width, height);
+        });
+        windowProperty().addListener((o) -> {
+            fitWindowContents(width, height);
+        });
 
         initKeyEvents();
     }
@@ -78,6 +95,23 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
         return ((Group) getRoot()).getChildren().addAll(n);
     }
 
+    private void fitWindowContents(double width, double height) {
+            //LOGGER.log(Level.CONFIG, "Window Width changed to: {0}", ((ReadOnlyDoubleProperty)o).getValue());
+            double newHeight = heightProperty().doubleValue();
+            double newWidth  = widthProperty().doubleValue();
+            
+            double scale = newHeight/height;
+            if ( scale * width > newWidth ) {
+                scale = newWidth/width;
+            }
+            
+            getRoot().setScaleX(scale);
+            getRoot().setScaleY(scale);
+            getRoot().setLayoutX((widthProperty().doubleValue()-width)/2.0);
+            getRoot().setLayoutY((heightProperty().doubleValue()-height)/2.0);
+    }
+    
+    
     /**
      * UI of the game can request cursor changes here.
      *
@@ -92,7 +126,7 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
 
     public void initLayers(Node menuLayer, Node hudLayer) {
         LOGGER.config("Layers Initialization.");
-        addAll(roomLayer, hudLayer, scrimLayer, menuLayer);
+        addAll(roomLayer, atmosphereLayer, hudLayer, scrimLayer, menuLayer);
     }
 
     private void initKeyEvents() {
@@ -162,14 +196,10 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
             }
 
             game.getWorld().getPlayer().moveBy(dx, dy);
-        } 
-        else {
+        } else {
             if (scrim.isFading()) {
                 scrim.update();
             }
-//            else {
-//                game.setRunning(true);
-//            }
         }
     }
 
