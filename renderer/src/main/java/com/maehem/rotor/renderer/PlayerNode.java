@@ -24,6 +24,7 @@ import com.maehem.rotor.engine.data.Player;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.data.Point;
 import java.util.logging.Logger;
+import javafx.geometry.Bounds;
 
 /**
  *
@@ -34,13 +35,19 @@ public class PlayerNode extends CharacterNode implements DataListener {
     private final static Logger LOGGER = Logger.getLogger(PlayerNode.class.getName());
 
     protected final Player player;
+    private final FlashLightLayer flashlight;
 
     public PlayerNode(Player player) {
         super((WalkSheet) player.getWalkSheet(), player.getParent().getTileSize());
 
         this.player = player;
+        flashlight = new FlashLightLayer(this);
+        
+        getChildren().add(flashlight);
+        
         updateLayout(player.getState().getPosition());
 
+        
         player.getState().addDataChangeListener(PlayerState.PROP_POSITION, this);
 
         LOGGER.finer("Create Player Node.");
@@ -60,32 +67,39 @@ public class PlayerNode extends CharacterNode implements DataListener {
 
                 if (oPos.x < pos.x) {
                     getWalkSheet().setDir(WalkSheet.DIR.RIGHT);
+                    getFlashlight().setAngle(0.0);
                 } else if (oPos.x > pos.x) {
                     getWalkSheet().setDir(WalkSheet.DIR.LEFT);
+                    getFlashlight().setAngle(180.0);
                 }
                 if (oPos.y < pos.y) {
                     getWalkSheet().setDir(WalkSheet.DIR.TOWARD);
+                    getFlashlight().setAngle(90.0);
                 } else if (oPos.y > pos.y) {
                     getWalkSheet().setDir(WalkSheet.DIR.AWAY);
+                    getFlashlight().setAngle(270.0);
                 }
-
-                getWalkSheet().step();
-                
+                getWalkSheet().step();                
                 updateLayout((Point) newValue);
                 break;
-//            case World.PROP_ROOM:
-//                if (player.hasPortKey()) {
-//                    player.gotoPortKey();
-//                }
-//                break;
-
         }
     }
 
+    public Bounds getCollisionBox() {
+        return getWalkSheet().getBoundsInParent();
+    }
+    
     public final void updateLayout(Point pos) {
         setLayoutX(pos.x * player.getParent().getScreenWidth());
         setLayoutY(pos.y * player.getParent().getScreenHeight());
 
+    }
+
+    /**
+     * @return the flashlight
+     */
+    public FlashLightLayer getFlashlight() {
+        return flashlight;
     }
 
 }

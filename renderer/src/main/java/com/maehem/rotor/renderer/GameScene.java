@@ -70,7 +70,7 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
         
         setFill(Color.BLACK);                
         roomLayer.setClip(new Rectangle(width, height));
-        atmosphereLayer = new AtmosphereLayer(width, height);
+        atmosphereLayer = new AtmosphereLayer(width, height); // Move to room layer
         game.addListener(atmosphereLayer);
         
         // Adjust root node position and scale whenever window size changes.
@@ -254,9 +254,6 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
                     World.getInstance().setCurrentRoom((long) newValue);
 
                 });
-
-            // Run Transistion
-            // Un-pause game.
         }
     }
 
@@ -266,21 +263,13 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
             case DATA_LOADED:
                 this.worldNode = new WorldNode(game.getWorld());
                 worldNode.getPlayerNode().player.getState().addDataChangeListener(PlayerState.STATE_LEAVE, this);
+                worldNode.getPlayerNode().getFlashlight().setMask(getWidth(), getHeight());
                 scrim = new SceneFader(getWidth(), getHeight());
                 scrimLayer.getChildren().add(scrim);
 
                 LOGGER.log(Level.CONFIG, "Add SceneFader of size: {0}x{1}", new Object[]{getWidth(), getHeight()});
 
                 game.getWorld().addDataChangeListener(World.PROP_ROOM, this);
-
-//                PlayerNode playerNode = new PlayerNode(e.getSource().getWorld().getPlayer());
-//                
-//                // TODO Move this off somewhere so we can call it when switching rooms.
-//                //worldNode = new WorldNode(e.getSource().getWorld());
-//                
-//                currentRoomNode = worldNode.getCurrentRealmNode().getCurrentRoomNode();
-//                currentRoomNode.enter(e.getSource(), playerNode);
-//                roomLayer.getChildren().add(currentRoomNode);
                 break;
         }
     }

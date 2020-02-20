@@ -39,7 +39,6 @@ public class Game {
 
     private final String gameName;
     private World world = null;
-    //private Player player = null;
     private boolean initialized = false;
     private boolean running = false;  // Running==true or Paused==false
 
@@ -51,6 +50,10 @@ public class Game {
         this.gameName = gameName;
     }
 
+    /**
+     * Called when user creates new game or loads game from save file.
+     * 
+     */
     private void init() {
         LOGGER.config("Game Initialization...");
         FileSystem.init(gameName);

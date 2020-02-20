@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Group;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -47,6 +48,7 @@ public class RoomNode extends Group implements GameListener, DataListener {
 
     public RoomNode(Room room) {
         this.room = room;
+        setViewOrder(1000.0); // Ensures that it renders first.
         
     }
 
@@ -65,6 +67,12 @@ public class RoomNode extends Group implements GameListener, DataListener {
         //blackness.toFront();
         
         playerNode.player.getState().addDataChangeListener(PlayerState.PROP_POSITION, this);
+        
+        // Clip to the room's actual size so that camera panning works correctly.
+        setClip(new Rectangle(
+                room.getWidth()*room.parent.getParent().getScreenWidth(), 
+                room.getHeight()*room.parent.getParent().getScreenHeight()
+        ));
 
         game.addListener(this);
     }
@@ -143,7 +151,7 @@ public class RoomNode extends Group implements GameListener, DataListener {
                 }
 
                 for (DoorNode dn : doorNodes) {
-                    if (playerNode.getBoundsInParent().intersects(dn.getBoundsInParent())) {
+                    if ( dn.intersects(dn.sceneToLocal(playerNode.localToScene(playerNode.getCollisionBox())))) {  //  <=== Thank you StackOverflow!
                         LOGGER.log(Level.CONFIG, "Player contacted door to room: {0}", dn.door.destRoomUID);
                         playerNode.player.getState().removeDataChangeListener(PlayerState.PROP_POSITION, this);
                         playerNode.player.setPortKey(dn.door); // Triggers room transition fade.
