@@ -36,8 +36,8 @@ public class FlashLightLayer extends Group/* implements DataListener */{
     private final Polygon lightCone = new Polygon();
     private final Rectangle darkness;
     
-    private final double W = 200;
-    private final double H = 100;
+    private final double W = 300;
+    private final double H = 150;
     private final double BLUR = H/2.0;
 
     public FlashLightLayer(PlayerNode node) {

@@ -147,6 +147,8 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
                 case SHIFT:
                     running = true;
                     break;
+                case F:
+                    worldNode.getPlayerNode().attackWithSword();
             }
         });
         setOnKeyReleased((KeyEvent event) -> {
@@ -263,6 +265,7 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
             case DATA_LOADED:
                 this.worldNode = new WorldNode(game.getWorld());
                 worldNode.getPlayerNode().player.getState().addDataChangeListener(PlayerState.STATE_LEAVE, this);
+                e.getSource().addListener(worldNode.getPlayerNode());
                 worldNode.getPlayerNode().getFlashlight().setMask(getWidth(), getHeight());
                 scrim = new SceneFader(getWidth(), getHeight());
                 scrimLayer.getChildren().add(scrim);

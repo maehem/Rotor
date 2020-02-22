@@ -28,23 +28,9 @@ import java.util.ArrayList;
  */
 public class WorldNode {
 
-    /**
-     * @return the playerNode
-     */
-    public PlayerNode getPlayerNode() {
-        return playerNode;
-    }
-
-    /**
-     * @param playerNode the playerNode to set
-     */
-    public void setPlayerNode(PlayerNode playerNode) {
-        this.playerNode = playerNode;
-    }
-
     private final ArrayList<RealmNode> realmNodes = new ArrayList<>();
     private final World world;
-    private PlayerNode playerNode;
+    private final PlayerNode playerNode;
     
     public WorldNode( World world ) {
         this.world = world;
@@ -77,5 +63,19 @@ public class WorldNode {
         
         return null;
     }
+
+    /**
+     * @return the playerNode
+     */
+    public PlayerNode getPlayerNode() {
+        return playerNode;
+    }
+
+//    /**
+//     * @param playerNode the playerNode to set
+//     */
+//    public void setPlayerNode(PlayerNode playerNode) {
+//        this.playerNode = playerNode;
+//    }
 
 }

@@ -23,6 +23,8 @@ import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.data.Player;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.data.Point;
+import com.maehem.rotor.engine.game.events.GameEvent;
+import com.maehem.rotor.engine.game.events.GameListener;
 import java.util.logging.Logger;
 import javafx.geometry.Bounds;
 
@@ -30,12 +32,13 @@ import javafx.geometry.Bounds;
  *
  * @author maehem
  */
-public class PlayerNode extends CharacterNode implements DataListener {
+public class PlayerNode extends CharacterNode implements DataListener, GameListener  {
 
     private final static Logger LOGGER = Logger.getLogger(PlayerNode.class.getName());
 
     protected final Player player;
     private final FlashLightLayer flashlight;
+    private final ImageSequence swordSwish;
 
     public PlayerNode(Player player) {
         super((WalkSheet) player.getWalkSheet(), player.getParent().getTileSize());
@@ -44,6 +47,10 @@ public class PlayerNode extends CharacterNode implements DataListener {
         flashlight = new FlashLightLayer(this);
         
         getChildren().add(flashlight);
+        
+        swordSwish = new ImageSequence(PlayerNode.class.getResourceAsStream("/renderer/glyphs/sword-swish.png"), 32, ImageSequence.Type.ONE_SHOT);
+        swordSwish.setHideWhenDone(true);
+        getChildren().add(swordSwish);
         
         updateLayout(player.getState().getPosition());
 
@@ -100,6 +107,25 @@ public class PlayerNode extends CharacterNode implements DataListener {
      */
     public FlashLightLayer getFlashlight() {
         return flashlight;
+    }
+
+    @Override
+    public void gameEvent(GameEvent e) {
+        switch ( e.type ) {
+            case TICK:
+                if ( player.isSwordAttack()) {
+                    swordSwish.step();
+                    if ( swordSwish.isDone() ) {
+                        player.swordAttack(false); // Consume request
+                    }
+                }
+        }
+    }
+
+    void attackWithSword() {
+        if ( player.isSwordAttack() ) return; // Ignore new attacks while swinging.
+        player.swordAttack(true);
+        swordSwish.reset();
     }
 
 }

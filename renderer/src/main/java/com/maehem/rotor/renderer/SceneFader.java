@@ -63,7 +63,7 @@ public class SceneFader extends Group {
         initOpening(width / 2, height / 2);
     }
 
-    public void initOpening( double x, double y) {
+    public final void initOpening( double x, double y) {
         irisSize = IRIS_MAX;
         iris.setRadius(irisSize);
         iris.setCenterX(x);

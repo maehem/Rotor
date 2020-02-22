@@ -56,7 +56,7 @@ public class WalkSheet extends ImageView {
     public WalkSheet(InputStream in, double size) throws IOException {
         super(new Image(in));
 
-        this.size = getImage().getHeight() / 4.0;
+        this.size = getImage().getHeight() / 4.0;  // TODO: we don't use local size!
         
         updateView();
     }

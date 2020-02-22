@@ -39,6 +39,7 @@ public class Player {
     private PortKey portKey;
     
     private Object walkSheet;
+    private boolean swordAttack = false;
     
     public Player( World parent ) {
         this.parent = parent;
@@ -112,5 +113,13 @@ public class Player {
         warpPosition(portKey.destPos.x, portKey.destPos.y);
         LOGGER.log(Level.CONFIG, "Set player destination position to: {0},{1}", new Object[]{portKey.destPos.x, portKey.destPos.y});
         portKey = null; // Consume the Port Key
+    }
+    
+    public void swordAttack(boolean attack) {
+        this.swordAttack = attack;
+    }
+
+    public boolean isSwordAttack() {
+        return swordAttack;
     }
 }

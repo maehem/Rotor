@@ -97,7 +97,7 @@ public class UserInterfaceLayer extends Group implements DialogLayer {
     public void populateDebugToggles(FlowPane togglesPane) {
         LOGGER.fine("UI Layer Populate Debug Toggles.");
         // Create and place debug toggles here.
-        ToggleButton paneBorders = new ToggleButton("", createGlyph("/glyphs/xy-visible.png"));
+        ToggleButton paneBorders = new ToggleButton("", createGlyph("/glyphs/debug/xy-visible.png"));
         paneBorders.setTooltip(new Tooltip("Show Pane Borders"));
         paneBorders.setSelected(showUIPaneBorders());
         paneBorders.selectedProperty().addListener((ov, prev, current) -> {

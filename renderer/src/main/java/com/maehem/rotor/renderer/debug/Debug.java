@@ -76,7 +76,7 @@ public class Debug {
         LOGGER.fine("Game Scene - Populate Debug Toggles.");
         
         // Create and place debug toggles here.
-        ToggleButton portKeyBorders = new ToggleButton("", createGlyph("/renderer/glyphs/settings.png"));
+        ToggleButton portKeyBorders = new ToggleButton("", createGlyph("/renderer/glyphs/debug/settings.png"));
         portKeyBorders.setTooltip(new Tooltip("Show PortKey Borders"));
         portKeyBorders.setSelected(showPortKeys());
         portKeyBorders.selectedProperty().addListener((ov, prev, current) -> {
