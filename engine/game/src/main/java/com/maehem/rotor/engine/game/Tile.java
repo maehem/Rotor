@@ -17,7 +17,7 @@
     under the License.
 
  */
-package com.maehem.rotor.engine.data;
+package com.maehem.rotor.engine.game;
 
 /**
  *

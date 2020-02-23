@@ -19,13 +19,13 @@
 */
 package com.maehem.rotor.dungeoneer.realms.dungeon1;
 
-import com.maehem.rotor.engine.data.PortKey;
 import com.maehem.rotor.engine.data.Point;
-import com.maehem.rotor.engine.data.Realm;
-import com.maehem.rotor.engine.data.Room;
-import com.maehem.rotor.engine.data.Tile;
-import com.maehem.rotor.engine.data.Tile.FLAG;
-import static com.maehem.rotor.engine.data.Tile.FLAG.BLK;
+import com.maehem.rotor.engine.game.PortKey;
+import com.maehem.rotor.engine.game.Realm;
+import com.maehem.rotor.engine.game.Room;
+import com.maehem.rotor.engine.game.Tile;
+import com.maehem.rotor.engine.game.Tile.FLAG;
+import static com.maehem.rotor.engine.game.Tile.FLAG.BLK;
 
 /**
  *

@@ -17,8 +17,11 @@
     under the License.
 
  */
-package com.maehem.rotor.engine.data;
+package com.maehem.rotor.engine.game;
 
+import com.maehem.rotor.engine.data.DataChangeSupport;
+import com.maehem.rotor.engine.data.DataListener;
+import com.maehem.rotor.engine.data.WorldState;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -35,6 +38,7 @@ public class World {
     
     public static final String PROP_ROOM = "room";
     public static final String PROP_REALM = "realm";
+    public static final String STATE_LEAVE = "stateLeave";
 
     private static World instance;
 
@@ -157,7 +161,7 @@ public class World {
     }
 
     public void initState() {
-        state = new WorldState(this);
+        state = new WorldState();
         // Set current Realm
         //state.setCurrentRealm(getStartRealm());
         // Set Current Room
@@ -255,7 +259,7 @@ public class World {
         long oldRealm = getState().getCurrentRealm();
         getState().setCurrentRealm(realm);
         
-        changes.firePropertyChange(PROP_REALM, oldRealm, realm);
+        changes.firePropertyChange(PROP_REALM, this, oldRealm, realm);
     }
     
     public Room getCurrentRoom() {
@@ -266,7 +270,7 @@ public class World {
         long oldRoom = getState().getCurrentRoom();        
         getState().setCurrentRoom(room);
         
-        changes.firePropertyChange(PROP_ROOM, oldRoom, room);
+        changes.firePropertyChange(PROP_ROOM, this, oldRoom, room);
     }
     
     public final void addDataChangeListener(String key, DataListener l) {
@@ -277,4 +281,7 @@ public class World {
         changes.removeDataChangeListener(key, l);
     }
 
+    public void changeRoom( long newRoomUID ) {
+        changes.firePropertyChange(STATE_LEAVE, this, null, newRoomUID);
+    }
 }

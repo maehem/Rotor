@@ -45,9 +45,9 @@ public class DataChangeSupport {
         return listeners.toArray(new DataListenerKeyValue[listeners.size()]);
     }
     
-    public void firePropertyChange​(String propertyName, Object oldValue, Object newValue) {
+    public void firePropertyChange​(String propertyName, Object source, Object oldValue, Object newValue) {
         listeners.stream().filter((l) -> (propertyName.equals(l.getKey()))).forEachOrdered((l) -> {
-            l.getListener().dataChange(propertyName, oldValue, newValue);
+            l.getListener().dataChange(propertyName, source, oldValue, newValue);
         });
     }               
 }

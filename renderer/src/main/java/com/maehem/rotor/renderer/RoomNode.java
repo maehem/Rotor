@@ -20,11 +20,12 @@
 package com.maehem.rotor.renderer;
 
 import com.maehem.rotor.engine.data.DataListener;
-import com.maehem.rotor.engine.data.PortKey;
+import com.maehem.rotor.engine.game.PortKey;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.data.Point;
-import com.maehem.rotor.engine.data.Room;
+import com.maehem.rotor.engine.game.Room;
 import com.maehem.rotor.engine.game.Game;
+import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
 import java.util.ArrayList;
@@ -130,7 +131,7 @@ public class RoomNode extends Group implements GameListener, DataListener {
     }
 
     @Override
-    public void dataChange(String key, Object oldValue, Object newValue) {
+    public void dataChange(String key, Object source, Object oldValue, Object newValue) {
         switch (key) {
             case PlayerState.PROP_POSITION:
                 Point oPos = (Point) oldValue;
@@ -153,13 +154,13 @@ public class RoomNode extends Group implements GameListener, DataListener {
                 for (DoorNode dn : doorNodes) {
                     if ( dn.intersects(dn.sceneToLocal(playerNode.localToScene(playerNode.getCollisionBox())))) {  //  <=== Thank you StackOverflow!
                         LOGGER.log(Level.CONFIG, "Player contacted door to room: {0}", dn.door.destRoomUID);
-                        playerNode.player.getState().removeDataChangeListener(PlayerState.PROP_POSITION, this);
-                        playerNode.player.setPortKey(dn.door); // Triggers room transition fade.
+                        //playerNode.player.getState().removeDataChangeListener(PlayerState.PROP_POSITION, this);
+                        ((PlayerState)source).removeDataChangeListener(PlayerState.PROP_POSITION, this);
+                        playerNode.player.setPortKey(dn.door);
+                        World.getInstance().changeRoom(dn.door.destRoomUID);
                         return;
                     }
                 }
-                
-
                 break;
         }
     }

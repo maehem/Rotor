@@ -19,7 +19,6 @@
  */
 package com.maehem.rotor.engine.game;
 
-import com.maehem.rotor.engine.data.World;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
 import java.io.DataInputStream;

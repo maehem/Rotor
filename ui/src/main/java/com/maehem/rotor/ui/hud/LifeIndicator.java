@@ -77,7 +77,7 @@ public class LifeIndicator extends VBox  implements GameListener, DataListener, 
     }
 
     @Override
-    public void dataChange(String dataKey, Object oldValue, Object newValue) {
+    public void dataChange(String dataKey, Object source, Object oldValue, Object newValue) {
         if ( dataKey.equals(this.KEY) ) {
             setValue((int) newValue);
         }

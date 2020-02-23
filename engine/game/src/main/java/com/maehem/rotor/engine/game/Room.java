@@ -17,8 +17,9 @@
     under the License.
 
  */
-package com.maehem.rotor.engine.data;
+package com.maehem.rotor.engine.game;
 
+import com.maehem.rotor.engine.data.RoomState;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -47,9 +48,9 @@ public class Room {
 
     private Object assetSheetObject;
 
-    public enum Edge {
-        TOP, LEFT, BOTTOM, RIGHT
-    }
+//    public enum Edge {
+//        TOP, LEFT, BOTTOM, RIGHT
+//    }
 
     public long uid = Math.round(Math.random());
 

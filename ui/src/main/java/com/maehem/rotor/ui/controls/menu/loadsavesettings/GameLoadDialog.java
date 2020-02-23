@@ -19,7 +19,7 @@
 */
 package com.maehem.rotor.ui.controls.menu.loadsavesettings;
 
-import com.maehem.rotor.engine.data.World;
+import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.data.WorldState;
 import com.maehem.rotor.engine.game.FileSystem;
 import com.maehem.rotor.engine.game.Game;

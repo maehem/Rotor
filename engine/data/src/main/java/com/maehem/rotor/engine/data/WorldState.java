@@ -35,8 +35,9 @@ public class WorldState {
 
     private final DataChangeSupport changes = new DataChangeSupport();
     public static final String PROP_ROOM = "room";
+    public static final String PROP_REALM = "realm";
 
-    private final World world;    
+    //private final World world;    
     private boolean loaded = false;
     private long ticksElapsed = 0;
     
@@ -46,27 +47,12 @@ public class WorldState {
     /**
      * Create state for the world.
      * 
-     * @param world
      */
-    public WorldState( World world) {
-        this.world = world;
+    public WorldState( /* World world */) {
+        //this.world = world;
         LOGGER.config("World State initialization...");
     }
 
-//    /**
-//     * @return the playerName
-//     */
-//    public String getPlayerName() {
-//        return playerName;
-//    }
-//
-//    /**
-//     * @param playerName the playerName to set
-//     */
-//    public void setPlayerName(String playerName) {
-//        this.playerName = playerName;
-//    }
-//
     /**
      * After loading, resolve anything here.
      */
@@ -81,56 +67,6 @@ public class WorldState {
         loaded = state;
     }
 
-    public void load(DataInputStream dis) throws IOException {
-        LOGGER.finer("World State Load starting...");
-
-        if ( !dis.readUTF().equals("<WORLD_STATE>") ) {
-            throw new IOException("Data Chunk is not a <WORLD_STATE> type.");
-        }
-        // Read local settings block
-        ticksElapsed = dis.readLong();
-        //setPlayerHealth(dis.readInt());
-        setCurrentRealm(dis.readLong());
-        setCurrentRoom(dis.readLong());
-
-        // Load Realm states
-        int nRealms = dis.readChar();
-        
-        for ( int i=0; i< nRealms; i++ ) {
-            RealmState.generate(world, dis);
-        }
-
-        if ( !dis.readUTF().equals("<WORLD_STATE_>") ) {
-            throw new IOException("Chunk has more items in the <WORLD_STATE> chunk than we expected. File version mis-match?");
-        }
-        
-        LOGGER.finer("World State Load completed OK.");
-        setLoaded(true);
-        
-        resolveStuff();
-    }
-
-    public void save(DataOutputStream dos) throws IOException {
-         LOGGER.finer("World State Save starting...");
-       
-        dos.writeUTF("<WORLD_STATE>");
-
-        // Write World local state
-        dos.writeLong(ticksElapsed);
-        //dos.writeInt(getPlayerHealth());
-        dos.writeLong(getCurrentRealm());
-        dos.writeLong(getCurrentRoom());
-        
-        // Write state for each realm
-        for ( Realm realm : world.getRealms() ) {
-            realm.getState().save(dos);
-        }
-                
-        dos.writeUTF("<WORLD_STATE_>");
-
-        LOGGER.finer("World State Save completed OK.");        
-    }
-
     /**
      * @return the ticksElapsed
      */
@@ -142,31 +78,6 @@ public class WorldState {
         ticksElapsed++;
     }
 
-//    /**
-//     * @return the playerDifficulty
-//     */
-//    public int getPlayerDifficulty() {
-//        return playerDifficulty;
-//    }
-//
-//    public void setPlayerDifficulty(int amount) {
-//        playerDifficulty = amount;
-//    }
-//
-//    /**
-//     * @return the playerHealth
-//     */
-//    public int getPlayerHealth() {
-//        return playerHealth;
-//    }
-//
-//    /**
-//     * @param playerHealth the playerHealth to set
-//     */
-//    public void setPlayerHealth(int playerHealth) {
-//        this.playerHealth = playerHealth;
-//    }
-//
     /**
      * @return the currentRealm
      */
@@ -197,4 +108,65 @@ public class WorldState {
         LOGGER.log(Level.INFO, "Current Room set to: {0}", this.currentRoom);
     }
 
+    public final void addDataChangeListener(String key, DataListener l) {
+        changes.addDataChangeListener(key, l);
+    }
+
+    public final void removeDataChangeListener(String key, DataListener l) {
+        changes.removeDataChangeListener(key, l);
+    }
+
+    public void load(DataInputStream dis) throws IOException {
+        LOGGER.finer("World State Load starting...");
+//
+//        if ( !dis.readUTF().equals("<WORLD_STATE>") ) {
+//            throw new IOException("Data Chunk is not a <WORLD_STATE> type.");
+//        }
+//        // Read local settings block
+//        ticksElapsed = dis.readLong();
+//        //setPlayerHealth(dis.readInt());
+//        setCurrentRealm(dis.readLong());
+//        setCurrentRoom(dis.readLong());
+//
+//        // Load Realm states
+//        int nRealms = dis.readChar();
+//        
+//        for ( int i=0; i< nRealms; i++ ) {
+//            RealmState.generate(world, dis);
+//        }
+//
+//        if ( !dis.readUTF().equals("<WORLD_STATE_>") ) {
+//            throw new IOException("Chunk has more items in the <WORLD_STATE> chunk than we expected. File version mis-match?");
+//        }
+//        
+//        LOGGER.finer("World State Load completed OK.");
+//        setLoaded(true);
+//        
+//        resolveStuff();
+    }
+//
+    public void save(DataOutputStream dos) throws IOException {
+         LOGGER.finer("World State Save starting...");
+//       
+//        dos.writeUTF("<WORLD_STATE>");
+//
+//        // Write World local state
+//        dos.writeLong(ticksElapsed);
+//        //dos.writeInt(getPlayerHealth());
+//        dos.writeLong(getCurrentRealm());
+//        dos.writeLong(getCurrentRoom());
+//        
+//        // Write state for each realm
+//        for ( Realm realm : world.getRealms() ) {
+//            realm.getState().save(dos);
+//        }
+//                
+//        dos.writeUTF("<WORLD_STATE_>");
+//
+//        LOGGER.finer("World State Save completed OK.");        
+    }
+    
+//    public void changeRoom( long newRoomUID ) {
+//        changes.firePropertyChange(STATE_LEAVE, this, null, newRoomUID);
+//    }
 }

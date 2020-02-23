@@ -21,7 +21,7 @@ package com.maehem.rotor.dungeoneer;
 
 import com.maehem.rotor.dungeoneer.realms.dungeon1.Dungeon1Realm;
 import com.maehem.rotor.dungeoneer.realms.dungeon1.Room001;
-import com.maehem.rotor.engine.data.World;
+import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;

@@ -19,8 +19,8 @@
  */
 package com.maehem.rotor.renderer;
 
-import com.maehem.rotor.engine.data.PortKey;
-import com.maehem.rotor.engine.data.World;
+import com.maehem.rotor.engine.game.PortKey;
+import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.renderer.debug.Debug;
 import com.maehem.rotor.renderer.debug.DebugListener;
 import java.util.logging.Level;

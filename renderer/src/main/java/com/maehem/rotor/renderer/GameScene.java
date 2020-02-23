@@ -20,9 +20,10 @@
 package com.maehem.rotor.renderer;
 
 import com.maehem.rotor.engine.data.DataListener;
-import com.maehem.rotor.engine.data.Player;
+import com.maehem.rotor.engine.game.Player;
 import com.maehem.rotor.engine.data.PlayerState;
-import com.maehem.rotor.engine.data.World;
+import com.maehem.rotor.engine.data.WorldState;
+import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
@@ -226,7 +227,7 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
     }
 
     @Override
-    public void dataChange(String key, Object oldValue, Object newValue) {
+    public void dataChange(String key, Object source, Object oldValue, Object newValue) {
         switch (key) {
             case World.PROP_ROOM:
                 LOGGER.log(Level.CONFIG, "Game Scene: Change Room to: {0}", newValue);
@@ -243,7 +244,7 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
                     game.setRunning(true);
                 });
                 break;
-            case PlayerState.STATE_LEAVE:
+            case World.STATE_LEAVE:
                 LOGGER.log(Level.CONFIG, "Game Scene: Player left room. New destination: {0}", newValue);
                 // Pause game
                 game.setRunning(false);
@@ -254,7 +255,6 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
                     // Unload old room.
                     worldNode.getCurrentRealmNode().getCurrentRoomNode().leave();
                     World.getInstance().setCurrentRoom((long) newValue);
-
                 });
         }
     }
@@ -264,7 +264,7 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
         switch (e.type) {
             case DATA_LOADED:
                 this.worldNode = new WorldNode(game.getWorld());
-                worldNode.getPlayerNode().player.getState().addDataChangeListener(PlayerState.STATE_LEAVE, this);
+                game.getWorld().addDataChangeListener(World.STATE_LEAVE, this);
                 e.getSource().addListener(worldNode.getPlayerNode());
                 worldNode.getPlayerNode().getFlashlight().setMask(getWidth(), getHeight());
                 scrim = new SceneFader(getWidth(), getHeight());

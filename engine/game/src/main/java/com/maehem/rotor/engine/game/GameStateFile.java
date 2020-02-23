@@ -35,7 +35,7 @@ public class GameStateFile {
 
     private static final Logger LOGGER = Logger.getLogger(GameStateFile.class.getName());
 
-    public static final String MAGIC_COOKIE = "ROCKETCOLONY";
+    public static final String MAGIC_COOKIE = "ROTORGAME";
 
 //    static {
 //        LOGGER.setLevel(Level.FINE);

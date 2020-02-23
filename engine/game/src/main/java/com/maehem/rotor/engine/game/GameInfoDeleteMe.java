@@ -17,8 +17,10 @@
     under the License.
 
 */
-package com.maehem.rotor.engine.data;
+package com.maehem.rotor.engine.game;
 
+import com.maehem.rotor.engine.data.DataChangeSupport;
+import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.data.exception.MoneyOverdraftException;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -30,9 +32,9 @@ import java.util.logging.Logger;
  *
  * @author maehem
  */
-public class GameInfo {
+public class GameInfoDeleteMe {
 
-    private static final Logger LOGGER = Logger.getLogger(GameInfo.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GameInfoDeleteMe.class.getName());
 
     public static final String PROP_NAME = "name";
     public static final String PROP_MONEY = "money";
@@ -74,13 +76,13 @@ public class GameInfo {
 
     private final DataChangeSupport changes = new DataChangeSupport();
 
-    public GameInfo() {
+    public GameInfoDeleteMe() {
         name = "Unnamed Colony";
         description = "Somewhere on Mars...";
         founder = "";
     }
 
-    public GameInfo(DataInputStream dis) throws IOException {
+    public GameInfoDeleteMe(DataInputStream dis) throws IOException {
         load(dis);
     }
 
@@ -180,7 +182,7 @@ public class GameInfo {
     public void setName(String name) {
         String oldName = this.name;
         this.name = name;
-        changes.firePropertyChange(PROP_NAME, oldName, name);
+        changes.firePropertyChange(PROP_NAME, this, oldName, name);
     }
 
     /**
@@ -226,7 +228,7 @@ public class GameInfo {
     public void setMoney(int money) {
         int oldMoney = this.money;
         this.money = money;
-        changes.firePropertyChange(PROP_MONEY, oldMoney, money);
+        changes.firePropertyChange(PROP_MONEY, this, oldMoney, money);
     }
 
     /**
@@ -242,7 +244,7 @@ public class GameInfo {
     public void setPopulation(int population) {
         int oldPopulation = this.population;
         this.population = population;
-        changes.firePropertyChange(PROP_POPULATION, oldPopulation, population);
+        changes.firePropertyChange(PROP_POPULATION, this, oldPopulation, population);
     }
 
     /**
@@ -258,7 +260,7 @@ public class GameInfo {
     public void setRotation(int rotation) {
         int oldRotation = this.rotation;
         this.rotation = rotation;
-        changes.firePropertyChange(PROP_ROTATION, oldRotation, rotation);
+        changes.firePropertyChange(PROP_ROTATION, this, oldRotation, rotation);
     }
 
     /**
@@ -274,7 +276,7 @@ public class GameInfo {
     public void setTicksElapsed(long ticksElapsed) {
         long oldTicks = this.ticksElapsed;
         this.ticksElapsed = ticksElapsed;
-        changes.firePropertyChange(PROP_TICKS_ELEAPSED, oldTicks, ticksElapsed);
+        changes.firePropertyChange(PROP_TICKS_ELEAPSED, this, oldTicks, ticksElapsed);
     }
 
     public void addDataChangeListener(String key, DataListener l) {

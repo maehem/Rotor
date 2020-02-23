@@ -20,7 +20,7 @@
 package com.maehem.rotor.renderer;
 
 import com.maehem.rotor.engine.data.DataListener;
-import com.maehem.rotor.engine.data.Player;
+import com.maehem.rotor.engine.game.Player;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.data.Point;
 import com.maehem.rotor.engine.game.events.GameEvent;
@@ -61,7 +61,7 @@ public class PlayerNode extends CharacterNode implements DataListener, GameListe
     }
 
     @Override
-    public void dataChange(String key, Object oldValue, Object newValue) {
+    public void dataChange(String key, Object source, Object oldValue, Object newValue) {
         switch (key) {
             case PlayerState.PROP_POSITION:
                 Point oPos = (Point) oldValue;

@@ -25,5 +25,5 @@ package com.maehem.rotor.engine.data;
  */
 public interface DataListener {
     
-    public void dataChange( String key, Object oldValue, Object newValue );
+    public void dataChange( String key, Object source, Object oldValue, Object newValue );
 }

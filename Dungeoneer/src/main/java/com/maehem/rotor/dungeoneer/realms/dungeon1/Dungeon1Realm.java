@@ -19,8 +19,8 @@
 */
 package com.maehem.rotor.dungeoneer.realms.dungeon1;
 
-import com.maehem.rotor.engine.data.Realm;
-import com.maehem.rotor.engine.data.World;
+import com.maehem.rotor.engine.game.Realm;
+import com.maehem.rotor.engine.game.World;
 
 /**
  *

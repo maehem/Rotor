@@ -16,21 +16,38 @@
     specific language governing permissions and limitations
     under the License.
 
-*/
-package com.maehem.rotor.engine.data.exception;
+ */
+package com.maehem.rotor.engine.game;
 
-import com.maehem.rotor.engine.data.Room;
+import com.maehem.rotor.engine.data.Point;
 
 /**
+ * A token to indicate a destination @Room and destination @Point for the player
+ * to teleport to.
  *
  * @author maehem
  */
-public class Delete_RoomDimensionException extends Exception {
+public class PortKey {
 
-    public Delete_RoomDimensionException(Room room, Room.Edge e, int index, long destRoom) {
-        super("Destination door index was larger than rooms size: " + room.getDisplayName()+ 
-                " " + e.toString() + "[" + index + "]  room dest UID: " + destRoom);
+    public final long destRoomUID;
+    public final Point destPos;
+    
+    public final Point layoutPos;
+    public final Point size;
+
+    /**
+     * 
+     * @param layoutPos relative placement of upper left corner 0.0 - 1.0 per room unit size.
+     * @param size
+     * @param destRoomUID
+     * @param destPos 
+     */
+    public PortKey(Point layoutPos, Point size, long destRoomUID, Point destPos ) {
+        this.layoutPos = layoutPos;
+        this.size = size;
+        
+        this.destRoomUID = destRoomUID;
+        this.destPos = destPos;
     }
-    
-    
+
 }

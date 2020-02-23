@@ -17,8 +17,10 @@
     under the License.
 
  */
-package com.maehem.rotor.engine.data;
+package com.maehem.rotor.engine.game;
 
+import com.maehem.rotor.engine.data.PlayerState;
+import com.maehem.rotor.engine.data.Point;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -102,7 +104,7 @@ public class Player {
      */
     public void setPortKey(PortKey portKey) {
         this.portKey = portKey;
-        getState().changeRoom(portKey.destRoomUID);
+        //getState().changeRoom(portKey.destRoomUID);
     }
 
     public boolean hasPortKey() {

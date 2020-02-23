@@ -19,8 +19,8 @@
  */
 package com.maehem.rotor.renderer;
 
-import com.maehem.rotor.engine.data.Realm;
-import com.maehem.rotor.engine.data.Room;
+import com.maehem.rotor.engine.game.Realm;
+import com.maehem.rotor.engine.game.Room;
 import java.util.ArrayList;
 
 /**

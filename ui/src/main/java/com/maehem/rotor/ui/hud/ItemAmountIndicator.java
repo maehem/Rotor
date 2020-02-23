@@ -81,7 +81,7 @@ public abstract class ItemAmountIndicator extends VBox implements GameListener, 
     }
 
     @Override
-    public void dataChange(String dataKey, Object oldValue, Object newValue) {
+    public void dataChange(String dataKey, Object source, Object oldValue, Object newValue) {
         if ( dataKey.equals(this.key) ) {
             setValue((int) newValue);
         }

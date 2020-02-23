@@ -19,7 +19,7 @@
  */
 package com.maehem.rotor.renderer;
 
-import com.maehem.rotor.engine.data.Tile;
+import com.maehem.rotor.engine.game.Tile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Group;

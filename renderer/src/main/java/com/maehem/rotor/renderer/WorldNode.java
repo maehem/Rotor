@@ -19,7 +19,7 @@
  */
 package com.maehem.rotor.renderer;
 
-import com.maehem.rotor.engine.data.World;
+import com.maehem.rotor.engine.game.World;
 import java.util.ArrayList;
 
 /**
@@ -43,6 +43,13 @@ public class WorldNode {
     }
     
     /**
+     * @return the world
+     */
+    public World getWorld() {
+        return world;
+    }
+
+    /**
      * @return the realmNodes
      */
     public ArrayList<RealmNode> getRealmNodes() {
@@ -50,8 +57,8 @@ public class WorldNode {
     }
 
     public RealmNode getCurrentRealmNode() {
-        long currentRealmUID = world.getState().getCurrentRealm();
-        for ( var r : world.getRealms() ) {
+        long currentRealmUID = getWorld().getState().getCurrentRealm();
+        for ( var r : getWorld().getRealms() ) {
             if ( r.getUid() == currentRealmUID ) {
                 for (RealmNode rn : getRealmNodes()) {
                     if ( rn.getRealm() == r ) {
@@ -70,12 +77,5 @@ public class WorldNode {
     public PlayerNode getPlayerNode() {
         return playerNode;
     }
-
-//    /**
-//     * @param playerNode the playerNode to set
-//     */
-//    public void setPlayerNode(PlayerNode playerNode) {
-//        this.playerNode = playerNode;
-//    }
 
 }
