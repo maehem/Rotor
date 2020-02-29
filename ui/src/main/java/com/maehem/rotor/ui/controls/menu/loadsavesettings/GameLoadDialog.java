@@ -19,7 +19,6 @@
 */
 package com.maehem.rotor.ui.controls.menu.loadsavesettings;
 
-import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.data.WorldState;
 import com.maehem.rotor.engine.game.FileSystem;
 import com.maehem.rotor.engine.game.Game;
@@ -111,7 +110,8 @@ public class GameLoadDialog extends DialogPanel {
 
     private void doLoad(String fileName) {
         try {
-            WorldState worldState = World.getInstance().getState();
+            //WorldState worldState = World.getInstance().getState();
+            WorldState worldState = game.getWorld().getState();
             
             LOGGER.log(Level.INFO, "Load Game: {0}", fileName);
             FileSystem fs = FileSystem.getInstance();

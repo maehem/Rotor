@@ -23,8 +23,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * Walk Sheets are a single image that contain all four walking directions and a
@@ -41,7 +49,7 @@ import javafx.scene.image.ImageView;
  *
  * @author maehem
  */
-public class WalkSheet extends ImageView {
+public class WalkSheet extends Group {
     private static final Logger LOGGER = Logger.getLogger(WalkSheet.class.getName());
 
     public static final int NWALKS = 8;
@@ -49,14 +57,43 @@ public class WalkSheet extends ImageView {
         TOWARD, AWAY, LEFT, RIGHT
     }
 
+    private final ImageView view;
+    
     private final double size;
     private DIR currentDir = DIR.TOWARD;
     private int currentWalk = 0;
+    private final ImageView damageView = new ImageView();
+    
+    
 
     public WalkSheet(InputStream in, double size) throws IOException {
-        super(new Image(in));
+        view = new ImageView(new Image(in));
+        //super(new Image(in));
 
-        this.size = getImage().getHeight() / 4.0;  // TODO: we don't use local size!
+        this.size = view.getImage().getHeight() / 4.0;  // TODO: we don't use local size!
+        
+        PixelReader pixelReader = view.getImage().getPixelReader();
+         
+        int width = (int)view.getImage().getWidth();
+        int height = (int)view.getImage().getHeight();
+        WritableImage writableImage 
+                = new WritableImage(width, height);
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+         
+        for (int y = 0; y < height; y++){
+            for (int x = 0; x < width; x++){
+                Color color = pixelReader.getColor(x, y);
+                if ( color.isOpaque() )
+                    pixelWriter.setColor(x, y, Color.RED);
+            }
+        }
+        
+        damageView.setImage(writableImage);
+        damageView.setOpacity(0.5);
+        damageView.setBlendMode(BlendMode.MULTIPLY);
+        damageView.setVisible(false);
+        
+        getChildren().addAll(view, damageView);
         
         updateView();
     }
@@ -104,7 +141,14 @@ public class WalkSheet extends ImageView {
 
     private void updateView() {
         Rectangle2D viewportRect = new Rectangle2D(currentWalk * size, currentDir.ordinal() * size, size, size);
-        setViewport(viewportRect);
+        
+        view.setViewport(viewportRect);
+        damageView.setViewport(viewportRect);
+    }
+
+
+    void showDamage(boolean show) {
+        damageView.setVisible(show);
     }
 
 }

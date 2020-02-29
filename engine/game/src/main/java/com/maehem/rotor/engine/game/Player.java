@@ -20,7 +20,6 @@
 package com.maehem.rotor.engine.game;
 
 import com.maehem.rotor.engine.data.PlayerState;
-import com.maehem.rotor.engine.data.Point;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +27,7 @@ import java.util.logging.Logger;
  *
  * @author maehem
  */
-public class Player {
+public class Player extends Entity {
 
     private static final Logger LOGGER = Logger.getLogger(Player.class.getName());
 
@@ -36,62 +35,26 @@ public class Player {
     public static final double RUN_MULT = 3.0;
     
     private final PlayerState state = new PlayerState();
-    private final World parent;
+    
+    //private final World parent;
     
     private PortKey portKey;
     
-    private Object walkSheet;
-    private boolean swordAttack = false;
+    //private Object walkSheet;
+    //private boolean swordAttack = false;
     
-    public Player( World parent ) {
-        this.parent = parent;
+    public Player( /*World parent*/ ) {
+        //this.parent = parent;
         LOGGER.config("Create Player.");
     }
     
-    /**
-     * @return the state
-     */
-    public PlayerState getState() {
-        return state;
-    }
-
-    public void warpPosition( double x, double y ) {
-        getState().warpPosition(x,y);
-    }
-    
-    public void moveBy( double dx, double dy ) {
-        Point p = getState().getPosition();
-        
-        // TODO:  Use double to track Player position as 0.0 to 1.0
-        // Check if we are able to move into the next location.
-        boolean blocked = getParent().getCurrentRoom().isBlocked( p.x + dx, p.y + dy );
-        if ( blocked ) {
-            LOGGER.finer("Path is blocked.");
-        } else  {
-            getState().move(dx,dy);
-        }
-    }
-    /**
-     * @return the parent
-     */
-    public World getParent() {
-        return parent;
-    }
-
-    /**
-     * @return the walkSheet
-     */
-    public Object getWalkSheet() {
-        return walkSheet;
-    }
-
-    /**
-     * @param walkSheet the walkSheet to set
-     */
-    public void setWalkSheet(Object walkSheet) {
-        this.walkSheet = walkSheet;
-    }
-    
+//    /**
+//     * @return the parent
+//     */
+//    public World getParent() {
+//        return parent;
+//    }
+//
     /**
      * @return the portKey
      */
@@ -117,11 +80,12 @@ public class Player {
         portKey = null; // Consume the Port Key
     }
     
-    public void swordAttack(boolean attack) {
-        this.swordAttack = attack;
+    /**
+     * @return the state
+     */
+    @Override
+    public PlayerState getState() {
+        return state;
     }
 
-    public boolean isSwordAttack() {
-        return swordAttack;
-    }
 }

@@ -23,83 +23,69 @@ import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.game.Player;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.data.Point;
+import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
+import java.io.IOException;
 import java.util.logging.Logger;
-import javafx.geometry.Bounds;
 
 /**
  *
  * @author maehem
  */
-public class PlayerNode extends CharacterNode implements DataListener, GameListener  {
+public class PlayerNode extends EntityNode implements DataListener, GameListener {
 
     private final static Logger LOGGER = Logger.getLogger(PlayerNode.class.getName());
 
     protected final Player player;
     private final FlashLightLayer flashlight;
-    private final ImageSequence swordSwish;
+    private final World world;
 
-    public PlayerNode(Player player) {
-        super((WalkSheet) player.getWalkSheet(), player.getParent().getTileSize());
+    public PlayerNode(Player player, World world) throws IOException {
+        //super(player, (WalkSheet) player.getWalkSheet(), World.getInstance().getTileSize() /*player.getParent().getTileSize()*/);
+        super(player, world.getClassLoader(), world.getTileSize(), new Point(world.getScreenWidth(), world.getScreenHeight()));
 
         this.player = player;
+        this.world = world;
+        
         flashlight = new FlashLightLayer(this);
+        player.getState().addDataChangeListener(PlayerState.PROP_NIGHT_VISION, this);
         
         getChildren().add(flashlight);
-        
-        swordSwish = new ImageSequence(PlayerNode.class.getResourceAsStream("/renderer/glyphs/sword-swish.png"), 32, ImageSequence.Type.ONE_SHOT);
-        swordSwish.setHideWhenDone(true);
-        getChildren().add(swordSwish);
-        
-        updateLayout(player.getState().getPosition());
 
-        
+        // done at super() level.
+        //updateLayout(player.getState().getPosition());
+
         player.getState().addDataChangeListener(PlayerState.PROP_POSITION, this);
 
-        LOGGER.finer("Create Player Node.");
+        LOGGER.finer("Entity is Player");
     }
 
     @Override
     public void dataChange(String key, Object source, Object oldValue, Object newValue) {
+        super.dataChange(key, source, oldValue, newValue);
+
         switch (key) {
             case PlayerState.PROP_POSITION:
                 Point oPos = (Point) oldValue;
                 Point pos = (Point) newValue;
 
-                if (oPos.x == pos.x && oPos.y == pos.y) {
-                    getWalkSheet().stand();
-                    return;
-                }
-
                 if (oPos.x < pos.x) {
-                    getWalkSheet().setDir(WalkSheet.DIR.RIGHT);
                     getFlashlight().setAngle(0.0);
                 } else if (oPos.x > pos.x) {
-                    getWalkSheet().setDir(WalkSheet.DIR.LEFT);
                     getFlashlight().setAngle(180.0);
                 }
                 if (oPos.y < pos.y) {
-                    getWalkSheet().setDir(WalkSheet.DIR.TOWARD);
                     getFlashlight().setAngle(90.0);
                 } else if (oPos.y > pos.y) {
-                    getWalkSheet().setDir(WalkSheet.DIR.AWAY);
                     getFlashlight().setAngle(270.0);
                 }
-                getWalkSheet().step();                
                 updateLayout((Point) newValue);
                 break;
+            case PlayerState.PROP_NIGHT_VISION:
+                flashlight.setDarkness(1.0 - (double)newValue);
+                break;
         }
-    }
-
-    public Bounds getCollisionBox() {
-        return getWalkSheet().getBoundsInParent();
-    }
-    
-    public final void updateLayout(Point pos) {
-        setLayoutX(pos.x * player.getParent().getScreenWidth());
-        setLayoutY(pos.y * player.getParent().getScreenHeight());
-
     }
 
     /**
@@ -111,21 +97,21 @@ public class PlayerNode extends CharacterNode implements DataListener, GameListe
 
     @Override
     public void gameEvent(GameEvent e) {
-        switch ( e.type ) {
-            case TICK:
-                if ( player.isSwordAttack()) {
-                    swordSwish.step();
-                    if ( swordSwish.isDone() ) {
-                        player.swordAttack(false); // Consume request
-                    }
-                }
-        }
+        super.gameEvent(e);
+
+//        switch ( e.type ) {
+//            case TICK:
+//                if ( player.isSwordAttack()) {
+//                    swordSwish.step();
+//                    if ( swordSwish.isDone() ) {
+//                        player.swordAttack(false); // Consume request
+//                    }
+//                }
+//        }
     }
 
-    void attackWithSword() {
-        if ( player.isSwordAttack() ) return; // Ignore new attacks while swinging.
-        player.swordAttack(true);
-        swordSwish.reset();
+    World getWorld() {
+        return world;
     }
 
 }

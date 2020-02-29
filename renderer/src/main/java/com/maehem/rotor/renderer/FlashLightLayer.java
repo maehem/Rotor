@@ -55,7 +55,7 @@ public class FlashLightLayer extends Group/* implements DataListener */{
 
         darkness = new Rectangle();
         darkness.setFill(Color.BLACK);
-        setDarkness(0.9);
+        setDarkness(1.0-node.player.getState().getNightVision());
         
     }
 

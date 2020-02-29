@@ -124,7 +124,7 @@ public class HUD extends HBox implements GameListener, DebugListener {
                 money.setValue(state.getMoney());
                 bombs.setValue(state.getBombs());
                 arrows.setValue(state.getArrows());
-                life.setValue(state.getHealth());
+                life.setValue((int) state.getHealth());
 
         }
     }

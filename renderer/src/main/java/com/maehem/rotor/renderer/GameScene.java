@@ -20,15 +20,15 @@
 package com.maehem.rotor.renderer;
 
 import com.maehem.rotor.engine.data.DataListener;
+import com.maehem.rotor.engine.data.Point;
 import com.maehem.rotor.engine.game.Player;
-import com.maehem.rotor.engine.data.PlayerState;
-import com.maehem.rotor.engine.data.WorldState;
 import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
 import com.maehem.rotor.renderer.ui.UIEvent;
 import com.maehem.rotor.renderer.ui.UIListener;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
@@ -68,12 +68,14 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
         super(new Group());
         this.game = game;
         game.addListener(this);
-        
-        setFill(Color.BLACK);                
+
+        setFill(Color.BLACK);
         roomLayer.setClip(new Rectangle(width, height));
         atmosphereLayer = new AtmosphereLayer(width, height); // Move to room layer
         game.addListener(atmosphereLayer);
-        
+
+        atmosphereLayer.setVisible(false);
+
         // Adjust root node position and scale whenever window size changes.
         widthProperty().addListener((o) -> {
             fitWindowContents(width, height);
@@ -97,22 +99,21 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
     }
 
     private void fitWindowContents(double width, double height) {
-            //LOGGER.log(Level.CONFIG, "Window Width changed to: {0}", ((ReadOnlyDoubleProperty)o).getValue());
-            double newHeight = heightProperty().doubleValue();
-            double newWidth  = widthProperty().doubleValue();
-            
-            double scale = newHeight/height;
-            if ( scale * width > newWidth ) {
-                scale = newWidth/width;
-            }
-            
-            getRoot().setScaleX(scale);
-            getRoot().setScaleY(scale);
-            getRoot().setLayoutX((widthProperty().doubleValue()-width)/2.0);
-            getRoot().setLayoutY((heightProperty().doubleValue()-height)/2.0);
+        //LOGGER.log(Level.CONFIG, "Window Width changed to: {0}", ((ReadOnlyDoubleProperty)o).getValue());
+        double newHeight = heightProperty().doubleValue();
+        double newWidth = widthProperty().doubleValue();
+
+        double scale = newHeight / height;
+        if (scale * width > newWidth) {
+            scale = newWidth / width;
+        }
+
+        getRoot().setScaleX(scale);
+        getRoot().setScaleY(scale);
+        getRoot().setLayoutX((widthProperty().doubleValue() - width) / 2.0);
+        getRoot().setLayoutY((heightProperty().doubleValue() - height) / 2.0);
     }
-    
-    
+
     /**
      * UI of the game can request cursor changes here.
      *
@@ -198,7 +199,11 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
                 dy *= Player.RUN_MULT;
             }
 
-            game.getWorld().getPlayer().moveBy(dx, dy);
+            Player player = game.getWorld().getPlayer();
+            Point pos = player.getState().getPosition();
+            if (!worldNode.getWorld().getCurrentRoom().isBlocked(pos.x + dx, pos.y + dy)) {
+                game.getWorld().getPlayer().moveBy(dx, dy);
+            }
         } else {
             if (scrim.isFading()) {
                 scrim.update();
@@ -253,8 +258,8 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
                 scrim.startFade(); // Game loop handles animation updates.
                 scrim.setOnFadeOutFinished((data_type) -> {
                     // Unload old room.
-                    worldNode.getCurrentRealmNode().getCurrentRoomNode().leave();
-                    World.getInstance().setCurrentRoom((long) newValue);
+                    worldNode.getCurrentRealmNode().getCurrentRoomNode().leave(game);
+                    worldNode.getWorld().setCurrentRoom((long) newValue);
                 });
         }
     }
@@ -263,6 +268,7 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
     public void gameEvent(GameEvent e) {
         switch (e.type) {
             case DATA_LOADED:
+                try {
                 this.worldNode = new WorldNode(game.getWorld());
                 game.getWorld().addDataChangeListener(World.STATE_LEAVE, this);
                 e.getSource().addListener(worldNode.getPlayerNode());
@@ -273,7 +279,11 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
                 LOGGER.log(Level.CONFIG, "Add SceneFader of size: {0}x{1}", new Object[]{getWidth(), getHeight()});
 
                 game.getWorld().addDataChangeListener(World.PROP_ROOM, this);
-                break;
+            } catch (IOException ex) {
+                Logger.getLogger(GameScene.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            break;
+
         }
     }
 

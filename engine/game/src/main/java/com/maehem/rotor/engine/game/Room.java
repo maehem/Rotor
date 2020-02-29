@@ -38,6 +38,7 @@ public class Room {
     public Realm parent;
     private RoomState state = null;  // Only set if player has visited.
     private final ArrayList<PortKey> doors = new ArrayList<>();
+    private final ArrayList<Entity> entities = new ArrayList<>();
 
     public static final int MAX_WIDTH = 8;
     public static final int MAX_HEIGHT = 8;
@@ -45,12 +46,8 @@ public class Room {
     public int nTilesX;
     public int nTilesY;
     private Tile[][] tiles;
-
+    
     private Object assetSheetObject;
-
-//    public enum Edge {
-//        TOP, LEFT, BOTTOM, RIGHT
-//    }
 
     public long uid = Math.round(Math.random());
 
@@ -242,6 +239,18 @@ public class Room {
         tiles[x][y] = tile;
     }
 
+    public final void addEntity( Entity ent ) {
+        entities.add(ent);
+    }
+    
+    /**
+     * @return the entities
+     */
+    public ArrayList<Entity> getEntities() {
+        return entities;
+    }
+
+    
 //    public Point getEntryPos(Edge e, int index) {
 //        switch (e) {
 //            case TOP:

@@ -34,6 +34,13 @@ import java.util.logging.Logger;
  * @author maehem
  */
 public class World {
+
+    /**
+     * @return the classLoader
+     */
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
     private static final Logger LOGGER = Logger.getLogger(World.class.getName());
     
     public static final String PROP_ROOM = "room";
@@ -56,19 +63,23 @@ public class World {
     private int screenWidth = 640;
     private int screenHeight = 360;
     private int tileSize = 32;
+    private final ClassLoader classLoader;
 
-    private World() {
+    
+    public World(Game game, ClassLoader cl) {
         LOGGER.config("World Instance Created.");
-        this.player = new Player(this);
+        game.setWorld(this);
+        this.classLoader = cl;
+        this.player = new Player(/*this*/);
     }
     
-    public static final World getInstance() {
-        if ( instance == null ) {
-            instance = new World();
-        }
-        
-        return instance;
-    }
+//    public static final World getInstance() {
+//        if ( instance == null ) {
+//            instance = new World();
+//        }
+//        
+//        return instance;
+//    }
     
     public ArrayList<Realm> getRealms() {
         return realms;

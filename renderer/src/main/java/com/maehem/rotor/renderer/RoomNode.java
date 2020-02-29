@@ -23,11 +23,13 @@ import com.maehem.rotor.engine.data.DataListener;
 import com.maehem.rotor.engine.game.PortKey;
 import com.maehem.rotor.engine.data.PlayerState;
 import com.maehem.rotor.engine.data.Point;
+import com.maehem.rotor.engine.game.Entity;
 import com.maehem.rotor.engine.game.Room;
 import com.maehem.rotor.engine.game.Game;
 import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,6 +47,7 @@ public class RoomNode extends Group implements GameListener, DataListener {
     private final Room room;
     private PlayerNode playerNode;
     private final ArrayList<DoorNode> doorNodes = new ArrayList<>();
+    private final ArrayList<EntityNode> entityNodes = new ArrayList<>();
     
 
     public RoomNode(Room room) {
@@ -78,10 +81,14 @@ public class RoomNode extends Group implements GameListener, DataListener {
         game.addListener(this);
     }
 
-    public void leave() {
+    public void leave(Game game) {
 
+        for ( EntityNode e: entityNodes ) {
+            game.removeListener(e);
+        }
         getChildren().removeAll();
         doorNodes.clear();
+        entityNodes.clear();
 
         this.playerNode = null;
     }
@@ -109,6 +116,17 @@ public class RoomNode extends Group implements GameListener, DataListener {
             doorNodes.add(dn);
         }
 
+        for ( Entity e : room.getEntities() ) {
+            try {
+                World w = room.parent.getParent();
+                EntityNode en = new EntityNode(e,game.getWorld().getClassLoader(),32, new Point(w.getScreenWidth(), w.getScreenHeight()));
+                getChildren().add(en);
+                entityNodes.add(en);
+                game.addListener(en);
+            } catch (IOException ex) {
+                Logger.getLogger(RoomNode.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         //getChildren().add(blackness);
         
         LOGGER.log(Level.FINE, "Room Size is: {0}x{1}", new Object[]{getBoundsInLocal().getWidth(), getBoundsInLocal().getHeight()});
@@ -119,6 +137,17 @@ public class RoomNode extends Group implements GameListener, DataListener {
         switch (e.type) {
             case TICK:
                 //LOGGER.finest("tick");
+                
+                // Check for collisions.
+                for ( EntityNode ent: entityNodes ) {
+                    if ( ent.intersects(ent.sceneToLocal(playerNode.localToScene(playerNode.getCollisionBox())))) {
+                        //LOGGER.log(Level.WARNING, "Player colided with entity: {0}", ent.getEntity().getName());
+                        if ( playerNode.meleeBegun() ) {
+                            ent.getEntity().damage(playerNode.player.getMeleeDamage());
+                        }
+                    }
+                }
+                
                 break;
         }
     }
@@ -157,7 +186,7 @@ public class RoomNode extends Group implements GameListener, DataListener {
                         //playerNode.player.getState().removeDataChangeListener(PlayerState.PROP_POSITION, this);
                         ((PlayerState)source).removeDataChangeListener(PlayerState.PROP_POSITION, this);
                         playerNode.player.setPortKey(dn.door);
-                        World.getInstance().changeRoom(dn.door.destRoomUID);
+                        playerNode.getWorld().changeRoom(dn.door.destRoomUID);
                         return;
                     }
                 }

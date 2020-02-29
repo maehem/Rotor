@@ -29,12 +29,10 @@ import com.maehem.rotor.engine.logging.LoggingFormatter;
 import com.maehem.rotor.engine.logging.LoggingHandler;
 import com.maehem.rotor.engine.logging.LoggingMessageList;
 import com.maehem.rotor.renderer.GameScene;
-import com.maehem.rotor.renderer.WalkSheet;
 import com.maehem.rotor.renderer.debug.Debug;
 import com.maehem.rotor.ui.UserInterfaceLayer;
 import com.maehem.rotor.ui.DebugWindow;
 import com.maehem.rotor.ui.MainMenu;
-import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -130,6 +128,14 @@ public class GameWindow extends Application implements GameListener {
         debugWindow.reloadLog();
 
         LOGGER.log(Level.FINEST, "Window Size: {0}x{1}", new Object[]{stage.getWidth(), stage.getHeight()});
+//        Dummy dummy = new Dummy();
+//        Class<? extends Dummy> aClass = dummy.getClass();
+//        URL resource = aClass.getResource("/characters/person-1.png");
+//        String path = resource.getPath();
+//        
+//        System.out.println("Game Window Class resource path: " + path );
+//        InputStream openStream = resource.openStream();
+
         mainMenu.show();
     }
 
@@ -153,20 +159,23 @@ public class GameWindow extends Application implements GameListener {
      * @param game
      */
     private void initWorld(Game game) {
-        World w = game.getWorld();
+        //World w = game.getWorld();
 
+        World w = new World(game, this.getClass().getClassLoader());
+        game.setWorld(w);
+        
         w.setDisplayName("Realms of Helios");
         w.setTileSize(32); // 1x scale rendered tile size
         w.setStartRealm(Dungeon1Realm.UID);
         w.setStartRoom(Room001.UID);
         w.setScreenWidth(640);
         w.setScreenHeight(374);
-
-        try {
-            w.getPlayer().setWalkSheet(new WalkSheet(GameWindow.class.getResourceAsStream("/characters/person-1.png"), 32));
-        } catch (IOException ex) {
-            Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        w.getPlayer().setWalkSheetFilename("characters/person-1.png");
+//        try {
+//            w.getPlayer().setWalkSheet(new WalkSheet(GameWindow.class.getResourceAsStream("/characters/person-1.png"), 32));
+//        } catch (IOException ex) {
+//            Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         // Add the realms
         w.getRealms().add(new Dungeon1Realm(w));
 

@@ -58,6 +58,7 @@ public class ImageSequence extends ImageView {
         
         this.srcSize = getImage().getHeight();
         this.nFrames = (int) (getImage().getWidth()/srcSize);
+        if ( type == Type.ONE_SHOT ) currentFrame = nFrames;
         
         updateView();
     }
@@ -131,5 +132,9 @@ public class ImageSequence extends ImageView {
      */
     public void setHideWhenDone(boolean hideWhenDone) {
         this.hideWhenDone = hideWhenDone;
+    }
+    
+    public void setAngle( double angle ) {
+        setRotate(angle);
     }
 }

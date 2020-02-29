@@ -25,35 +25,29 @@ import java.util.logging.Logger;
  *
  * @author maehem
  */
-public class PlayerState {
+public class PlayerState extends EntityState {
 
     private static final Logger LOGGER = Logger.getLogger(PlayerState.class.getName());
 
-    private final DataChangeSupport changes = new DataChangeSupport();
 //    public static final String STATE_LEAVE = "stateLeave";
 
     private static final int MANA_MAX = 99;
     private static final int MONEY_MAX = 999;
     private static final int BOMBS_MAX = 99;
     private static final int ARROWS_MAX = 99;
-    private static final int HEALTH_MAX = 99;
 
     public static final String PROP_MANA = "mana";
     public static final String PROP_MONEY = "money";
     public static final String PROP_BOMBS = "bombs";
     public static final String PROP_ARROWS = "arrows";
-    public static final String PROP_HEALTH = "health";
-    public static final String PROP_POSITION = "position";
+    public static final String PROP_NIGHT_VISION = "nightVision";
     
-    private String name;
     private int mana = 99;
     private int money = 999;
     private int bombs = 99;
     private int arrows = 99;
-    private int health = 99;
     private int difficulty = 1;
-
-    private final Point position = new Point(0.25, 0.5);
+    private double nightVision = 0.5;
 
     public PlayerState() {
         LOGGER.config("Player State created.");
@@ -71,9 +65,9 @@ public class PlayerState {
      */
     public void setMana(int val) {
         int oldMoney = this.mana;
-        this.mana = checkNumber(val, 0, MANA_MAX);
+        this.mana = checkIntNumber(val, 0, MANA_MAX);
 
-        changes.firePropertyChange(PROP_MANA, this, oldMoney, val);
+        getChanges().firePropertyChange(PROP_MANA, this, oldMoney, val);
     }
 
     /**
@@ -89,9 +83,9 @@ public class PlayerState {
      */
     public void setMoney(int val) {
         int oldMoney = this.money;
-        this.money = checkNumber(val, 0, MONEY_MAX);
+        this.money = checkIntNumber(val, 0, MONEY_MAX);
 
-        changes.firePropertyChange(PROP_MONEY, this, oldMoney, money);
+        getChanges().firePropertyChange(PROP_MONEY, this, oldMoney, money);
     }
 
     /**
@@ -108,9 +102,9 @@ public class PlayerState {
      */
     public void setBombs(int val) {
         int oldVal = this.bombs;
-        this.bombs = checkNumber(val, 0, BOMBS_MAX);
+        this.bombs = checkIntNumber(val, 0, BOMBS_MAX);
 
-        changes.firePropertyChange(PROP_BOMBS, this, oldVal, val);
+        getChanges().firePropertyChange(PROP_BOMBS, this, oldVal, val);
     }
 
     /**
@@ -127,41 +121,8 @@ public class PlayerState {
      */
     public void setArrows(int val) {
         int oldVal = this.arrows;
-        this.arrows = checkNumber(val, 0, ARROWS_MAX);
-        changes.firePropertyChange(PROP_ARROWS, this, oldVal, val);
-    }
-
-    /**
-     * @return the health
-     */
-    public int getHealth() {
-        return health;
-    }
-
-    /**
-     * Set health.
-     *
-     * @param val
-     */
-    public void setHealth(int val) {
-        int oldVal = this.health;
-        this.health = checkNumber(val, 0, HEALTH_MAX);
-        changes.firePropertyChange(PROP_HEALTH, this, oldVal, val);
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     *
-     * @param text
-     */
-    public void setName(String text) {
-        this.name = text;
+        this.arrows = checkIntNumber(val, 0, ARROWS_MAX);
+        getChanges().firePropertyChange(PROP_ARROWS, this, oldVal, val);
     }
 
     /**
@@ -179,15 +140,24 @@ public class PlayerState {
         this.difficulty = difficulty;
     }
 
-    public final void addDataChangeListener(String key, DataListener l) {
-        changes.addDataChangeListener(key, l);
+    /**
+     * @return the nightVision
+     */
+    public double getNightVision() {
+        return nightVision;
     }
 
-    public final void removeDataChangeListener(String key, DataListener l) {
-        changes.removeDataChangeListener(key, l);
+    /**
+     * @param val the nightVision to set 0.0 - 1.0(max)
+     */
+    public void setNightVision(double val) {
+        double oldVal = this.nightVision;
+        this.nightVision = val;
+        
+        getChanges().firePropertyChange(PROP_NIGHT_VISION, this, oldVal, val);
     }
 
-    private int checkNumber(int val, int min, int max) {
+    protected int checkIntNumber(int val, int min, int max) {
         if (val < 0) {
             return 0;
         } else if (val > max) {
@@ -197,28 +167,4 @@ public class PlayerState {
         }
     }
 
-    public void move(double dx, double dy) {
-        Point oldPos = new Point(getPosition().x, getPosition().y);
-        position.x += dx;
-        position.y += dy;
-
-        changes.firePropertyChange(PROP_POSITION, this, oldPos, getPosition());
-    }
-
-    /**
-     * @return the position
-     */
-    public Point getPosition() {
-        return position;
-    }
-
-    public void warpPosition(double x, double y) {
-        Point oldPos = new Point(position.x, position.y);
-        position.x = x;
-        position.y = y;
-    }
-    
-//    public void changeRoom( long newRoomUID ) {
-//        changes.firePropertyChange(STATE_LEAVE, this, null, newRoomUID);
-//    }
 }

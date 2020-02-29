@@ -21,11 +21,6 @@ package com.maehem.rotor.engine.game;
 
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
@@ -56,7 +51,8 @@ public class Game {
     private void init() {
         LOGGER.config("Game Initialization...");
         FileSystem.init(gameName);
-        world = World.getInstance();
+        //this.world = world;
+        //world = World.getInstance();
         
         initialized = true;
         doNotify(GameEvent.TYPE.GAME_INIT);
@@ -68,15 +64,18 @@ public class Game {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public final void initFromFile() throws FileNotFoundException, IOException {
-        init();
-        // TODO: Have FileSystem return a DataInputStream for the world map.
-        File worldMap = new File(FileSystem.getInstance().getGameDir(), "WorldMap.map");
-        DataInputStream dis = new DataInputStream(new FileInputStream(worldMap));
+//    public final void initFromFile() throws FileNotFoundException, IOException {
+//        init();
+//        // TODO: Have FileSystem return a DataInputStream for the world map.
+//        File worldMap = new File(FileSystem.getInstance().getGameDir(), "WorldMap.map");
+//        DataInputStream dis = new DataInputStream(new FileInputStream(worldMap));
+//
+//        getWorld().load(dis);
+//    }
 
-        getWorld().load(dis);
-    }
-
+    /**
+     * Called by GameNew dialog.
+     */
     public void initNewGame() {
         init();
         getWorld().initState();
@@ -96,7 +95,7 @@ public class Game {
         //doTick();
 
         subTicks++;
-        if (subTicks > 511) {
+        if (getSubTicks() > 511) {
             subTicks = 0;
         }
         
@@ -171,4 +170,14 @@ public class Game {
         return world;
     }
 
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    /**
+     * @return the subTicks
+     */
+    public int getSubTicks() {
+        return subTicks;
+    }
 }

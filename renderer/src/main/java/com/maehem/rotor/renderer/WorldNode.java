@@ -20,26 +20,28 @@
 package com.maehem.rotor.renderer;
 
 import com.maehem.rotor.engine.game.World;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  *
  * @author maehem
  */
 public class WorldNode {
+    private static final Logger LOGGER = Logger.getLogger(WorldNode.class.getName());
 
     private final ArrayList<RealmNode> realmNodes = new ArrayList<>();
     private final World world;
     private final PlayerNode playerNode;
     
-    public WorldNode( World world ) {
+    public WorldNode( World world ) throws IOException {
         this.world = world;
-        playerNode = new PlayerNode(world.getPlayer());
+        playerNode = new PlayerNode(world.getPlayer(), world);
         
         world.getRealms().forEach((realm) -> {
             realmNodes.add(new RealmNode(realm));
-        });
-        
+        });        
     }
     
     /**
