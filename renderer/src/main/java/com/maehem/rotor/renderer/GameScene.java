@@ -20,7 +20,6 @@
 package com.maehem.rotor.renderer;
 
 import com.maehem.rotor.engine.data.DataListener;
-import com.maehem.rotor.engine.data.Point;
 import com.maehem.rotor.engine.game.Player;
 import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.game.Game;
@@ -61,7 +60,7 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
     private SceneFader scrim;
 
     // TODO Move this into Player
-    public boolean running, goNorth, goSouth, goEast, goWest;
+//    public boolean running, goNorth, goSouth, goEast, goWest;
     private final Game game;
 
     public GameScene(Game game, double width, double height) {
@@ -87,7 +86,7 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
             fitWindowContents(width, height);
         });
 
-        initKeyEvents();
+        //initKeyEvents();  // Moved to after game load.
     }
 
     public boolean add(Node n) {
@@ -132,22 +131,28 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
     }
 
     private void initKeyEvents() {
+        Player player = game.getWorld().getPlayer();
         setOnKeyPressed((KeyEvent event) -> {
             switch (event.getCode()) {
                 case UP:
-                    goNorth = true;
+                    player.goNorth(true);
+                    //goNorth = true;
                     break;
                 case DOWN:
-                    goSouth = true;
+                    player.goSouth(true);
+                    //goSouth = true;
                     break;
                 case LEFT:
-                    goWest = true;
+                    player.goWest(true);
+                    //goWest = true;
                     break;
                 case RIGHT:
-                    goEast = true;
+                    player.goEast(true);
+                    //goEast = true;
                     break;
                 case SHIFT:
-                    running = true;
+                    player.setRunning(true);
+                    //running = true;
                     break;
                 case F:
                     worldNode.getPlayerNode().attackWithSword();
@@ -156,19 +161,20 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
         setOnKeyReleased((KeyEvent event) -> {
             switch (event.getCode()) {
                 case UP:
-                    goNorth = false;
+                    player.goNorth(false);
                     break;
                 case DOWN:
-                    goSouth = false;
+                    player.goSouth(false);
                     break;
                 case LEFT:
-                    goWest = false;
+                    player.goWest(false);
                     break;
                 case RIGHT:
-                    goEast = false;
+                    player.goEast(false);
                     break;
                 case SHIFT:
-                    running = false;
+                    player.setRunning(false);
+                    //running = false;
                     break;
             }
         });
@@ -179,31 +185,31 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
 
             game.tick();  // Game logic state update.
 
-            // TODO: Move this into Player
-            double dx = 0, dy = 0;
-
-            if (goNorth) {
-                dy -= Player.WALK_SPEED;
-            }
-            if (goSouth) {
-                dy += Player.WALK_SPEED;
-            }
-            if (goEast) {
-                dx += Player.WALK_SPEED;
-            }
-            if (goWest) {
-                dx -= Player.WALK_SPEED;
-            }
-            if (running) {
-                dx *= Player.RUN_MULT;
-                dy *= Player.RUN_MULT;
-            }
-
-            Player player = game.getWorld().getPlayer();
-            Point pos = player.getState().getPosition();
-            if (!worldNode.getWorld().getCurrentRoom().isBlocked(pos.x + dx, pos.y + dy)) {
-                game.getWorld().getPlayer().moveBy(dx, dy);
-            }
+//            // TODO: Move this into Player
+//            double dx = 0, dy = 0;
+//
+//            if (goNorth) {
+//                dy -= Player.WALK_SPEED;
+//            }
+//            if (goSouth) {
+//                dy += Player.WALK_SPEED;
+//            }
+//            if (goEast) {
+//                dx += Player.WALK_SPEED;
+//            }
+//            if (goWest) {
+//                dx -= Player.WALK_SPEED;
+//            }
+//            if (running) {
+//                dx *= Player.RUN_MULT;
+//                dy *= Player.RUN_MULT;
+//            }
+//
+//            Player player = game.getWorld().getPlayer();
+//            Point pos = player.getState().getPosition();
+//            if (!worldNode.getWorld().getCurrentRoom().isBlocked(pos.x + dx, pos.y + dy)) {
+//                game.getWorld().getPlayer().moveBy(dx, dy);
+//            }
         } else {
             if (scrim.isFading()) {
                 scrim.update();
@@ -269,19 +275,20 @@ public class GameScene extends Scene implements GameListener, UIListener, DataLi
         switch (e.type) {
             case DATA_LOADED:
                 try {
-                this.worldNode = new WorldNode(game.getWorld());
-                game.getWorld().addDataChangeListener(World.STATE_LEAVE, this);
-                e.getSource().addListener(worldNode.getPlayerNode());
-                worldNode.getPlayerNode().getFlashlight().setMask(getWidth(), getHeight());
-                scrim = new SceneFader(getWidth(), getHeight());
-                scrimLayer.getChildren().add(scrim);
+                    initKeyEvents();
+                    this.worldNode = new WorldNode(game.getWorld());
+                    game.getWorld().addDataChangeListener(World.STATE_LEAVE, this);
+                    e.getSource().addListener(worldNode.getPlayerNode());
+                    worldNode.getPlayerNode().getFlashlight().setMask(getWidth(), getHeight());
+                    scrim = new SceneFader(getWidth(), getHeight());
+                    scrimLayer.getChildren().add(scrim);
 
-                LOGGER.log(Level.CONFIG, "Add SceneFader of size: {0}x{1}", new Object[]{getWidth(), getHeight()});
+                    LOGGER.log(Level.CONFIG, "Add SceneFader of size: {0}x{1}", new Object[]{getWidth(), getHeight()});
 
-                game.getWorld().addDataChangeListener(World.PROP_ROOM, this);
-            } catch (IOException ex) {
-                Logger.getLogger(GameScene.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                    game.getWorld().addDataChangeListener(World.PROP_ROOM, this);
+                } catch (IOException ex) {
+                    Logger.getLogger(GameScene.class.getName()).log(Level.SEVERE, null, ex);
+                }
             break;
 
         }

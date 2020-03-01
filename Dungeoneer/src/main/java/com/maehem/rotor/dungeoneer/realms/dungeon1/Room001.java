@@ -23,7 +23,6 @@ import com.maehem.rotor.engine.data.Point;
 import com.maehem.rotor.engine.game.ArrowsLootItem;
 import com.maehem.rotor.engine.game.BombsLootItem;
 import com.maehem.rotor.engine.game.Entity;
-import com.maehem.rotor.engine.game.MoneyLootItem;
 import com.maehem.rotor.engine.game.PortKey;
 import com.maehem.rotor.engine.game.Realm;
 import com.maehem.rotor.engine.game.Room;
@@ -57,6 +56,9 @@ public class Room001 extends Room {
         Entity entity = new Entity("Gordon", "characters/person-gordon.png", new BombsLootItem(5));
         entity.getState().warpPosition(0.7, 0.5);
         addEntity(entity);
+        
+        ArrowsLootItem arrowsLootItem = new ArrowsLootItem(8, 0.3, 0.6);
+        addItem(arrowsLootItem);
 
         put(0, 0, new Tile("clifFace1", new FLAG[]{BLK}));
         put(1, 0, new Tile("clifFace2", new FLAG[]{BLK}));

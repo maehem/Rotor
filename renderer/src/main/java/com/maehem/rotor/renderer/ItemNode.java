@@ -27,11 +27,18 @@ import com.maehem.rotor.engine.game.Item;
  */
 public class ItemNode extends ImageSequence {
 
-    private final Item item;
+    final Item item;
 
     public ItemNode(Item item, ClassLoader cl, double size ) {
         super(cl.getResourceAsStream(item.getImagePath()), size, Type.REPEAT);
         this.item = item;
+    }
+
+    public ItemNode(Item item, ClassLoader cl, double size, int x, int y) {
+        this(item, cl, size);
+        setLayoutX(item.getPosition().x * x);
+        setLayoutY(item.getPosition().y * y);
+        
     }
     
     

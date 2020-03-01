@@ -39,6 +39,7 @@ public class Room {
     private RoomState state = null;  // Only set if player has visited.
     private final ArrayList<PortKey> doors = new ArrayList<>();
     private final ArrayList<Entity> entities = new ArrayList<>();
+    private final ArrayList<Item> items = new ArrayList<>();
 
     public static final int MAX_WIDTH = 8;
     public static final int MAX_HEIGHT = 8;
@@ -248,6 +249,21 @@ public class Room {
      */
     public ArrayList<Entity> getEntities() {
         return entities;
+    }
+
+    /**
+     * 
+     * @param item to add
+     */
+    public final void addItem( Item item ) {
+        items.add(item);
+    }
+    
+    /**
+     * @return the items
+     */
+    public ArrayList<Item> getItems() {
+        return items;
     }
 
     

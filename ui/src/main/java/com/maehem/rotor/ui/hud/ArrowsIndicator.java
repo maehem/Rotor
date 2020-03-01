@@ -29,7 +29,7 @@ import com.maehem.rotor.ui.debug.DebugChangeSupport;
 public class ArrowsIndicator extends ItemAmountIndicator {
 
     public ArrowsIndicator(DebugChangeSupport changes) {
-        super(PlayerState.PROP_BOMBS, "/glyphs/hud/arrow.png", 99,changes);
+        super(PlayerState.PROP_ARROWS, "/glyphs/hud/arrow.png", 99,changes);
     }
     
     

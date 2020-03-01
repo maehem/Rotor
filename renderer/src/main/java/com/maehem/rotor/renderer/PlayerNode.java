@@ -49,6 +49,8 @@ public class PlayerNode extends EntityNode implements DataListener, GameListener
         this.world = world;
         
         flashlight = new FlashLightLayer(this);
+        flashlight.setVisible(false);
+        
         player.getState().addDataChangeListener(PlayerState.PROP_NIGHT_VISION, this);
         
         getChildren().add(flashlight);

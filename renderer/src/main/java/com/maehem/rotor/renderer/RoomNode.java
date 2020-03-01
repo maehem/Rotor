@@ -26,11 +26,14 @@ import com.maehem.rotor.engine.data.Point;
 import com.maehem.rotor.engine.game.Entity;
 import com.maehem.rotor.engine.game.Room;
 import com.maehem.rotor.engine.game.Game;
+import com.maehem.rotor.engine.game.Item;
+import com.maehem.rotor.engine.game.Player;
 import com.maehem.rotor.engine.game.World;
 import com.maehem.rotor.engine.game.events.GameEvent;
 import com.maehem.rotor.engine.game.events.GameListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Group;
@@ -48,12 +51,12 @@ public class RoomNode extends Group implements GameListener, DataListener {
     private PlayerNode playerNode;
     private final ArrayList<DoorNode> doorNodes = new ArrayList<>();
     private final ArrayList<EntityNode> entityNodes = new ArrayList<>();
-    
+    private final CopyOnWriteArrayList<ItemNode> itemNodes = new CopyOnWriteArrayList<>();
 
     public RoomNode(Room room) {
         this.room = room;
         setViewOrder(1000.0); // Ensures that it renders first.
-        
+
     }
 
     public void enter(Game game, PlayerNode playerNode) {
@@ -69,13 +72,12 @@ public class RoomNode extends Group implements GameListener, DataListener {
         }
 
         //blackness.toFront();
-        
         playerNode.player.getState().addDataChangeListener(PlayerState.PROP_POSITION, this);
-        
+
         // Clip to the room's actual size so that camera panning works correctly.
         setClip(new Rectangle(
-                room.getWidth()*room.parent.getParent().getScreenWidth(), 
-                room.getHeight()*room.parent.getParent().getScreenHeight()
+                room.getWidth() * room.parent.getParent().getScreenWidth(),
+                room.getHeight() * room.parent.getParent().getScreenHeight()
         ));
 
         game.addListener(this);
@@ -83,7 +85,7 @@ public class RoomNode extends Group implements GameListener, DataListener {
 
     public void leave(Game game) {
 
-        for ( EntityNode e: entityNodes ) {
+        for (EntityNode e : entityNodes) {
             game.removeListener(e);
         }
         getChildren().removeAll();
@@ -116,10 +118,11 @@ public class RoomNode extends Group implements GameListener, DataListener {
             doorNodes.add(dn);
         }
 
-        for ( Entity e : room.getEntities() ) {
+        for (Entity e : room.getEntities()) {
             try {
                 World w = room.parent.getParent();
-                EntityNode en = new EntityNode(e,game.getWorld().getClassLoader(),32, new Point(w.getScreenWidth(), w.getScreenHeight()));
+                e.setWalkSpeed(Entity.WALK_SPEED * 0.7);  // Slow them down a little
+                EntityNode en = new EntityNode(e, w.getClassLoader(), 32, new Point(w.getScreenWidth(), w.getScreenHeight()));
                 getChildren().add(en);
                 entityNodes.add(en);
                 game.addListener(en);
@@ -127,8 +130,15 @@ public class RoomNode extends Group implements GameListener, DataListener {
                 Logger.getLogger(RoomNode.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        //getChildren().add(blackness);
-        
+
+        for (Item item : room.getItems()) {
+            World w = room.parent.getParent();
+            ItemNode itemNode = new ItemNode(item, w.getClassLoader(), w.getTileSize() / 1.4, w.getScreenWidth(), w.getScreenHeight());
+            getChildren().add(itemNode);
+            itemNodes.add(itemNode);
+            //game.addListener(itemNode);
+        }
+
         LOGGER.log(Level.FINE, "Room Size is: {0}x{1}", new Object[]{getBoundsInLocal().getWidth(), getBoundsInLocal().getHeight()});
     }
 
@@ -136,18 +146,65 @@ public class RoomNode extends Group implements GameListener, DataListener {
     public void gameEvent(GameEvent e) {
         switch (e.type) {
             case TICK:
-                //LOGGER.finest("tick");
-                
+                Player player = e.getSource().getWorld().getPlayer();
+                player.tryMove(room);
+
                 // Check for collisions.
-                for ( EntityNode ent: entityNodes ) {
-                    if ( ent.intersects(ent.sceneToLocal(playerNode.localToScene(playerNode.getCollisionBox())))) {
-                        //LOGGER.log(Level.WARNING, "Player colided with entity: {0}", ent.getEntity().getName());
-                        if ( playerNode.meleeBegun() ) {
-                            ent.getEntity().damage(playerNode.player.getMeleeDamage());
+                for (EntityNode entNode : entityNodes) {
+
+                    // If entity is within 3 blocks, turn toward player.
+                    Point ePos = entNode.getEntity().getState().getPosition();
+                    Point pPos = player.getState().getPosition();
+                    Entity entity = entNode.getEntity();
+                    if (Math.abs(ePos.x - pPos.x) < 0.2 && Math.abs(ePos.y - pPos.y) < 0.2) {
+                        WalkSheet ws = entNode.getWalkSheet();
+                        boolean goDown = ePos.y - pPos.y < 0.0;
+                        boolean goRight = ePos.x - pPos.x < 0.0;
+                        boolean closeEnoughX = Math.abs(ePos.x - pPos.x) < 0.05;
+                        boolean closeEnoughY = Math.abs(ePos.y - pPos.y) < 0.05;
+                        
+                        entity.goSouth(goDown && !closeEnoughY);
+                        entity.goNorth(!goDown && !closeEnoughY);
+                        entity.goEast(goRight && !closeEnoughX);
+                        entity.goWest(!goRight && !closeEnoughX);
+
+                        entity.tryMove(room);
+                    } else {
+                        entity.stop();
+                    }
+
+                    if (entNode.getCollisionBox().intersects(entNode.sceneToLocal(playerNode.localToScene(playerNode.getCollisionBox())))) {
+                        //LOGGER.log(Level.WARNING, "Player colided with entity: {0}", entNode.getEntity().getName());
+                        if (playerNode.meleeBegun()) {
+                            entNode.getEntity().damage(playerNode.player.getMeleeDamage());
+                        }
+
+                        if (entNode.isAlive()) {
+                            entNode.attackWithSword();
+                        }
+
+                        if (!entNode.isAlive() && entNode.hasLoot()) {
+                            if (playerNode.player.takeItem(entNode.getEntity().getLootItem())) {
+                                LOGGER.log(Level.CONFIG, "Player looted the corpse of {0}", entNode.getEntity().getName());
+                                entNode.clearLootItem();
+                            }
                         }
                     }
                 }
-                
+
+                for (ItemNode node : itemNodes) {
+                    if (e.getSource().getSubTicks() % 3 == 0) {
+                        node.step();
+                    }
+                    if (node.intersects(node.sceneToLocal(playerNode.localToScene(playerNode.getCollisionBox())))) {
+                        //LOGGER.log(Level.WARNING, "Player colided with entity: {0}", entNode.getEntity().getName());
+                        if (playerNode.player.takeItem(node.item)) {
+                            LOGGER.config("Player consumed placed item.");
+                            getChildren().remove(node);
+                            itemNodes.remove(node);
+                        }
+                    }
+                }
                 break;
         }
     }
@@ -181,10 +238,10 @@ public class RoomNode extends Group implements GameListener, DataListener {
                 }
 
                 for (DoorNode dn : doorNodes) {
-                    if ( dn.intersects(dn.sceneToLocal(playerNode.localToScene(playerNode.getCollisionBox())))) {  //  <=== Thank you StackOverflow!
+                    if (dn.intersects(dn.sceneToLocal(playerNode.localToScene(playerNode.getCollisionBox())))) {  //  <=== Thank you StackOverflow!
                         LOGGER.log(Level.CONFIG, "Player contacted door to room: {0}", dn.door.destRoomUID);
                         //playerNode.player.getState().removeDataChangeListener(PlayerState.PROP_POSITION, this);
-                        ((PlayerState)source).removeDataChangeListener(PlayerState.PROP_POSITION, this);
+                        ((PlayerState) source).removeDataChangeListener(PlayerState.PROP_POSITION, this);
                         playerNode.player.setPortKey(dn.door);
                         playerNode.getWorld().changeRoom(dn.door.destRoomUID);
                         return;
@@ -193,5 +250,5 @@ public class RoomNode extends Group implements GameListener, DataListener {
                 break;
         }
     }
-    
+
 }

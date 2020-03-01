@@ -26,6 +26,7 @@ import com.maehem.rotor.engine.game.events.GameListener;
 import com.maehem.rotor.ui.UserInterfaceLayer;
 import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.debug.DebugListener;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -82,6 +83,7 @@ public abstract class ItemAmountIndicator extends VBox implements GameListener, 
 
     @Override
     public void dataChange(String dataKey, Object source, Object oldValue, Object newValue) {
+        LOGGER.log(Level.CONFIG, "Data change for ItemAmountIndicator [{0}] old: {1}    new:{2}", new Object[]{key, oldValue, newValue});
         if ( dataKey.equals(this.key) ) {
             setValue((int) newValue);
         }

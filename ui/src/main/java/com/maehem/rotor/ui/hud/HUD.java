@@ -92,6 +92,13 @@ public class HUD extends HBox implements GameListener, DebugListener {
         arrows =  new ArrowsIndicator(changes);    // Arrows
         life =    new LifeIndicator(changes);  // LifeIndicator
 
+        game.addListener(mana);
+        //game.addListener(equiped);  // Not working yet.
+        game.addListener(money);
+        game.addListener(bombs);
+        game.addListener(arrows);
+        game.addListener(life);
+        
         // Create a gap between arrows and life panels
         Pane spacer = new Pane( new Rectangle(40, 20, Color.TRANSPARENT));
         //spacer.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));

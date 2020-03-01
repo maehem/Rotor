@@ -29,8 +29,25 @@ public class ArrowsLootItem extends Item {
     
     private int amount;
     
+    /**
+     * For Items carried by entities.
+     * 
+     * @param amount 
+     */
     public ArrowsLootItem(int amount) {
         super(IMAGE_PATH);
+        this.amount = amount;
+    }
+
+    /**
+     * For Items placed in Room.
+     * 
+     * @param amount
+     * @param x
+     * @param y 
+     */
+    public ArrowsLootItem(int amount, double x, double y) {
+        super(IMAGE_PATH, x, y);
         this.amount = amount;
     }
     

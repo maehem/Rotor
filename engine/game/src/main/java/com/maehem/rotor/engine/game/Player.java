@@ -31,30 +31,14 @@ public class Player extends Entity {
 
     private static final Logger LOGGER = Logger.getLogger(Player.class.getName());
 
-    public static final double WALK_SPEED = 0.005;
-    public static final double RUN_MULT = 3.0;
-    
     private final PlayerState state = new PlayerState();
-    
-    //private final World parent;
     
     private PortKey portKey;
     
-    //private Object walkSheet;
-    //private boolean swordAttack = false;
-    
-    public Player( /*World parent*/ ) {
-        //this.parent = parent;
+    public Player() {
         LOGGER.config("Create Player.");
     }
     
-//    /**
-//     * @return the parent
-//     */
-//    public World getParent() {
-//        return parent;
-//    }
-//
     /**
      * @return the portKey
      */
@@ -67,7 +51,6 @@ public class Player extends Entity {
      */
     public void setPortKey(PortKey portKey) {
         this.portKey = portKey;
-        //getState().changeRoom(portKey.destRoomUID);
     }
 
     public boolean hasPortKey() {
@@ -86,6 +69,31 @@ public class Player extends Entity {
     @Override
     public PlayerState getState() {
         return state;
+    }
+
+    /**
+     * Add this item to inventory.
+     * 
+     * @param item
+     * @return true if item was added to player inventory.
+     */
+    public boolean takeItem(Item item) {
+        // If item is arrow, bomb, money or health, then add use it. 
+        // Otherwise, it is an inventory item.
+        if ( item instanceof ArrowsLootItem ) {
+            LOGGER.log(Level.CONFIG, "Player takes {0} Arrows.", ((ArrowsLootItem) item).getAmount());
+            return getState().addArrows(((ArrowsLootItem) item).getAmount());
+        }
+        if ( item instanceof BombsLootItem ) {
+            LOGGER.log(Level.CONFIG, "Player takes {0} Bombs.", ((BombsLootItem) item).getAmount());
+            return getState().addBombs(((BombsLootItem) item).getAmount());
+        }
+        if ( item instanceof MoneyLootItem ) {
+            LOGGER.log(Level.CONFIG, "Player takes {0} Coins.", ((MoneyLootItem) item).getAmount());
+            return getState().addMoney(((MoneyLootItem) item).getAmount());
+        }        
+        
+        return false;        
     }
 
 }

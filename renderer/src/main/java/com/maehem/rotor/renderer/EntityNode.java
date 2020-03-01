@@ -29,8 +29,8 @@ import com.maehem.rotor.engine.game.events.GameListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
@@ -70,6 +70,7 @@ public class EntityNode extends Group implements DataListener, GameListener {
     private boolean walking = false;
     private int damageTicks = 0;
     private ImageSequence lootItemImage;
+    private final Rectangle collisionBox;
 
     public EntityNode(Entity entity, ClassLoader cl, double size, Point screenSize) throws IOException {
         this.entity = entity;
@@ -126,13 +127,10 @@ public class EntityNode extends Group implements DataListener, GameListener {
 
         // Loot Sparkle
         lootSparkle = new ImageSequence(cl.getResourceAsStream("characters/loot-sparkle.png"), size, ImageSequence.Type.REPEAT);
-        //lootSparkle.setFitHeight(size);
-        //lootSparkle.setPreserveRatio(true);
         lootSparkle.setVisible(false);
-        //lootSparkle.setOpacity(0.5);
         getChildren().add(lootSparkle);
 
-        if (entity.getLootItem() != null) {
+        if (hasLoot()) {
             Item lootItem = entity.getLootItem();
             lootItemImage = new ImageSequence(cl.getResourceAsStream(lootItem.getImagePath()), size/1.2, ImageSequence.Type.REPEAT);
             lootItemImage.setLayoutX(size/8.0);
@@ -140,6 +138,12 @@ public class EntityNode extends Group implements DataListener, GameListener {
             lootItemImage.setVisible(false);
             this.getChildren().add(lootItemImage);
         }
+        
+        collisionBox = new Rectangle(graphic.getBoundsInLocal().getWidth(), graphic.getBoundsInLocal().getHeight());
+        collisionBox.setFill(Color.TRANSPARENT);
+        collisionBox.setStroke(Color.RED);
+        collisionBox.setStrokeWidth(1.0);
+        getChildren().add(collisionBox);
         
         entity.getState().addDataChangeListener(EntityState.PROP_POSITION, this);
         entity.getState().addDataChangeListener(EntityState.PROP_HEALTH, this);
@@ -167,24 +171,19 @@ public class EntityNode extends Group implements DataListener, GameListener {
 
                 if (oPos.x < pos.x) {
                     getWalkSheet().setDir(WalkSheet.DIR.RIGHT);
-                    //getFlashlight().setAngle(0.0);
                     swordSwish.setAngle(90.0);
 
                 } else if (oPos.x > pos.x) {
                     getWalkSheet().setDir(WalkSheet.DIR.LEFT);
-                    //getFlashlight().setAngle(180.0);
                     swordSwish.setAngle(270.0);
                 }
                 if (oPos.y < pos.y) {
                     getWalkSheet().setDir(WalkSheet.DIR.TOWARD);
-                    //getFlashlight().setAngle(90.0);
                     swordSwish.setAngle(180.0);
                 } else if (oPos.y > pos.y) {
                     getWalkSheet().setDir(WalkSheet.DIR.AWAY);
-                    //getFlashlight().setAngle(270.0);
                     swordSwish.setAngle(0.0);
                 }
-                //getWalkSheet().step();
                 walking = true;
                 updateLayout((Point) newValue);
                 break;
@@ -196,6 +195,10 @@ public class EntityNode extends Group implements DataListener, GameListener {
                     damageTicks = 2;
                 }
                 if ((double) newValue <= 0.0) {
+                    collisionBox.setWidth(getCollisionBox().getWidth());
+                    collisionBox.setHeight(getCollisionBox().getHeight());
+                    collisionBox.setTranslateX(getCollisionBox().getCenterX()-getCollisionBox().getWidth()/2);
+                    collisionBox.setTranslateY(getCollisionBox().getCenterY()-getCollisionBox().getHeight()/2);
                     // Death
                     graphic.setVisible(false);
                     healthBar.setVisible(false);
@@ -231,7 +234,7 @@ public class EntityNode extends Group implements DataListener, GameListener {
                 if (damageTicks > 0) {
                     damageTicks--;
                 }
-                if (!isAlive()) {
+                if (entity.getState().getHealth() <= 0.0) {
                     if (ghost.getTranslateY() > 0.0) {
                         ghost.setTranslateY(ghost.getTranslateY() - 3.0);
                         double amount = ghost.getTranslateY() / -ghost.getLayoutY(); // Start at 1.0, diminish to 0.0
@@ -272,7 +275,12 @@ public class EntityNode extends Group implements DataListener, GameListener {
     }
 
     public Bounds getCollisionBox() {
+        if ( isAlive() ) {
         return getWalkSheet().getBoundsInParent();
+        } else {
+            Bounds bb = getBoundsInLocal();
+            return new BoundingBox(bb.getCenterX(), bb.getCenterY(), bb.getWidth()/4, bb.getHeight()/4);
+        }
     }
 
     public final void updateLayout(Point pos) {
@@ -288,6 +296,15 @@ public class EntityNode extends Group implements DataListener, GameListener {
     }
 
     public boolean isAlive() {
-        return entity.getState().getHealth() > 0.0;
+        return entity.getState().getHealth() > 0.0 || ghost.getTranslateY() > 0.0;
+    }
+    
+    public final boolean hasLoot() {
+        return entity.getLootItem() != null;
+    }
+
+    void clearLootItem() {
+        entity.setLootItem(null);
+        this.getChildren().remove(lootItemImage);
     }
 }

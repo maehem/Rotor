@@ -25,14 +25,12 @@ import java.util.logging.Logger;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.ColorInput;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Walk Sheets are a single image that contain all four walking directions and a

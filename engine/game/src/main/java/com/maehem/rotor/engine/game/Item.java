@@ -19,6 +19,8 @@
  */
 package com.maehem.rotor.engine.game;
 
+import com.maehem.rotor.engine.data.Point;
+
 /**
  * Item found in world or looted.
  * 
@@ -27,14 +29,24 @@ package com.maehem.rotor.engine.game;
 public class Item {
 
     private final String imagePath;
-
+    private final Point position = new Point(0, 0);
+    
     public Item( String imagePath ) {
         this.imagePath = imagePath;
-        
+    }
+
+    public Item( String imagePath, double x, double y ) {
+        this(imagePath);
+        position.x = x;
+        position.y = y;
     }
 
     public String getImagePath() {
         return imagePath;
+    }
+
+    public final Point getPosition() {
+        return position;
     }
     
 }

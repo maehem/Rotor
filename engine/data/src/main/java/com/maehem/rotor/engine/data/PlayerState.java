@@ -19,6 +19,7 @@
  */
 package com.maehem.rotor.engine.data;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -26,10 +27,7 @@ import java.util.logging.Logger;
  * @author maehem
  */
 public class PlayerState extends EntityState {
-
     private static final Logger LOGGER = Logger.getLogger(PlayerState.class.getName());
-
-//    public static final String STATE_LEAVE = "stateLeave";
 
     private static final int MANA_MAX = 99;
     private static final int MONEY_MAX = 999;
@@ -42,12 +40,12 @@ public class PlayerState extends EntityState {
     public static final String PROP_ARROWS = "arrows";
     public static final String PROP_NIGHT_VISION = "nightVision";
     
-    private int mana = 99;
-    private int money = 999;
-    private int bombs = 99;
-    private int arrows = 99;
+    private int mana = 0;
+    private int money = 0;
+    private int bombs = 0;
+    private int arrows = 0;
     private int difficulty = 1;
-    private double nightVision = 0.5;
+    private double nightVision = 0.0;
 
     public PlayerState() {
         LOGGER.config("Player State created.");
@@ -85,7 +83,7 @@ public class PlayerState extends EntityState {
         int oldMoney = this.money;
         this.money = checkIntNumber(val, 0, MONEY_MAX);
 
-        getChanges().firePropertyChange(PROP_MONEY, this, oldMoney, money);
+        getChanges().firePropertyChange(PROP_MONEY, this, oldMoney, getMoney());
     }
 
     /**
@@ -104,7 +102,8 @@ public class PlayerState extends EntityState {
         int oldVal = this.bombs;
         this.bombs = checkIntNumber(val, 0, BOMBS_MAX);
 
-        getChanges().firePropertyChange(PROP_BOMBS, this, oldVal, val);
+        LOGGER.log(Level.CONFIG, "Bombs amount changing from {0} to {1}", new Object[]{oldVal, getBombs()});
+        getChanges().firePropertyChange(PROP_BOMBS, this, oldVal, getBombs());
     }
 
     /**
@@ -122,7 +121,7 @@ public class PlayerState extends EntityState {
     public void setArrows(int val) {
         int oldVal = this.arrows;
         this.arrows = checkIntNumber(val, 0, ARROWS_MAX);
-        getChanges().firePropertyChange(PROP_ARROWS, this, oldVal, val);
+        getChanges().firePropertyChange(PROP_ARROWS, this, oldVal, getArrows());
     }
 
     /**
@@ -165,6 +164,33 @@ public class PlayerState extends EntityState {
         } else {
             return val;
         }
+    }
+
+    public boolean addArrows(int amount) {
+        // Check if we can take at least one.
+        if ( ARROWS_MAX - arrows < 1 ) return false;
+        
+        setArrows(getArrows() + amount);
+        
+        return true;
+    }
+
+    public boolean addBombs(int amount) {
+        // Check if we can take at least one.
+        if ( BOMBS_MAX - getBombs() < 1 ) return false;
+        
+        setBombs(getBombs() + amount);
+        
+        return true;
+    }
+
+    public boolean addMoney(int amount) {
+        // Check if we can take at least one.
+        if ( MONEY_MAX - getMoney() < 1 ) return false;
+        
+        setMoney(getMoney() + amount);
+        
+        return true;
     }
 
 }
