@@ -29,10 +29,12 @@ import java.util.logging.Logger;
  * @author maehem
  */
 public class Game {
+
     private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
 
     private final String gameName;
     private World world = null;
+    private final ClassLoader contentClassLoader;
     private boolean initialized = false;
     private boolean running = false;  // Running==true or Paused==false
 
@@ -40,8 +42,9 @@ public class Game {
     
     public CopyOnWriteArrayList<GameListener> listeners = new CopyOnWriteArrayList<>();
 
-    public Game(String gameName) {
+    public Game(String gameName, ClassLoader cl) {
         this.gameName = gameName;
+        this.contentClassLoader = cl;
     }
 
     /**
@@ -51,8 +54,6 @@ public class Game {
     private void init() {
         LOGGER.config("Game Initialization...");
         FileSystem.init(gameName);
-        //this.world = world;
-        //world = World.getInstance();
         
         initialized = true;
         doNotify(GameEvent.TYPE.GAME_INIT);
@@ -179,5 +180,12 @@ public class Game {
      */
     public int getSubTicks() {
         return subTicks;
+    }
+    
+    /**
+     * @return the contentClassLoader
+     */
+    public ClassLoader getContentClassLoader() {
+        return contentClassLoader;
     }
 }

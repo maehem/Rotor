@@ -28,9 +28,14 @@ import com.maehem.rotor.ui.debug.DebugChangeSupport;
  */
 public class ArrowsIndicator extends ItemAmountIndicator {
 
+    public static final String ALT_GLYPH = "glyphs/hud/arrow.png";
+
     public ArrowsIndicator(DebugChangeSupport changes) {
-        super(PlayerState.PROP_ARROWS, "/glyphs/hud/arrow.png", 99,changes);
+        super(PlayerState.PROP_ARROWS, "/_glyphs/hud/arrow.png", 99,changes);
     }
-    
-    
+
+    @Override
+    public String getAltGlyphPath() {
+        return ALT_GLYPH;
+    }
 }

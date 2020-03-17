@@ -28,19 +28,32 @@ import javafx.scene.layout.Pane;
  */
 public class HealthBarStrip extends HBox {
 
+    private static final String GLYPH_PATH = "/_glyphs/hud/heart.png";
     public static final int HEART_SIZE = 16;
-    private final Pane hearts[] = new Pane[10];
+    public static final int N_HEARTS = 10;
+    private final Pane hearts[] = new Pane[N_HEARTS];
+    
+    // TODO:  Partial hearts
+    // TODO:  Heart image from game content. Needs ClassLoader from World.
     
     public HealthBarStrip() {
-        for ( int i=0; i<hearts.length; i++ ) {
-            hearts[i] = HUD.createGlyph("/glyphs/hud/heart.png", HEART_SIZE);
-            getChildren().add(hearts[i]);
-        }
+        setGlyph(HUD.class, GLYPH_PATH);
+//        for ( int i=0; i<hearts.length; i++ ) {
+//            setGlyph(i, getClass().getClassLoader(), GLYPH_PATH );
+//            getChildren().add(hearts[i]);
+//        }
     }
     
     protected void setValue(int value) {
         for ( int i=0; i< hearts.length; i++ ) {
             hearts[i].setVisible(value/5 > i);
+        }
+    }
+    
+    public final void setGlyph( Class cl, String path ) {
+        for ( int i=0; i<hearts.length; i++ ) {
+            hearts[i]= HUD.createGlyph(cl, path, HEART_SIZE);
+            getChildren().add(hearts[i]);
         }
     }
     

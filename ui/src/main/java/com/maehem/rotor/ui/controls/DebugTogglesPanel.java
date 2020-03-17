@@ -19,10 +19,7 @@
 */
 package com.maehem.rotor.ui.controls;
 
-import com.maehem.rotor.renderer.debug.Debug;
 import javafx.geometry.Insets;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;

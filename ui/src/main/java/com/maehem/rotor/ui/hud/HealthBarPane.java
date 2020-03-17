@@ -27,8 +27,8 @@ import javafx.scene.layout.VBox;
  */
 public class HealthBarPane extends VBox {
 
-    private HealthBarStrip topBar = new HealthBarStrip();
-    private HealthBarStrip bottomBar = new HealthBarStrip();
+    private final HealthBarStrip topBar = new HealthBarStrip();
+    private final HealthBarStrip bottomBar = new HealthBarStrip();
 
     
     public HealthBarPane() {
@@ -39,5 +39,10 @@ public class HealthBarPane extends VBox {
     public void setValue( int val ) {
         topBar.setValue(val);
         bottomBar.setValue(val-50);
+    }
+
+    void setGlyph(Class cl, String path) {
+        topBar.setGlyph(cl, path);
+        bottomBar.setGlyph(cl, path);
     }
 }

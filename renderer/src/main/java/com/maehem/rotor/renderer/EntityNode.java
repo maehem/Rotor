@@ -57,7 +57,6 @@ public class EntityNode extends Group implements DataListener, GameListener {
 
     private final WalkSheet graphic;
     private final ImageSequence swordSwish;
-    private final Entity entity;
     private final Point screenSize;
     private final ImageView ghost;
     private final BoxBlur ghostBlur = new BoxBlur();
@@ -66,6 +65,7 @@ public class EntityNode extends Group implements DataListener, GameListener {
     private final Text nameTag;
     private final ImageView ashPile;
     private final ImageSequence lootSparkle;
+    public  final Entity entity;
 
     private boolean walking = false;
     private int damageTicks = 0;
@@ -168,11 +168,9 @@ public class EntityNode extends Group implements DataListener, GameListener {
                     walking = false;
                     return;
                 }
-
                 if (oPos.x < pos.x) {
                     getWalkSheet().setDir(WalkSheet.DIR.RIGHT);
                     swordSwish.setAngle(90.0);
-
                 } else if (oPos.x > pos.x) {
                     getWalkSheet().setDir(WalkSheet.DIR.LEFT);
                     swordSwish.setAngle(270.0);
@@ -219,6 +217,8 @@ public class EntityNode extends Group implements DataListener, GameListener {
     public void gameEvent(GameEvent e) {
         switch (e.type) {
             case TICK:
+                entity.meleeCooldownTick(); // Decrements the melee cooldown, if there is one.
+                
                 if (walking && e.getSource().getSubTicks() % 2 == 0) {
                     getWalkSheet().step();
                 }
@@ -226,6 +226,7 @@ public class EntityNode extends Group implements DataListener, GameListener {
                     swordSwish.step();
                     if (swordSwish.isDone()) {
                         getEntity().meleeAttack(false); // Consume request
+                        entity.startMeleeCooldown();
                     }
                 }
                 if (damageTicks <= 0) {
@@ -263,15 +264,15 @@ public class EntityNode extends Group implements DataListener, GameListener {
     }
 
     void attackWithSword() {
-        if (getEntity().isMeleeAttack()) {
-            return; // Ignore new attacks while swinging.
+        if (getEntity().isMeleeAttack() || getEntity().isMeleeCooldown()) {
+            return; // Ignore new attacks while swinging or cooling.
         }
         getEntity().meleeAttack(true);
         swordSwish.reset();
     }
 
     public boolean meleeBegun() {
-        return !swordSwish.isDone() && swordSwish.getCurrentFrame() == 1; // Frame 0 might have been already processed before we get here.
+        return !swordSwish.isDone() && swordSwish.getCurrentFrame() <= 1; // Frame 0 might have been already processed before we get here.
     }
 
     public Bounds getCollisionBox() {

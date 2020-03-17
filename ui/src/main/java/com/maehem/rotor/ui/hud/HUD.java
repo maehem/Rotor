@@ -27,6 +27,7 @@ import com.maehem.rotor.ui.UserInterfaceLayer;
 import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.debug.DebugListener;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,31 +53,22 @@ import javafx.scene.shape.Rectangle;
 public class HUD extends HBox implements GameListener, DebugListener {
 
     private static final Logger LOGGER = Logger.getLogger(HUD.class.getName());
-    
-    //public static final double CORNER_ARC = 10;
-    //public static final double HEIGHT = 100;
+
     public static final double PADDING = 4;
-    //public static final double STUB_WIDTH = 24;
 
-    //private final Graphics gfx;
-    
-    //private final StackPane tabPopGlyph;
-    //private final StackPane tabTuckGlyph;
     //private double tuckedX = -100;
-    ManaIndicator mana;
-    EquipedItemIndicator equiped;
-    MoneyIndicator money;
-    BombsIndicator bombs;
-    ArrowsIndicator arrows;
-    LifeIndicator life;
+    private final ManaIndicator mana;
+    private final EquipedItemIndicator equiped;
+    private final MoneyIndicator money;
+    private final BombsIndicator bombs;
+    private final ArrowsIndicator arrows;
+    private final LifeIndicator life;
     
-
     private boolean popped = true;
 
-    public HUD(Game game, DebugChangeSupport changes) {
-        //this.gfx = gfx;
+    public HUD(Game game, DebugChangeSupport debugChanges) {
         
-        changes.addDebugChangeListener(UserInterfaceLayer.DebugProp.SHOW_UI_PANE_BORDERS, this);
+        debugChanges.addDebugChangeListener(UserInterfaceLayer.DebugProp.SHOW_UI_PANE_BORDERS, this);
         setAlignment(Pos.TOP_CENTER);
         
         //setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
@@ -84,14 +76,15 @@ public class HUD extends HBox implements GameListener, DebugListener {
         setPadding(new Insets(PADDING));
         setSpacing(20);
         
-        mana =    new ManaIndicator(changes);  // Magic
+        mana =    new ManaIndicator(debugChanges);  // Magic
         
-        equiped = new EquipedItemIndicator(changes); // Equiped Item
-        money =   new MoneyIndicator(changes);     // Money
-        bombs =   new BombsIndicator(changes);     // Bombs
-        arrows =  new ArrowsIndicator(changes);    // Arrows
-        life =    new LifeIndicator(changes);  // LifeIndicator
+        equiped = new EquipedItemIndicator(debugChanges); // Equiped Item
+        money =   new MoneyIndicator(debugChanges);     // Money
+        bombs =   new BombsIndicator(debugChanges);     // Bombs
+        arrows =  new ArrowsIndicator(debugChanges);    // Arrows
+        life =    new LifeIndicator(debugChanges);  // LifeIndicator
 
+        
         game.addListener(mana);
         //game.addListener(equiped);  // Not working yet.
         game.addListener(money);
@@ -99,6 +92,12 @@ public class HUD extends HBox implements GameListener, DebugListener {
         game.addListener(arrows);
         game.addListener(life);
         
+        // Attempt to override the default glyph image with one from
+        // another source.  Just supply a ClassLoader and a Path.
+        setArrowsGlyph(game.getContentClassLoader(), ArrowsIndicator.ALT_GLYPH );
+        setBombsGlyph( game.getContentClassLoader(), BombsIndicator.ALT_GLYPH );
+        setMoneyGlyph( game.getContentClassLoader(), MoneyIndicator.ALT_GLYPH );
+
         // Create a gap between arrows and life panels
         Pane spacer = new Pane( new Rectangle(40, 20, Color.TRANSPARENT));
         //spacer.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
@@ -108,19 +107,52 @@ public class HUD extends HBox implements GameListener, DebugListener {
         game.addListener(this);
     }
     
-    public static StackPane createGlyph(String path, double size) {
+    public static StackPane createGlyph(Class cl, String path, double size) {
         try {
-            URL glyphResource = HUD.class.getResource(path);
+            //InputStream is = cl.getClassLoader().getResourceAsStream(path);
+            //URL glyphResource = cl.getResource(path);
+            URL glyphResource = cl.getResource(path);
+            
+            if ( glyphResource == null ) {
+            //if ( is == null) {
+                LOGGER.log(Level.WARNING, "{0}:{1} could not be found.", new Object[]{cl.getName(),path});
+                return null;
+            }
             ImageView glyphImage = new ImageView(new Image(glyphResource.openStream()));
+            //ImageView glyphImage = new ImageView(new Image(is));
             glyphImage.setPreserveRatio(true);
             glyphImage.setFitWidth(size);
             return new StackPane(glyphImage);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
-            return new StackPane();
+            //return new StackPane();
+            return null;
         }
     }
 
+    public static StackPane createGlyph2(ClassLoader cl, String path, double size) {
+//        try {
+            InputStream is = cl.getResourceAsStream(path);
+            //URL glyphResource = cl.getResource(path);
+//            if ( glyphResource == null ) {
+//            //if ( is == null) {
+//                LOGGER.log(Level.WARNING, "{0}:{1} could not be found.", new Object[]{cl.getName(),path});
+//                return null;
+//            }
+            if ( is == null ) return null;
+            
+            ImageView glyphImage = new ImageView(new Image(is));
+            //ImageView glyphImage = new ImageView(new Image(is));
+            glyphImage.setPreserveRatio(true);
+            glyphImage.setFitWidth(size);
+            return new StackPane(glyphImage);
+//        } catch (IOException ex) {
+//            LOGGER.log(Level.SEVERE, null, ex);
+//            //return new StackPane();
+//            return null;
+//        }
+    }
+    
     @Override
     public void gameEvent(GameEvent e) {
         switch ( e.type ) {
@@ -153,4 +185,21 @@ public class HUD extends HBox implements GameListener, DebugListener {
             setBorder(Border.EMPTY);
         }
     }
+    
+    public final void setLifeGlyph( Class cl, String path ) {
+        life.setGlyph( cl, path );
+    }
+    
+    public final void setBombsGlyph( ClassLoader cl, String path ) {
+        bombs.setGlyph( cl, path );
+    }
+    
+    public final void setArrowsGlyph( ClassLoader cl, String path ) {
+        arrows.setGlyph( cl, path );
+    }
+    
+    public final void setMoneyGlyph( ClassLoader cl, String path ) {
+        money.setGlyph( cl, path );
+    }
+    
 }

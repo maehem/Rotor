@@ -53,15 +53,16 @@ public class EquipedItemIndicator extends Group implements DebugListener {
         strokes[0] = new BorderStroke(Color.GOLD, BorderStrokeStyle.SOLID, new CornerRadii(8), new BorderWidths(3));
         strokes[1] = new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(6), new BorderWidths(2), new Insets(3));
         
-        StackPane glyph = HUD.createGlyph("/glyphs/equipable/bow-1.png", SIZE);
+        //StackPane glyph = HUD.createGlyph(HUD.class, "/_glyphs/equipable/bow-1.png", SIZE);
+    //    StackPane glyph = HUD.createGlyph(getClass().getClassLoader(), "_glyphs/equipable/bow-1.png", SIZE);
         
         //sp.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
         
         //Rectangle r = new Rectangle(SIZE-4, SIZE-4, Color.BLACK);
         sp.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(8), new Insets(2))));
-        glyph.setBorder(new Border(strokes));
+        //glyph.setBorder(new Border(strokes));
         
-        sp.getChildren().addAll(glyph);
+        //sp.getChildren().addAll(glyph);
         
         getChildren().add(sp);
     }

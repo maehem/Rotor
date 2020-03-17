@@ -28,7 +28,6 @@ import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.debug.DebugListener;
 import java.util.logging.Logger;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -36,10 +35,6 @@ import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 
 /**
  *
@@ -56,8 +51,6 @@ public class LifeIndicator extends VBox  implements GameListener, DataListener, 
     public LifeIndicator(DebugChangeSupport changes) {
         changes.addDebugChangeListener(UserInterfaceLayer.DebugProp.SHOW_UI_PANE_BORDERS, this);
 
-        //Text title = new Text("---- LIFE ----");
-        //title.setFont(Font.font(System.getProperty("Font"), FontWeight.BOLD, FontPosture.ITALIC, 16));
         setAlignment(Pos.TOP_CENTER);
         setSpacing(8);
         
@@ -72,36 +65,18 @@ public class LifeIndicator extends VBox  implements GameListener, DataListener, 
 
                 state.addDataChangeListener(this.KEY, this);
                 break;
-
         }
     }
 
     @Override
     public void dataChange(String dataKey, Object source, Object oldValue, Object newValue) {
         if ( dataKey.equals(this.KEY) ) {
-            setValue((int) newValue);
+            setValue((double)newValue);
         }
     }
 
-    void setValue(int val) {
-        hearts.setValue(val);
-    }
-    
-    private Group titleGroup() {
-        Group g = new Group();
-        Text titleBlack = new Text(TITLE);
-        titleBlack.setFont(Font.font(System.getProperty("Font"), FontWeight.BOLD, FontPosture.ITALIC, 16));
-        titleBlack.setFill(Color.BLACK);
-        titleBlack.setX(2.0);
-        titleBlack.setY(2.0);
-        
-        Text titleWhite = new Text(TITLE);
-        titleWhite.setFont(Font.font(System.getProperty("Font"), FontWeight.BOLD, FontPosture.ITALIC, 16));
-        titleWhite.setFill(Color.WHITE);
-        
-        g.getChildren().addAll(titleBlack, titleWhite);
-        
-        return g;
+    void setValue(double val) {
+        hearts.setValue((int)val);
     }
     
     @Override
@@ -120,5 +95,9 @@ public class LifeIndicator extends VBox  implements GameListener, DataListener, 
         } else {
             setBorder(Border.EMPTY);
         }
+    }
+
+    void setGlyph(Class cl, String path) {
+        hearts.setGlyph(cl, path);
     }
 }

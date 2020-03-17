@@ -55,6 +55,8 @@ public class Room001 extends Room {
         //Entity entity = new Entity("Gordon", "characters/person-gordon.png", new MoneyLootItem(30));
         Entity entity = new Entity("Gordon", "characters/person-gordon.png", new BombsLootItem(5));
         entity.getState().warpPosition(0.7, 0.5);
+        entity.setWalkSpeed(Entity.WALK_SPEED * 0.7);  // Slow them down a little
+        entity.setMeleeCooldown(20);
         addEntity(entity);
         
         ArrowsLootItem arrowsLootItem = new ArrowsLootItem(8, 0.3, 0.6);

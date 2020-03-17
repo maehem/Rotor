@@ -28,8 +28,15 @@ import com.maehem.rotor.ui.debug.DebugChangeSupport;
  */
 public class BombsIndicator extends ItemAmountIndicator {
 
+    public static final String ALT_GLYPH = "glyphs/hud/bomb.png";
+
     public BombsIndicator(DebugChangeSupport changes) {
-        super(PlayerState.PROP_BOMBS, "/glyphs/hud/bomb.png", 99, changes);
+        super(PlayerState.PROP_BOMBS, "/_glyphs/hud/bomb.png", 99, changes);
     }
-    
+
+    @Override
+    public String getAltGlyphPath() {
+        return ALT_GLYPH;
+    }
+
 }

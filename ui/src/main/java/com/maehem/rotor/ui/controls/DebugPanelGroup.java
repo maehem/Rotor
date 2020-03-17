@@ -21,7 +21,6 @@ package com.maehem.rotor.ui.controls;
 
 import com.maehem.rotor.engine.logging.LogListener;
 import com.maehem.rotor.engine.logging.LoggingMessageList;
-import com.maehem.rotor.renderer.debug.Debug;
 import java.text.MessageFormat;
 import java.util.logging.Formatter;
 import java.util.logging.Level;

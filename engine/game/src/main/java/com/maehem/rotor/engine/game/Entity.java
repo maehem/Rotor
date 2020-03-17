@@ -34,16 +34,19 @@ public class Entity {
 
     public static final double WALK_SPEED = 0.005;
     public static final double RUN_MULT = 3.0;
+    public static final int MELEE_COOLDOWN = 0;
 
     private final EntityState state = new EntityState();
 
     private boolean running, goNorth, goSouth, goEast, goWest;
-    private boolean meleeAttack = false;
+    private boolean meleeAttack = false;       
     private Object walkSheet;
     private String walkSheetFilename;
     private Item lootItem;
     private double walkSpeed = WALK_SPEED;
     private double runMult = RUN_MULT;
+    private int meleeCooldownTicks = 0;
+    private int meleeCooldown = MELEE_COOLDOWN;
 
     public Entity() {
     }
@@ -267,4 +270,29 @@ public class Entity {
         this.runMult = runMult;
     }
 
+    /**
+     * @return the meleeCooldown
+     */
+    public int getMeleeCooldown() {
+        return meleeCooldown;
+    }
+
+    /**
+     * @param meleeCooldown the meleeCooldown to set
+     */
+    public void setMeleeCooldown(int meleeCooldown) {
+        this.meleeCooldown = meleeCooldown;
+    }
+
+    public boolean isMeleeCooldown() {
+        return meleeCooldownTicks > 0;
+    }
+    
+    public void meleeCooldownTick() {
+        if ( isMeleeCooldown() ) meleeCooldownTicks--;
+    }
+    
+    public void startMeleeCooldown() {
+        this.meleeCooldownTicks = this.meleeCooldown;
+    }
 }

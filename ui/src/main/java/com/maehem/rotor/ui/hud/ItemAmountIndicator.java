@@ -26,15 +26,19 @@ import com.maehem.rotor.engine.game.events.GameListener;
 import com.maehem.rotor.ui.UserInterfaceLayer;
 import com.maehem.rotor.ui.debug.DebugChangeSupport;
 import com.maehem.rotor.ui.debug.DebugListener;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -51,6 +55,7 @@ public abstract class ItemAmountIndicator extends VBox implements GameListener, 
     //private Text quanityLabel;
     private final HudText quantityLabel;
     private final String key;
+    private StackPane glyph;
     
     public ItemAmountIndicator( String key, String glyphName, int quantity, DebugChangeSupport changes) {
         this.key = key;
@@ -62,8 +67,14 @@ public abstract class ItemAmountIndicator extends VBox implements GameListener, 
         setAlignment(Pos.TOP_CENTER);
         
         quantityLabel = new HudText(String.valueOf(quantity), TEXT_SIZE);
+        //glyph = HUD.createGlyph(this.getClass().getClassLoader(), glyphName, GLYPH_SIZE);
         
-        getChildren().addAll(HUD.createGlyph(glyphName, GLYPH_SIZE), quantityLabel);
+        getChildren().add(quantityLabel);
+        //setGlyph(HUD.class, glyphName);
+        //setGlyph(HUD.class.getClassLoader(), glyphName);
+        
+        setGlyph(glyphName);
+        
     }
     
     public void setValue(int value) {
@@ -77,7 +88,6 @@ public abstract class ItemAmountIndicator extends VBox implements GameListener, 
                 PlayerState state = e.getSource().getWorld().getPlayer().getState();
                 state.addDataChangeListener(this.key, this);
                 break;
-
         }
     }
 
@@ -106,4 +116,37 @@ public abstract class ItemAmountIndicator extends VBox implements GameListener, 
             setBorder(Border.EMPTY);
         }
     }
+
+    private void setGlyph(String path) {
+            InputStream is = ItemAmountIndicator.class.getResourceAsStream(path);            
+            ImageView glyphImage = new ImageView(new Image(is));
+            glyphImage.setPreserveRatio(true);
+            glyphImage.setFitWidth(GLYPH_SIZE);
+            this.glyph = new StackPane(glyphImage);
+            getChildren().add(glyph);
+    }
+    
+    public final void setGlyph(Class cl, String path) {
+        StackPane newGlyph = HUD.createGlyph(cl, path, GLYPH_SIZE);
+        if ( newGlyph == null ) return;
+        
+        if ( glyph != null ) { 
+            getChildren().remove(glyph);
+        }
+        this.glyph = newGlyph;
+        getChildren().add(glyph);
+    }
+    
+    public final void setGlyph(ClassLoader cl, String path) {
+        StackPane newGlyph = HUD.createGlyph2(cl, path, GLYPH_SIZE);
+        if ( newGlyph == null ) return;
+        
+        if ( glyph != null ) { 
+            getChildren().remove(glyph);
+        }
+        this.glyph = newGlyph;
+        getChildren().add(glyph);
+    }
+    
+    public abstract String getAltGlyphPath();
 }

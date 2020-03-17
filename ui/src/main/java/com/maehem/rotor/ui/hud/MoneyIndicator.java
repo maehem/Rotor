@@ -28,28 +28,16 @@ import com.maehem.rotor.ui.debug.DebugChangeSupport;
  */
 public class MoneyIndicator extends ItemAmountIndicator {
 
+    public static final String ALT_GLYPH = "glyphs/hud/money.png";
     
     public MoneyIndicator(DebugChangeSupport changes) {
-        super(PlayerState.PROP_MONEY, "/glyphs/hud/money.png", 999, changes);
+        super(PlayerState.PROP_MONEY, "/_glyphs/hud/money.png", 999, changes);
     }
 
-//    @Override
-//    public void gameEvent(GameEvent e) {
-//        switch (e.type) {
-//            case DATA_LOADED:
-//                PlayerState state = e.getSource().getPlayer().getState();
-//
-//                state.addDataChangeListener(KEY, this);
-//                break;
-//
-//        }
-//    }
-//
-//    @Override
-//    public void dataChange(String key, Object oldValue, Object newValue) {
-//        if ( key.equals(KEY) ) {
-//            setValue((int) newValue);
-//        }
-//    }
-//
+    @Override
+    public String getAltGlyphPath() {
+        return ALT_GLYPH;
+    }
+
+    
 }

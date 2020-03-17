@@ -56,7 +56,6 @@ public class RoomNode extends Group implements GameListener, DataListener {
     public RoomNode(Room room) {
         this.room = room;
         setViewOrder(1000.0); // Ensures that it renders first.
-
     }
 
     public void enter(Game game, PlayerNode playerNode) {
@@ -91,6 +90,7 @@ public class RoomNode extends Group implements GameListener, DataListener {
         getChildren().removeAll();
         doorNodes.clear();
         entityNodes.clear();
+        itemNodes.clear();
 
         this.playerNode = null;
     }
@@ -121,7 +121,6 @@ public class RoomNode extends Group implements GameListener, DataListener {
         for (Entity e : room.getEntities()) {
             try {
                 World w = room.parent.getParent();
-                e.setWalkSpeed(Entity.WALK_SPEED * 0.7);  // Slow them down a little
                 EntityNode en = new EntityNode(e, w.getClassLoader(), 32, new Point(w.getScreenWidth(), w.getScreenHeight()));
                 getChildren().add(en);
                 entityNodes.add(en);
@@ -152,31 +151,36 @@ public class RoomNode extends Group implements GameListener, DataListener {
                 // Check for collisions.
                 for (EntityNode entNode : entityNodes) {
 
-                    // If entity is within 3 blocks, turn toward player.
-                    Point ePos = entNode.getEntity().getState().getPosition();
-                    Point pPos = player.getState().getPosition();
-                    Entity entity = entNode.getEntity();
-                    if (Math.abs(ePos.x - pPos.x) < 0.2 && Math.abs(ePos.y - pPos.y) < 0.2) {
-                        WalkSheet ws = entNode.getWalkSheet();
-                        boolean goDown = ePos.y - pPos.y < 0.0;
-                        boolean goRight = ePos.x - pPos.x < 0.0;
-                        boolean closeEnoughX = Math.abs(ePos.x - pPos.x) < 0.05;
-                        boolean closeEnoughY = Math.abs(ePos.y - pPos.y) < 0.05;
-                        
-                        entity.goSouth(goDown && !closeEnoughY);
-                        entity.goNorth(!goDown && !closeEnoughY);
-                        entity.goEast(goRight && !closeEnoughX);
-                        entity.goWest(!goRight && !closeEnoughX);
+                    if (entNode.isAlive()) {
+                        // If entity is within n blocks, move toward player.
+                        Point ePos = entNode.getEntity().getState().getPosition();
+                        Point pPos = player.getState().getPosition();
+                        Entity entity = entNode.getEntity();
+                        if (Math.abs(ePos.x - pPos.x) < 0.2 && Math.abs(ePos.y - pPos.y) < 0.2) {
+                            WalkSheet ws = entNode.getWalkSheet();
+                            boolean goDown = ePos.y - pPos.y < 0.0;
+                            boolean goRight = ePos.x - pPos.x < 0.0;
+                            boolean closeEnoughX = Math.abs(ePos.x - pPos.x) < 0.05;
+                            boolean closeEnoughY = Math.abs(ePos.y - pPos.y) < 0.05;
 
-                        entity.tryMove(room);
-                    } else {
-                        entity.stop();
+                            entity.goSouth(goDown && !closeEnoughY);
+                            entity.goNorth(!goDown && !closeEnoughY);
+                            entity.goEast(goRight && !closeEnoughX);
+                            entity.goWest(!goRight && !closeEnoughX);
+
+                            entity.tryMove(room);
+                        } else {
+                            entity.stop();
+                        }
                     }
-
+                    
                     if (entNode.getCollisionBox().intersects(entNode.sceneToLocal(playerNode.localToScene(playerNode.getCollisionBox())))) {
                         //LOGGER.log(Level.WARNING, "Player colided with entity: {0}", entNode.getEntity().getName());
                         if (playerNode.meleeBegun()) {
                             entNode.getEntity().damage(playerNode.player.getMeleeDamage());
+                        }
+                        if (entNode.meleeBegun()) {
+                            playerNode.getEntity().damage(entNode.entity.getMeleeDamage());
                         }
 
                         if (entNode.isAlive()) {
